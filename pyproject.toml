@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "poetry-python-project"
+version = "0.1.0"
+description = "This repository is a template for a python project using the poetry container. The intent is to do all the basic lifting for a python project so that people can hit the ground running with their ideas."
+authors = ["michplunkett"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+black = "^23.3.0"
+requests = "^2.28.2"
+pytest = "^7.3.1"
+responses = "^0.23.1"
+isort = "^5.12.0"
+ruff = "^0.0.272"
+
+[tool.black]
+line-length = 80
+
+[tool.isort]
+profile= "black"
+line_length = 80
+skip = [".gitignore", "project/data/"]
+
+[tool.ruff]
+fix=true
+line-length = 80
+target-version = "py311"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
