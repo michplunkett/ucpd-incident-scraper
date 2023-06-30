@@ -13,4 +13,3 @@
 ```python
 print("Oh, it def does run successfully.")
 ```
-- [ ] I ran `make lint` and have made the bulk of changes that it has requested.
