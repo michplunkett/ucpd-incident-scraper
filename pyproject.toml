@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "poetry-python-project"
+name = "ucpd-incident-scraper"
 version = "0.1.0"
-description = "This repository is a template for a python project using the poetry container. The intent is to do all the basic lifting for a python project so that people can hit the ground running with their ideas."
+description = "This code is going to be used to scrape the UCPD Daily Incident every day and store the incidents on a generic JSON data-store through the use of a Python 🐍 job on GCP's Cloud Run."
 authors = ["michplunkett"]
 readme = "README.md"
 
