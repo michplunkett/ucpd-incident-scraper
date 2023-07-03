@@ -1,4 +1,4 @@
-BASEDIR=incident-scraper
+BASEDIR=incident_scraper
 
 .PHONY: format
 format:
