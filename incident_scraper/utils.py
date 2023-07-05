@@ -1,11 +1,12 @@
 # Util Functions
-import time
-import requests
-from urllib.parse import urlparse
-import sys
-import json
-import lxml.html
 import csv
+import json
+import sys
+import time
+from urllib.parse import urlparse
+
+import lxml.html
+import requests
 
 REQUEST_DELAY = 0.2
 

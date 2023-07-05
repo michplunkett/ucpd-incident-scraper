@@ -1,12 +1,13 @@
-import time
-import requests
-from urllib.parse import urlparse
-import sys
-import json
-import lxml.html
 import csv
-from utils import make_request, parse_html, make_link_absolute, page_grab
 import datetime
+import json
+import sys
+import time
+from urllib.parse import urlparse
+
+import lxml.html
+import requests
+from utils import make_link_absolute, make_request, page_grab, parse_html
 
 
 def epochtime_yesterdaymidnight():
