@@ -1,7 +1,7 @@
 from datetime import datetime, time
 
 import pytz
-from utils import page_grab
+from pages import page_grab
 
 from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
@@ -18,8 +18,8 @@ def get_yesterday_midnight_time():
 
 
 def get_table(
-    url: str = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
-    "?reportDate=1688360400",
+        url: str = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
+                   "?reportDate=1688360400",
 ):
     """This function takes a URL and returns the table from that day.
 
@@ -45,7 +45,7 @@ def get_table(
         for i in range(len(categories) - 1):
             inc_dict[id][str(categories[i].text)] = j[i].text
 
-    # track page number, as offset will take you back to zero
+    # Track page number, as offset will take you back to zero
     pages = response.cssselect("span.page-link")
     slash_index = pages[0].text.find("/")
     page_number = (
@@ -59,7 +59,7 @@ def get_yesterday():
     yesterday = get_yesterday_midnight_time()
     return get_table(
         url="https://incidentreports.uchicago.edu/incidentReportArchive.php?reportDate="
-        + str(yesterday)
+            + str(yesterday)
     )
 
 
@@ -78,22 +78,21 @@ def get_all_tables(initial_url: str):
     page_number = 100000000
     incidents, _ = get_table(url=initial_url)
 
-    # find starting offset
+    # Find starting offset
     offset_index = int(initial_url.find("offset="))
-    offset = int(initial_url[offset_index + 7 :]) + 5
+    offset = int(initial_url[offset_index + 7:]) + 5
 
-    # loop until you offset to the start of query
+    # Loop until you offset to the start of query
     while page_number != 1:
         rev_dict, page_number = get_table(
             url="https://incidentreports.uchicago.edu/incidentReportArchive.php?startDate=1293861600&endDate=1688274000&offset="
-            + str(offset)
+                + str(offset)
         )
         if page_number == 1:
             break
         incidents.update(rev_dict)
         offset += 5
-    fullreport = str(incidents)
-    return fullreport
+    return str(incidents)
 
 
 def export_string(json_string: str):
