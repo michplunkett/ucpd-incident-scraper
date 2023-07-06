@@ -1,4 +1,3 @@
-# Util Functions
 import time
 from urllib.parse import urlparse
 
@@ -27,13 +26,14 @@ def parse_html(html):
 
 
 def make_link_absolute(rel_url, current_url):
-    """Given a relative URL like "/abc/def" or "?page=2"
-    and a complete URL like "https://example.com/1/2/3" this function will
-    combine the two yielding a URL like "https://example.com/abc/def".
+    """Given a relative URL like "/abc/def" or "?page=2" and a complete URL like
+    "https://example.com/1/2/3" this function will combine the two yielding a URL like
+    "https://example.com/abc/def".
 
     Parameters:
         * rel_url:      a URL or fragment
-        * current_url:  a complete URL used to make the request that contained a link to rel_url
+        * current_url:  a complete URL used to make the request that contained a link to
+            rel_url
 
     Returns:
         A full URL with protocol & domain that refers to rel_url.

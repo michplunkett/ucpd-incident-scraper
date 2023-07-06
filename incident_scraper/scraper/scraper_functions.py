@@ -99,7 +99,7 @@ def get_all_tables(initial_url: str):
 def export_string(json_string: str):
     """Save JSON String to File."""
     try:
-        with open("output.json", "w") as file:
+        with open("../output.json", "w") as file:
             file.write(json_string)
         print("JSON has been saved to file successfully.")
     except IOError as e:
