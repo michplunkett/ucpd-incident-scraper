@@ -3,7 +3,11 @@ from datetime import datetime, time
 import pytz
 from pages import page_grab
 
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO
+from incident_scraper.utils.constants import (
+    BASE_UCPD_URL,
+    TIMEZONE_CHICAGO,
+    UCPD_URL_REPORT_DATE,
+)
 
 
 def get_yesterday_midnight_time():
@@ -18,8 +22,7 @@ def get_yesterday_midnight_time():
 
 
 def get_table(
-    url: str = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
-    "?reportDate=1688360400",
+    url: str = UCPD_URL_REPORT_DATE + "1688360400",
 ):
     """This function takes a URL and returns the table from that day.
 
@@ -59,26 +62,17 @@ def get_table(
 def get_yesterday():
     """Returns yesterday's UCPD Crime reports."""
     yesterday = get_yesterday_midnight_time()
-    return get_table(
-        url="https://incidentreports.uchicago.edu/incidentReportArchive.php?reportDate="
-        + str(yesterday)
-    )
-
-
-# starting at 2011
-initialurl = (
-    "https://incidentreports.uchicago.edu/incidentReportArchive.php?"
-    "startDate=1293861600&endDate=1688274000&offset=0"
-)
+    return get_table(url=BASE_UCPD_URL + str(yesterday))
 
 
 def get_all_tables(initial_url: str):
-    """Goes through all queried tables until we offset back to the first table.
+    """Goes through all queried tables until we offset back to the first
+    table.
+
     inputs:
-    initialurl- a url containing all the queried days in question
-    output:
-    json of dictionary of dictionaries of incidents. Keys of the outer dictionary
-    are.
+        initial_url- a url containing all the queried days in question
+        output: json of dictionary of dictionaries of incidents. Keys of the
+            outer dictionary are.
     """
     page_number = 100000000
     incidents, _ = get_table(url=initial_url)
@@ -90,8 +84,9 @@ def get_all_tables(initial_url: str):
     # Loop until you offset to the start of query
     while page_number != 1:
         rev_dict, page_number = get_table(
-            url="https://incidentreports.uchicago.edu/incidentReportArchive.php?"
-            "startDate=1293861600&endDate=1688274000&offset=" + str(offset)
+            url=BASE_UCPD_URL
+            + "?startDate=1293861600&endDate=1688274000&offset="
+            + str(offset)
         )
         if page_number == 1:
             break
@@ -111,5 +106,8 @@ def export_string(json_string: str):
 
 
 # code to get full history
-j = get_all_tables(initialurl)
+j = get_all_tables(
+    "https://incidentreports.uchicago.edu/incidentReportArchive.php?startDate"
+    "=1293861600&endDate=1688274000&offset=0"
+)
 export_string(j)
