@@ -4,9 +4,7 @@ from utils import page_grab
 
 
 def epochtime_yesterdaymidnight():
-    """
-    Returns epoch time for yesterday
-    """
+    """Returns epoch time for yesterday."""
     now = datetime.datetime.now()  # Current date and time in local timezone
     yesterday = now - datetime.timedelta(
         days=1
@@ -21,8 +19,7 @@ def epochtime_yesterdaymidnight():
 def get_table(
     url="https://incidentreports.uchicago.edu/incidentReportArchive.php?reportDate=1688360400",
 ):
-    """
-    This function takes a URL and returns the table from that day.
+    """This function takes a URL and returns the table from that day.
 
     Parameters:
         * url:  a URL to a page of parks
@@ -30,7 +27,6 @@ def get_table(
     Returns:
         A list of URLs to each park on the page.
     """
-
     inc_dict = dict()
     response = page_grab(url)
     container = response.cssselect("thead")
@@ -58,9 +54,7 @@ def get_table(
 
 
 def get_yesterday():
-    """
-    Returns Yesterdays UCPD Crime reports
-    """
+    """Returns Yesterdays UCPD Crime reports."""
     yesterday = epochtime_yesterdaymidnight()
     return get_table(
         url="https://incidentreports.uchicago.edu/incidentReportArchive.php?reportDate="
@@ -73,13 +67,12 @@ initialurl = "https://incidentreports.uchicago.edu/incidentReportArchive.php?sta
 
 
 def get_alltables(initialurl):
-    """
-    Goes through all queried tables until we offset back to the first table.
+    """Goes through all queried tables until we offset back to the first table.
     inputs:
     initialurl- a url containing all the queried days in question
     output:
     json of dictionary of dictionaries of incidents. Keys of the outer dictionary
-    are
+    are.
     """
     pagenumber = 100000000
     incid_dict, _ = get_table(url=initialurl)
@@ -103,9 +96,7 @@ def get_alltables(initialurl):
 
 
 def export_string(jsonString):
-    """
-    Save JSON String to File
-    """
+    """Save JSON String to File."""
     try:
         with open("output.json", "w") as file:
             file.write(jsonString)

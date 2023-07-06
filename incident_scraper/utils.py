@@ -9,8 +9,7 @@ from incident_scraper.utils.constants import REQUEST_DELAY
 
 
 def make_request(url):
-    """
-    Make a request to `url` and return the raw response.
+    """Make a request to `url` and return the raw response.
 
     This function ensure that the domain matches what is expected and that the rate limit
     is obeyed.
@@ -23,17 +22,14 @@ def make_request(url):
 
 
 def parse_html(html):
-    """
-    Parse HTML and return the root node.
-    """
+    """Parse HTML and return the root node."""
     return lxml.html.fromstring(html)
 
 
 def make_link_absolute(rel_url, current_url):
-    """
-    Given a relative URL like "/abc/def" or "?page=2"
+    """Given a relative URL like "/abc/def" or "?page=2"
     and a complete URL like "https://example.com/1/2/3" this function will
-    combine the two yielding a URL like "https://example.com/abc/def"
+    combine the two yielding a URL like "https://example.com/abc/def".
 
     Parameters:
         * rel_url:      a URL or fragment
