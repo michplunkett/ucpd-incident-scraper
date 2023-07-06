@@ -18,8 +18,8 @@ def get_yesterday_midnight_time():
 
 
 def get_table(
-        url: str = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
-                   "?reportDate=1688360400",
+    url: str = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
+    "?reportDate=1688360400",
 ):
     """This function takes a URL and returns the table from that day.
 
@@ -59,12 +59,15 @@ def get_yesterday():
     yesterday = get_yesterday_midnight_time()
     return get_table(
         url="https://incidentreports.uchicago.edu/incidentReportArchive.php?reportDate="
-            + str(yesterday)
+        + str(yesterday)
     )
 
 
 # starting at 2011
-initialurl = "https://incidentreports.uchicago.edu/incidentReportArchive.php?startDate=1293861600&endDate=1688274000&offset=0"
+initialurl = (
+    "https://incidentreports.uchicago.edu/incidentReportArchive.php?"
+    "startDate=1293861600&endDate=1688274000&offset=0"
+)
 
 
 def get_all_tables(initial_url: str):
@@ -80,13 +83,13 @@ def get_all_tables(initial_url: str):
 
     # Find starting offset
     offset_index = int(initial_url.find("offset="))
-    offset = int(initial_url[offset_index + 7:]) + 5
+    offset = int(initial_url[offset_index + 7 :]) + 5
 
     # Loop until you offset to the start of query
     while page_number != 1:
         rev_dict, page_number = get_table(
-            url="https://incidentreports.uchicago.edu/incidentReportArchive.php?startDate=1293861600&endDate=1688274000&offset="
-                + str(offset)
+            url="https://incidentreports.uchicago.edu/incidentReportArchive.php?"
+            "startDate=1293861600&endDate=1688274000&offset=" + str(offset)
         )
         if page_number == 1:
             break
