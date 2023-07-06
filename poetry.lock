@@ -235,13 +235,13 @@ requests = ["requests (>=2.20.0,<3.0.0.dev0)"]
 
 [[package]]
 name = "google-cloud-core"
-version = "2.3.2"
+version = "2.3.3"
 description = "Google Cloud API client core library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-cloud-core-2.3.2.tar.gz", hash = "sha256:b9529ee7047fd8d4bf4a2182de619154240df17fbe60ead399078c1ae152af9a"},
-    {file = "google_cloud_core-2.3.2-py2.py3-none-any.whl", hash = "sha256:8417acf6466be2fa85123441696c4badda48db314c607cf1e5d543fa8bdc22fe"},
+    {file = "google-cloud-core-2.3.3.tar.gz", hash = "sha256:37b80273c8d7eee1ae816b3a20ae43585ea50506cb0e60f3cf5be5f87f1373cb"},
+    {file = "google_cloud_core-2.3.3-py2.py3-none-any.whl", hash = "sha256:fbd11cad3e98a7e5b0343dc07cb1039a5ffd7a5bb96e1f1e27cee4bda4a90863"},
 ]
 
 [package.dependencies]
@@ -253,13 +253,13 @@ grpc = ["grpcio (>=1.38.0,<2.0dev)"]
 
 [[package]]
 name = "google-cloud-datastore"
-version = "2.16.0"
+version = "2.16.1"
 description = "Google Cloud Datastore API client library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-cloud-datastore-2.16.0.tar.gz", hash = "sha256:ef49fd8e03af4793985813ca491e74135493ffad2e1b395bb226170a424da35f"},
-    {file = "google_cloud_datastore-2.16.0-py2.py3-none-any.whl", hash = "sha256:087a184eee4c1c4a68be4b165b98eda8de71028d536de53790466a0a1b8df8df"},
+    {file = "google-cloud-datastore-2.16.1.tar.gz", hash = "sha256:710ef27ebdfb50340f4671c532ad4c1525665985e9421984ffcd6b96b57e34bb"},
+    {file = "google_cloud_datastore-2.16.1-py2.py3-none-any.whl", hash = "sha256:153d8dac05f0248d7f7d6f0986a31f8fb22d3cdfb764718eac0f28e3cadc8144"},
 ]
 
 [package.dependencies]
