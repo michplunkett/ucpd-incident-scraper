@@ -1,13 +1,6 @@
-import csv
 import datetime
-import json
-import sys
-import time
-from urllib.parse import urlparse
 
-import lxml.html
-import requests
-from utils import make_link_absolute, make_request, page_grab, parse_html
+from utils import page_grab
 
 
 def epochtime_yesterdaymidnight():
@@ -40,7 +33,6 @@ def get_table(
 
     inc_dict = dict()
     response = page_grab(url)
-    urls = []
     container = response.cssselect("thead")
     categories = container[0].cssselect("th")
     incidents = response.cssselect("tbody")

@@ -1,14 +1,11 @@
 # Util Functions
-import csv
-import json
-import sys
 import time
 from urllib.parse import urlparse
 
 import lxml.html
 import requests
 
-REQUEST_DELAY = 0.2
+from incident_scraper.utils.constants import REQUEST_DELAY
 
 
 def make_request(url):
