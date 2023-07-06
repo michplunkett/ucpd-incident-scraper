@@ -7,7 +7,7 @@ from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
 
 def get_yesterday_midnight_time():
-    """Returns epoch time for yesterday."""
+    """Returns epoch time from yesterday at midnight."""
     # Current date and time in the Chicago time zone
     tz = pytz.timezone(TIMEZONE_CHICAGO)
     today = datetime.now(tz).date()
@@ -29,21 +29,23 @@ def get_table(
     Returns:
         A list of URLs to each park on the page.
     """
-    inc_dict = dict()
+    incident_dict = dict()
     response = page_grab(url)
     container = response.cssselect("thead")
     categories = container[0].cssselect("th")
     incidents = response.cssselect("tbody")
     incident_rows = incidents[0].cssselect("tr")
-    for j in incident_rows:
-        if len(j) == 1:
+    for incident in incident_rows:
+        if len(incident) == 1:
             continue
-        id = str(j[6].text)
-        if id == "None":
+        incident_id = str(incident[6].text)
+        if incident_id == "None":
             continue
-        inc_dict[id] = dict()
+        incident_dict[incident_id] = dict()
         for i in range(len(categories) - 1):
-            inc_dict[id][str(categories[i].text)] = j[i].text
+            incident_dict[incident_id][str(categories[i].text)] = incident[
+                i
+            ].text
 
     # Track page number, as offset will take you back to zero
     pages = response.cssselect("span.page-link")
@@ -51,7 +53,7 @@ def get_table(
     page_number = (
         int(pages[0].text[: slash_index - 1]) if slash_index != -1 else 0
     )
-    return inc_dict, page_number
+    return incident_dict, page_number
 
 
 def get_yesterday():
