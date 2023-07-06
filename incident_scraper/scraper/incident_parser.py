@@ -26,10 +26,12 @@ def get_table(
 ):
     """This function takes a URL and returns the table from that day.
 
-    Parameters:
+    Parameters
+    ----------
         * url:  a URL to a page of parks
 
-    Returns:
+    Returns
+    -------
         A list of URLs to each park on the page.
     """
     incident_dict = dict()

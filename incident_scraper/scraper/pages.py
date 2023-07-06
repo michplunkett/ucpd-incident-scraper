@@ -30,12 +30,14 @@ def make_link_absolute(rel_url, current_url):
     "https://example.com/1/2/3" this function will combine the two yielding a URL like
     "https://example.com/abc/def".
 
-    Parameters:
+    Parameters
+    ----------
         * rel_url:      a URL or fragment
         * current_url:  a complete URL used to make the request that contained a link to
             rel_url
 
-    Returns:
+    Returns
+    -------
         A full URL with protocol & domain that refers to rel_url.
     """
     url = urlparse(current_url)
