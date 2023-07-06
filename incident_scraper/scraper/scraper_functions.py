@@ -55,7 +55,7 @@ def get_table(
 
 
 def get_yesterday():
-    """Returns Yesterdays UCPD Crime reports."""
+    """Returns yesterday's UCPD Crime reports."""
     yesterday = get_yesterday_midnight_time()
     return get_table(
         url="https://incidentreports.uchicago.edu/incidentReportArchive.php?reportDate="
