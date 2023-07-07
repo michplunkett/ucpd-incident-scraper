@@ -1,17 +1,23 @@
+"""Contains all UCPD page-specific logic."""
 from datetime import datetime, time
 
 import pytz
 from pages import page_grab
 
-from incident_scraper.utils.constants import (
-    BASE_UCPD_URL,
-    TIMEZONE_CHICAGO,
-    UCPD_URL_REPORT_DATE,
-)
+BASE_UCPD_URL = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
+UCPD_URL_REPORT_DATE = BASE_UCPD_URL + "?reportDate="
+
+TIMEZONE_CHICAGO = "America/Chicago"
 
 
-def get_yesterday_midnight_time():
-    """Returns epoch time from yesterday at midnight."""
+def previous_day_midnight_epoch_time():
+    """Return epoch time of the previous day at midnight.
+
+    Returns
+    -------
+    int
+        The epoch timestamp of the previous day at midnight.
+    """
     # Current date and time in the Chicago time zone
     tz = pytz.timezone(TIMEZONE_CHICAGO)
     today = datetime.now(tz).date()
@@ -21,14 +27,13 @@ def get_yesterday_midnight_time():
     return int(midnight_utc.timestamp())
 
 
-def get_table(
-    url: str = UCPD_URL_REPORT_DATE + "1688360400",
-):
-    """This function takes a URL and returns the table from that day.
+def get_table(url: str):
+    """Get the table information from that UCPD incident page.
 
     Parameters
     ----------
-        * url:  a URL to a page of parks
+    url: str
+        A UCPD incident URL for a specific datetime.
 
     Returns
     -------
@@ -62,19 +67,30 @@ def get_table(
 
 
 def get_yesterday():
-    """Returns yesterday's UCPD Crime reports."""
-    yesterday = get_yesterday_midnight_time()
-    return get_table(url=BASE_UCPD_URL + str(yesterday))
+    """Get yesterday's UCPD Crime reports.
+
+    Returns
+    -------
+    tuple (dictionary of incidents, page number)
+        The information for a given set of tables.
+    """
+    return get_table(
+        url=BASE_UCPD_URL + str(previous_day_midnight_epoch_time())
+    )
 
 
 def get_all_tables(initial_url: str):
-    """Goes through all queried tables until we offset back to the first
-    table.
+    """Go through all queried tables until we offset back to the first table.
 
-    inputs:
-        initial_url- a url containing all the queried days in question
-        output: json of dictionary of dictionaries of incidents. Keys of the
-            outer dictionary are.
+    Parameters
+    ----------
+    initial_url: str
+        A url containing all the queried days in question
+
+    Returns
+    -------
+    str
+        A string list of all incidents for that date.
     """
     page_number = 100000000
     incidents, _ = get_table(url=initial_url)
@@ -95,21 +111,3 @@ def get_all_tables(initial_url: str):
         incidents.update(rev_dict)
         offset += 5
     return str(incidents)
-
-
-def export_string(json_string: str):
-    """Save JSON String to File."""
-    try:
-        with open("../output.json", "w") as file:
-            file.write(json_string)
-        print("JSON has been saved to file successfully.")
-    except IOError as e:
-        print("Error writing JSON to file:", str(e))
-
-
-# code to get full history
-j = get_all_tables(
-    "https://incidentreports.uchicago.edu/incidentReportArchive.php?startDate"
-    "=1293861600&endDate=1688274000&offset=0"
-)
-export_string(j)
