@@ -11,3 +11,19 @@ def get_client():
         A GCP client that allows you to easily interact with the GCP Datastore.
     """
     return Client()
+
+
+def add_incident():
+    pass
+
+
+def add_date_incident_list():
+    pass
+
+
+def does_incident_exist():
+    pass
+
+
+def remove_incident():
+    pass
