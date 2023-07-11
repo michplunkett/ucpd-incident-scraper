@@ -37,6 +37,7 @@ def get_table(url: str):
 
     Returns
     -------
+    list
         A list of URLs to each park on the page.
     """
     incident_dict = dict()
