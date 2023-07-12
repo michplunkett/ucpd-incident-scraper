@@ -27,19 +27,20 @@ class Incident:
         self.incident = incident.split(" / ")
         # location example: "8675309 NSW. Texas (DDR)"
         self.location = location
-        self.reported = (
-            datetime.strptime(reported, UCPD_DATE_FORMAT)
-            .astimezone(TIMEZONE_CHICAGO)
-            .isoformat()
-        )
-        self.occurred = (
-            datetime.strptime(occurred, UCPD_DATE_FORMAT)
-            .astimezone(TIMEZONE_CHICAGO)
-            .isoformat()
-        )
+        self.reported = self._date_str_to_iso_format(reported)
+        self.occurred = self._date_str_to_iso_format(occurred)
         self.comments = comments
         self.disposition = disposition
         self.validated_location = None
+
+    @staticmethod
+    def _date_str_to_iso_format(date_str: str):
+        """Take a date string and return in it a localized ISO format."""
+        return (
+            datetime.strptime(date_str, UCPD_DATE_FORMAT)
+            .astimezone(TIMEZONE_CHICAGO)
+            .isoformat()
+        )
 
     def get_parsed_location(self):
         """Parse UCPD sourced location for validation."""
