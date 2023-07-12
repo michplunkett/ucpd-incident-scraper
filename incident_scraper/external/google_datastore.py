@@ -6,8 +6,6 @@ from google.cloud.datastore import Client
 
 from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
-DATASTORE_DATE_KEY_FORMAT = "%x"
-PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
 UCPD_DATE_FORMAT = "%x %-I:%M %p"
 
 
@@ -55,8 +53,11 @@ class Incident:
 class GoogleDatastore:
     """Create the client and access GCP datastore functionality."""
 
+    DATASTORE_DATE_KEY_FORMAT = "%x"
+    PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+
     def __init__(self):
-        self.client = Client(PROJECT_ID)
+        self.client = Client(self.PROJECT_ID)
 
     def _add_date_incident_list(self):
         """Add date key to Datastore if it does not already exist."""
