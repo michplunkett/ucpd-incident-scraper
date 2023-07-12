@@ -18,6 +18,7 @@ lxml = "^4.9.3"
 pytz = "^2023.3"
 jupyter-black = "^0.3.4"
 nbqa = "^1.7.0"
+jupyter = "^1.0.0"
 
 [tool.black]
 line-length = 80
