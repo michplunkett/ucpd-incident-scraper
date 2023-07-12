@@ -2,9 +2,9 @@ BASEDIR=incident_scraper
 
 .PHONY: format
 format:
-	black ${BASEDIR}/ test/
+	black ${BASEDIR}/ test/ ./
 	isort ${BASEDIR}/ test/
-	nbqa isort ${BASEDIR}/ ./
+	nbqa isort ./scratch_notebook.ipynb
 
 .PHONY: lint
 lint:
