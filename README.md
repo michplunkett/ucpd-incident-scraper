@@ -10,7 +10,8 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
 
 ### Instructions to Run the Project
 1. Go into the base directory of the repository and type `poetry shell` into the terminal.
-2. Use the `make run` command.
+2. Run the command `poetry install` to install the requirements.
+3. Use the `make run` command.
 
 ### Technical Notes
 - Any modules should be added via the `poetry add [module]` command.
