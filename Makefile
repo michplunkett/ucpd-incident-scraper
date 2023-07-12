@@ -4,12 +4,11 @@ BASEDIR=incident_scraper
 format:
 	black ${BASEDIR}/ test/
 	isort ${BASEDIR}/ test/
-	nbqa isort ${BASEDIR}/
+	nbqa isort ${BASEDIR}/ ./
 
 .PHONY: lint
 lint:
 	ruff ${BASEDIR}/ test/
-	nbqa ruff ${BASEDIR}/
 
 .PHONY: test
 test:
