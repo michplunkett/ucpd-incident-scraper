@@ -27,6 +27,7 @@ class Incident:
         self.id = id
         # incident example: "Information / Theft"
         self.incident = incident.split(" / ")
+        # location example: "8675309 NSW. Texas (DDR)"
         self.location = location
         self.reported = (
             datetime.strptime(reported, UCPD_DATE_FORMAT)
@@ -40,9 +41,18 @@ class Incident:
         )
         self.comments = comments
         self.disposition = disposition
+        self.validated_location = None
+
+    def get_parsed_location(self):
+        """Parse UCPD sourced location for validation."""
+        return self.location.split(" (")[0]
+
+    def set_validated_location(self, census_location: str):
+        """Set the `validated_location` property."""
+        self.validated_location = census_location
 
 
-class Datastore:
+class GoogleDatastore:
     """Create the client and access GCP datastore functionality."""
 
     def __init__(self):
