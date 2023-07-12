@@ -1,16 +1,52 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 import os
+from datetime import datetime
 
 from google.cloud.datastore import Client
 
-project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
+from incident_scraper.utils.constants import TIMEZONE_CHICAGO
+
+DATASTORE_DATE_KEY_FORMAT = "%x"
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+UCPD_DATE_FORMAT = "%x %-I:%M %p"
+
+
+class Incident:
+    """Standard data structure for recovered UCPD incidents."""
+
+    def __init__(
+        self,
+        id: str,
+        incident: str,
+        location: str,
+        reported: str,
+        occurred: str,
+        comments: str,
+        disposition: str,
+    ):
+        self.id = id
+        # incident example: "Information / Theft"
+        self.incident = incident.split(" / ")
+        self.location = location
+        self.reported = (
+            datetime.strptime(reported, UCPD_DATE_FORMAT)
+            .astimezone(TIMEZONE_CHICAGO)
+            .isoformat()
+        )
+        self.occurred = (
+            datetime.strptime(occurred, UCPD_DATE_FORMAT)
+            .astimezone(TIMEZONE_CHICAGO)
+            .isoformat()
+        )
+        self.comments = comments
+        self.disposition = disposition
 
 
 class Datastore:
     """Create the client and access GCP datastore functionality."""
 
     def __init__(self):
-        self.client = Client(project_id)
+        self.client = Client(PROJECT_ID)
 
     def _add_date_incident_list(self):
         """Add date key to Datastore if it does not already exist."""
