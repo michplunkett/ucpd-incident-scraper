@@ -3,8 +3,8 @@ from datetime import datetime, time
 
 import pytz
 
+from incident_scraper.scraper.pages import page_grab
 from incident_scraper.utils.constants import TIMEZONE_CHICAGO
-from pages import page_grab
 
 BASE_UCPD_URL = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
 UCPD_URL_REPORT_DATE = BASE_UCPD_URL + "?reportDate="
