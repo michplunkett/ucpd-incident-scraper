@@ -19,8 +19,13 @@ class UCPDScraper:
         self.TIMEZONE_CHICAGO = "America/Chicago"
         self.REQUEST_DELAY = REQUEST_DELAY
 
+        # Today's date and time in the Chicago time zone when
+        # the scraper is initialized
+        self.tz = pytz.timezone(self.TIMEZONE_CHICAGO)
+        self.today = datetime.now(self.tz).date()
+
     @staticmethod
-    def previous_day_midnight_epoch_time(self):
+    def get_previous_day_epoch(self, num_days=1):
         """Return epoch time of the previous day at midnight.
 
         Returns
@@ -29,16 +34,15 @@ class UCPDScraper:
             The epoch timestamp of the previous day at midnight.
         """
         # Current date and time in the Chicago time zone
-        tz = pytz.timezone(self.TIMEZONE_CHICAGO)
-        today = datetime.now(tz).date()
+
         # Subtract one day from the current date
-        yesterday = today - datetime.timedelta(days=1)
-        midnight_utc = tz.localize(
+        yesterday = self.today - datetime.timedelta(days=num_days)
+        midnight_utc = self.tz.localize(
             datetime.combine(yesterday, time()), is_dst=None
         )
         return int(midnight_utc.timestamp())
 
-    def get_table(url: str):
+    def get_table(self, url: str):
         """Get the table information from that UCPD incident page.
 
         Parameters
@@ -50,28 +54,35 @@ class UCPDScraper:
         -------
             A list of URLs to each park on the page.
         """
+        FIRST_INDEX = 0
+        INCIDENT_INDEX = 6
         incident_dict = dict()
-        response = page_grab(url)
+
+        print(f"Fetching {url}")
+        r = requests.get(url)
+        response = lxml.html.fromstring(r.content)
         container = response.cssselect("thead")
-        categories = container[0].cssselect("th")
+        categories = container[FIRST_INDEX].cssselect("th")
         incidents = response.cssselect("tbody")
-        incident_rows = incidents[0].cssselect("tr")
+        incident_rows = incidents[FIRST_INDEX].cssselect("tr")
         for incident in incident_rows:
             if len(incident) == 1:
                 continue
-            incident_id = str(incident[6].text)
+            incident_id = str(incident[INCIDENT_INDEX].text)
             if incident_id == "None":
                 continue
             incident_dict[incident_id] = dict()
-            for i in range(len(categories) - 1):
-                incident_dict[incident_id][str(categories[i].text)] = incident[
-                    i
-                ].text
+            for index in range(len(categories) - 1):
+                incident_dict[incident_id][
+                    str(categories[index].text)
+                ] = incident[index].text
 
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")
-        slash_index = pages[0].text.find("/")
+        slash_index = pages[FIRST_INDEX].text.find("/")
         page_number = (
-            int(pages[0].text[: slash_index - 1]) if slash_index != -1 else 0
+            int(pages[FIRST_INDEX].text[: slash_index - 1])
+            if slash_index != -1
+            else 0
         )
         return incident_dict, page_number
