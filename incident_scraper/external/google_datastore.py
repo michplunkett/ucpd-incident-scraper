@@ -7,12 +7,12 @@ from jsonic import Serializable, deserialize, serialize
 
 from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
-UCPD_DATE_FORMAT = "%x %-I:%M %p"
-UCPD_DOY_DATE_FORMAT = "%x"
-
 
 class Incident(Serializable):
     """Standard data structure for recovered UCPD incidents."""
+
+    UCPD_DATE_FORMAT = "%x %-I:%M %p"
+    UCPD_DOY_DATE_FORMAT = "%x"
 
     def __init__(
         self,
@@ -37,22 +37,20 @@ class Incident(Serializable):
         self.disposition = disposition
         self.validated_location = None
 
-    @staticmethod
-    def _date_str_to_iso_format(date_str: str):
+    def _date_str_to_iso_format(self, date_str: str):
         """Take a date and return in it a localized ISO format."""
         return (
-            datetime.strptime(date_str, UCPD_DATE_FORMAT)
+            datetime.strptime(date_str, self.UCPD_DATE_FORMAT)
             .astimezone(TIMEZONE_CHICAGO)
             .isoformat()
         )
 
-    @staticmethod
-    def _date_str_to_datastore_format(date_str: str):
+    def _date_str_to_datastore_format(self, date_str: str):
         """Take a date and return it as a localized MM/DD/YYYY format."""
         return (
-            datetime.strptime(date_str, UCPD_DATE_FORMAT)
+            datetime.strptime(date_str, self.UCPD_DATE_FORMAT)
             .astimezone(TIMEZONE_CHICAGO)
-            .strftime(UCPD_DOY_DATE_FORMAT)
+            .strftime(self.UCPD_DOY_DATE_FORMAT)
         )
 
     def get_parsed_location(self):
