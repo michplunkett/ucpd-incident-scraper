@@ -1832,6 +1832,17 @@ files = [
 tests = ["pytest"]
 
 [[package]]
+name = "py-jsonic"
+version = "0.0.2"
+description = "lightweight utility for serializing/deserializing python objects to/from JSON"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "py-jsonic-0.0.2.tar.gz", hash = "sha256:8445c7e098878905401eaab0245f69600a0421c09afb3742e8d272728fa7cbd8"},
+    {file = "py_jsonic-0.0.2-py3-none-any.whl", hash = "sha256:d31094cba61e247ab49d9dddd4e43e57305343e2d8ee73099825607e7da10cdf"},
+]
+
+[[package]]
 name = "pyasn1"
 version = "0.5.0"
 description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
@@ -2679,4 +2690,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "9e59a85303b6b2bf149c6323e364a22faed529da1dd507dba43f7266a18dfa13"
+content-hash = "4398881ee4cb9b371b3db752d6d4ee9255e6c3aa6011e5bf7577809097af58d3"

@@ -20,6 +20,7 @@ jupyter-black = "^0.3.4"
 nbqa = "^1.7.0"
 jupyter = "^1.0.0"
 censusgeocode = "^0.5.2"
+py-jsonic = "^0.0.2"
 
 [tool.black]
 line-length = 80
