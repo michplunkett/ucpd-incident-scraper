@@ -1,11 +1,11 @@
 # UCPD Scraper - Class
-
-import pytz
 import time
+import pytz
 import requests
 import lxml.html
-from datetime import datetime, time
-from urllib.parse import urlparse
+from datetime import datetime, timedelta
+from datetime import time as dt_time
+
 
 # Global Variables
 
@@ -24,7 +24,10 @@ class UCPDScraper:
         self.tz = pytz.timezone(self.TIMEZONE_CHICAGO)
         self.today = datetime.now(self.tz).date()
 
-    @staticmethod
+        print(f"Today's date: {self.today}")
+        print(f"Constructing URL...")
+        self.construct_url()
+
     def get_previous_day_epoch(self, num_days=1):
         """Return epoch time of the previous day at midnight.
 
@@ -36,9 +39,9 @@ class UCPDScraper:
         # Current date and time in the Chicago time zone
 
         # Subtract one day from the current date
-        previous_day = self.today - datetime.timedelta(days=num_days)
+        previous_day = self.today - timedelta(days=num_days)
         midnight_utc = self.tz.localize(
-            datetime.combine(previous_day, time()), is_dst=None
+            datetime.combine(previous_day, dt_time()), is_dst=None
         )
         return int(midnight_utc.timestamp())
 
@@ -58,7 +61,7 @@ class UCPDScraper:
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
-            self.today - datetime.date(self.today.year, 1, 1)
+            self.today - datetime(self.today.year, 1, 1).date()
         ).days
         self.first_day_epoch = self.get_previous_day_epoch(days_since_start)
 
@@ -129,3 +132,7 @@ class UCPDScraper:
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
+
+
+scraper = UCPDScraper()
+all_incidents = scraper.get_all_tables()
