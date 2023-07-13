@@ -7,7 +7,6 @@ from datetime import timedelta
 import lxml.html
 import pytz
 import requests
-
 from utils.constants import TIMEZONE_CHICAGO
 
 
