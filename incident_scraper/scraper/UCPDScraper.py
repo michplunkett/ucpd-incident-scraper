@@ -33,12 +33,10 @@ class UCPDScraper:
         self.construct_url()
 
     def get_previous_day_epoch(self, num_days=1):
-        """Return epoch time of the previous day at midnight.
+        """Return epoch time of a previous day at midnight.
 
-        Returns
-        -------
-        int
-            The epoch timestamp of the previous day at midnight.
+        Given the number of days to subtract from the current date,
+        return the epoch time of that day at midnight.
         """
         # Current date and time in the Chicago time zone
 
