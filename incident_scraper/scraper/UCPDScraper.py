@@ -1,3 +1,4 @@
+"""UCPD Scraper - Class by Katherine Dumais and Federico Dominguez Molina"""
 # UCPD Scraper - Class
 import time
 import pytz
@@ -11,6 +12,8 @@ from datetime import datetime, timedelta
 
 
 class UCPDScraper:
+    """Scrape UCPD incident reports from present day to first day of the year"""
+
     def __init__(self, REQUEST_DELAY=0.2):
         self.BASE_UCPD_URL = (
             "https://incidentreports.uchicago.edu/incidentReportArchive.php"
