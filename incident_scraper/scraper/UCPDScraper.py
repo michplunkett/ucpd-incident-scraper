@@ -1,5 +1,4 @@
-"""UCPD Scraper - Class by Katherine Dumais and Federico Dominguez Molina"""
-# UCPD Scraper - Class
+"""UCPD Scraper - Class"""
 import time
 import pytz
 import requests
@@ -7,8 +6,8 @@ import lxml.html
 from datetime import time as dt_time
 from datetime import datetime, timedelta
 
-
-# Global Variables
+# Local imports
+from utils.constants import TIMEZONE_CHICAGO
 
 
 class UCPDScraper:
@@ -19,7 +18,7 @@ class UCPDScraper:
             "https://incidentreports.uchicago.edu/incidentReportArchive.php"
         )
         self.UCPD_URL_REPORT_DATE = self.BASE_UCPD_URL + "?reportDate="
-        self.TIMEZONE_CHICAGO = "America/Chicago"
+        self.TIMEZONE_CHICAGO = TIMEZONE_CHICAGO
         self.REQUEST_DELAY = REQUEST_DELAY
 
         # Today's date and time in the Chicago time zone when
