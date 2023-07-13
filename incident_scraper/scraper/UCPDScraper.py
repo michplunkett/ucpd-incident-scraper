@@ -86,3 +86,25 @@ class UCPDScraper:
             else 0
         )
         return incident_dict, page_number
+
+    def get_all_tables(self, initial_url: str):
+        """Go through all queried tables until we offset back to the first table."""
+        page_number = 100000000
+        incidents, _ = self.get_table(url=initial_url)
+
+        # Find starting offset
+        offset_index = int(initial_url.find("offset="))
+        offset = int(initial_url[offset_index + 7 :]) + 5
+
+        # Loop until you offset to the start of query
+        while page_number != 1:
+            rev_dict, page_number = self.get_table(
+                url=self.BASE_UCPD_URL
+                + "?startDate=1293861600&endDate=1688274000&offset="
+                + str(offset)
+            )
+            if page_number == 1:
+                break
+            incidents.update(rev_dict)
+            offset += 5
+        return str(incidents)
