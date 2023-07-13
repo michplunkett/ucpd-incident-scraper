@@ -3,8 +3,8 @@ import time
 import pytz
 import requests
 import lxml.html
-from datetime import datetime, timedelta
 from datetime import time as dt_time
+from datetime import datetime, timedelta
 
 
 # Global Variables
