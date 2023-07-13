@@ -1,11 +1,10 @@
 """UCPD Scraper - Class."""
-from datetime import time as dt_time
-from datetime import datetime, timedelta
+import time
+
 import lxml.html
 import pytz
 import requests
-import time
-
+from datetime import datetime, timedelta, time as dt_time
 
 # Local imports
 from utils.constants import TIMEZONE_CHICAGO
