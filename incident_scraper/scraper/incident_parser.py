@@ -2,22 +2,16 @@
 from datetime import datetime, time
 
 import pytz
-from pages import page_grab
+
+from incident_scraper.scraper.pages import page_grab
+from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
 BASE_UCPD_URL = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
 UCPD_URL_REPORT_DATE = BASE_UCPD_URL + "?reportDate="
 
-TIMEZONE_CHICAGO = "America/Chicago"
-
 
 def previous_day_midnight_epoch_time():
-    """Return epoch time of the previous day at midnight.
-
-    Returns
-    -------
-    int
-        The epoch timestamp of the previous day at midnight.
-    """
+    """Return epoch time of the previous day at midnight."""
     # Current date and time in the Chicago time zone
     tz = pytz.timezone(TIMEZONE_CHICAGO)
     today = datetime.now(tz).date()
@@ -28,17 +22,7 @@ def previous_day_midnight_epoch_time():
 
 
 def get_table(url: str):
-    """Get the table information from that UCPD incident page.
-
-    Parameters
-    ----------
-    url: str
-        A UCPD incident URL for a specific datetime.
-
-    Returns
-    -------
-        A list of URLs to each park on the page.
-    """
+    """Get the table information from that UCPD incident page."""
     incident_dict = dict()
     response = page_grab(url)
     container = response.cssselect("thead")
@@ -67,31 +51,14 @@ def get_table(url: str):
 
 
 def get_yesterday():
-    """Get yesterday's UCPD Crime reports.
-
-    Returns
-    -------
-    tuple (dictionary of incidents, page number)
-        The information for a given set of tables.
-    """
+    """Get yesterday's UCPD Crime reports."""
     return get_table(
         url=BASE_UCPD_URL + str(previous_day_midnight_epoch_time())
     )
 
 
 def get_all_tables(initial_url: str):
-    """Go through all queried tables until we offset back to the first table.
-
-    Parameters
-    ----------
-    initial_url: str
-        A url containing all the queried days in question
-
-    Returns
-    -------
-    str
-        A string list of all incidents for that date.
-    """
+    """Go through all queried tables until we offset back to the first table."""
     page_number = 100000000
     incidents, _ = get_table(url=initial_url)
 
