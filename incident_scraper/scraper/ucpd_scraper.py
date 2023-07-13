@@ -1,4 +1,4 @@
-"""UCPD Scraper - Class."""
+"""Contains code related to scraping UCPD incident reports."""
 import time
 from datetime import datetime
 from datetime import time as dt_time
@@ -8,7 +8,6 @@ import lxml.html
 import pytz
 import requests
 
-# Local imports
 from utils.constants import TIMEZONE_CHICAGO
 
 
@@ -68,16 +67,10 @@ class UCPDScraper:
         self.constructed_url = f"{self.BASE_UCPD_URL}?startDate={self.first_day_epoch}&endDate={self.todays_epoch}&offset={INITIAL_OFFSET}"
 
     def get_table(self, url: str):
-        """Get the table information from that UCPD incident page.
+        """
+        Get the table information from that UCPD incident page.
 
-        Parameters
-        ----------
-        url: str
-            A UCPD incident URL for a specific datetime.
-
-        Returns
-        -------
-            A list of URLs to each park on the page.
+        Scrapes the table from the given url and returns a dictionary
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
