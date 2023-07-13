@@ -1,4 +1,4 @@
-"""UCPD Scraper - Class"""
+"""UCPD Scraper - Class."""
 from datetime import time as dt_time
 from datetime import datetime, timedelta
 import lxml.html
@@ -12,7 +12,7 @@ from utils.constants import TIMEZONE_CHICAGO
 
 
 class UCPDScraper:
-    """Scrape UCPD incident reports from present day to first day of the year"""
+    """Scrape UCPD incident reports from present day to first day of the year."""
 
     def __init__(self, REQUEST_DELAY=0.2):
         self.BASE_UCPD_URL = (
@@ -50,13 +50,10 @@ class UCPDScraper:
 
     def construct_url(self):
         """
-        Given an initial and a final date, construct the URL for
-        posterior scrapping
+        Construct the url to scrape from.
 
-        Parameters
-        ----------
-        num_days: int
-            The number of days to go back from today's date
+        Constructs the url to scrape from by getting the epochs of the
+        present day and the first day of the current year.
         """
         INITIAL_OFFSET = 0
 
