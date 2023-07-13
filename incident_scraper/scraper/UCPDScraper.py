@@ -54,16 +54,16 @@ class UCPDScraper:
         """
         INITIAL_OFFSET = 0
 
-        todays_epoch = self.get_previous_day_epoch(num_days=0)
+        self.todays_epoch = self.get_previous_day_epoch(num_days=0)
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
             self.today - datetime.date(self.today.year, 1, 1)
         ).days
-        first_day_epoch = self.get_previous_day_epoch(days_since_start)
+        self.first_day_epoch = self.get_previous_day_epoch(days_since_start)
 
         # Construct the URL
-        self.constructed_url = f"{self.BASE_UCPD_URL}?startDate={first_day_epoch}&endDate={todays_epoch}&offset={INITIAL_OFFSET}"
+        self.constructed_url = f"{self.BASE_UCPD_URL}?startDate={self.first_day_epoch}&endDate={self.todays_epoch}&offset={INITIAL_OFFSET}"
 
     def get_table(self, url: str):
         """Get the table information from that UCPD incident page.
@@ -82,6 +82,7 @@ class UCPDScraper:
         incident_dict = dict()
 
         print(f"Fetching {url}")
+        time.sleep(self.REQUEST_DELAY)
         r = requests.get(url)
         response = lxml.html.fromstring(r.content)
         container = response.cssselect("thead")
@@ -110,22 +111,19 @@ class UCPDScraper:
         )
         return incident_dict, page_number
 
-    def get_all_tables(self, initial_url: str):
+    def get_all_tables(self):
         """Go through all queried tables until we offset back to the first table."""
         page_number = 100000000
-        incidents, _ = self.get_table(url=initial_url)
+        incidents, _ = self.get_table(url=self.constructed_url)
 
         # Find starting offset
-        offset_index = int(initial_url.find("offset="))
-        offset = int(initial_url[offset_index + 7 :]) + 5
+        offset_index = int(self.constructed_url.find("offset="))
+        offset = int(self.constructed_url[offset_index + 7 :]) + 5
 
         # Loop until you offset to the start of query
         while page_number != 1:
-            rev_dict, page_number = self.get_table(
-                url=self.BASE_UCPD_URL
-                + "?startDate=1293861600&endDate=1688274000&offset="
-                + str(offset)
-            )
+            new_url = f"{self.BASE_UCPD_URL}?startDate={self.first_day_epoch}&endDate={self.todays_epoch}&offset={offset}"
+            rev_dict, page_number = self.get_table(new_url)
             if page_number == 1:
                 break
             incidents.update(rev_dict)
