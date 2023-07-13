@@ -42,7 +42,7 @@ class UCPDScraper:
         )
         return int(midnight_utc.timestamp())
 
-    def construct_url(self, num_days=1):
+    def construct_url(self):
         """
         Given an initial and a final date, construct the URL for
         posterior scrapping
@@ -54,7 +54,7 @@ class UCPDScraper:
         """
         INITIAL_OFFSET = 0
 
-        todays_epoch = self.get_previous_day_epoch(num_days)
+        todays_epoch = self.get_previous_day_epoch(num_days=0)
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
