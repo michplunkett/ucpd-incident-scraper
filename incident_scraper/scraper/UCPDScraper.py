@@ -36,11 +36,34 @@ class UCPDScraper:
         # Current date and time in the Chicago time zone
 
         # Subtract one day from the current date
-        yesterday = self.today - datetime.timedelta(days=num_days)
+        previous_day = self.today - datetime.timedelta(days=num_days)
         midnight_utc = self.tz.localize(
-            datetime.combine(yesterday, time()), is_dst=None
+            datetime.combine(previous_day, time()), is_dst=None
         )
         return int(midnight_utc.timestamp())
+
+    def construct_url(self, num_days=1):
+        """
+        Given an initial and a final date, construct the URL for
+        posterior scrapping
+
+        Parameters
+        ----------
+        num_days: int
+            The number of days to go back from today's date
+        """
+        INITIAL_OFFSET = 0
+
+        todays_epoch = self.get_previous_day_epoch(num_days)
+        # Difference in number of days between today and the first day of the year
+        # This is used to calculate the number of pages to scrape
+        days_since_start = (
+            self.today - datetime.date(self.today.year, 1, 1)
+        ).days
+        first_day_epoch = self.get_previous_day_epoch(days_since_start)
+
+        # Construct the URL
+        self.constructed_url = f"{self.BASE_UCPD_URL}?startDate={first_day_epoch}&endDate={todays_epoch}&offset={INITIAL_OFFSET}"
 
     def get_table(self, url: str):
         """Get the table information from that UCPD incident page.
