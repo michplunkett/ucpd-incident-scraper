@@ -25,7 +25,7 @@ class UCPDScraper:
         self.today = datetime.now(self.tz).date()
 
         print(f"Today's date: {self.today}")
-        print(f"Constructing URL...")
+        print("Constructing URL...")
         self.construct_url()
 
     def get_previous_day_epoch(self, num_days=1):
@@ -132,7 +132,3 @@ class UCPDScraper:
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
-
-
-scraper = UCPDScraper()
-all_incidents = scraper.get_all_tables()
