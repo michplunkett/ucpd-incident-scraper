@@ -48,7 +48,7 @@ class UCPDScraper:
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
-            current_day - datetime(self.today.year, 1, 1).date()
+            self.today - datetime(self.today.year, 1, 1).date()
         ).days
         first_day_of_year = self._get_previous_day_epoch(days_since_start)
 
