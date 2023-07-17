@@ -13,17 +13,17 @@ from utils.constants import TIMEZONE_CHICAGO
 class UCPDScraper:
     """Scrape UCPD incident reports from present day to first day of the year."""
 
-    def __init__(self, REQUEST_DELAY=0.2):
-        self.BASE_UCPD_URL = (
-            "https://incidentreports.uchicago.edu/incidentReportArchive.php"
-        )
-        self.UCPD_URL_REPORT_DATE = self.BASE_UCPD_URL + "?reportDate="
-        self.TIMEZONE_CHICAGO = TIMEZONE_CHICAGO
-        self.REQUEST_DELAY = REQUEST_DELAY
+    BASE_UCPD_URL = (
+        "https://incidentreports.uchicago.edu/incidentReportArchive.php"
+    )
+    UCPD_URL_REPORT_DATE = BASE_UCPD_URL + "?reportDate="
+
+    def __init__(self, request_delay=0.2):
+        self.request_delay = request_delay
 
         # Today's date and time in the Chicago time zone when
         # the scraper is initialized
-        self.tz = pytz.timezone(self.TIMEZONE_CHICAGO)
+        self.tz = pytz.timezone(TIMEZONE_CHICAGO)
         self.today = datetime.now(self.tz).date()
 
         print(f"Today's date: {self.today}")
@@ -76,7 +76,7 @@ class UCPDScraper:
         incident_dict = dict()
 
         print(f"Fetching {url}")
-        time.sleep(self.REQUEST_DELAY)
+        time.sleep(self.request_delay)
         r = requests.get(url)
         response = lxml.html.fromstring(r.content)
         container = response.cssselect("thead")
