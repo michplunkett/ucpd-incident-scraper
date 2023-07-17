@@ -37,8 +37,10 @@ class UCPDScraper:
         Given the number of days to subtract from the current date,
         return the epoch time of that day at midnight.
         """
-        # Subtract one day from the current date
+        # Current date and time in the Chicago time zone
         today = datetime.now(self.tz).date()
+
+        # Subtract one day from the current date
         previous_day = today - timedelta(days=num_days)
         midnight_utc = self.tz.localize(
             datetime.combine(previous_day, dt_time()), is_dst=None
