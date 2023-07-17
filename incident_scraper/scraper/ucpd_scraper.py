@@ -62,7 +62,10 @@ class UCPDScraper:
         first_day_of_year = self.get_previous_day_epoch(days_since_start)
 
         # Construct the URL
-        return f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate={current_day}&offset="
+        return (
+            f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate="
+            f"{current_day}&offset="
+        )
 
     def get_table(self, url: str):
         """
