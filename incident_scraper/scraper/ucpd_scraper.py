@@ -21,21 +21,20 @@ class UCPDScraper:
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.base_url = self._construct_url()
+        self.tz = pytz.timezone(TIMEZONE_CHICAGO)
+        self.today = datetime.now(tz).date()
 
-    @staticmethod
-    def _get_previous_day_epoch(num_days=1):
+    def _get_previous_day_epoch(self, num_days=1):
         """Return epoch time of a previous day at midnight.
 
         Given the number of days to subtract from the current date, return the epoch
         time of that day at midnight.
         """
         # Current date and time in the Chicago time zone
-        tz = pytz.timezone(TIMEZONE_CHICAGO)
-        today = datetime.now(tz).date()
 
         # Subtract one day from the current date
-        previous_day = today - timedelta(days=num_days)
-        previous_day_midnight = tz.localize(
+        previous_day = self.today - timedelta(days=num_days)
+        previous_day_midnight = self.tz.localize(
             datetime.combine(previous_day, dt_time()), is_dst=None
         )
         return int(previous_day_midnight.timestamp())
@@ -51,11 +50,10 @@ class UCPDScraper:
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
-            current_day - datetime(current_day.year, 1, 1).date()
+            current_day - datetime(self.today.year, 1, 1).date()
         ).days
         first_day_of_year = self._get_previous_day_epoch(days_since_start)
 
-        print(f"Today's date: {current_day}")
         print("Constructing URL...")
         return (
             f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate="
