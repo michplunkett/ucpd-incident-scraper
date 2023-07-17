@@ -102,7 +102,7 @@ class UCPDScraper:
         incidents = {}
         offset = 0
 
-        # Loop until you offset to the start of query
+        # Loop until function arrives at last page
         while not at_last_page:
             rev_dict, at_last_page = self.get_table(self.base_url + str(offset))
             incidents.update(rev_dict)
