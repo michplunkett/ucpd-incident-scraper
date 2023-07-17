@@ -30,7 +30,7 @@ class UCPDScraper:
         print("Constructing URL...")
         self.base_url = self._construct_url()
 
-    def get_previous_day_epoch(self, num_days=1):
+    def _get_previous_day_epoch(self, num_days=1):
         """Return epoch time of a previous day at midnight.
 
         Given the number of days to subtract from the current date, return the epoch
@@ -53,13 +53,13 @@ class UCPDScraper:
         Constructs the url to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
-        current_day = self.get_previous_day_epoch(num_days=0)
+        current_day = self._get_previous_day_epoch(num_days=0)
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
             self.today - datetime(self.today.year, 1, 1).date()
         ).days
-        first_day_of_year = self.get_previous_day_epoch(days_since_start)
+        first_day_of_year = self._get_previous_day_epoch(days_since_start)
 
         # Construct the URL
         return (
