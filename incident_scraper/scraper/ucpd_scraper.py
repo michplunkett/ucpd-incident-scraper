@@ -7,7 +7,8 @@ from datetime import timedelta
 import lxml.html
 import pytz
 import requests
-from utils.constants import TIMEZONE_CHICAGO
+
+from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
 
 class UCPDScraper:
@@ -72,7 +73,7 @@ class UCPDScraper:
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
-        incident_dict ={}
+        incident_dict = {}
 
         print(f"Fetching {url}")
         time.sleep(self.request_delay)
