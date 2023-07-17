@@ -35,10 +35,10 @@ class UCPDScraper:
 
         # Subtract one day from the current date
         previous_day = today - timedelta(days=num_days)
-        midnight_utc = tz.localize(
+        previous_day_midnight = tz.localize(
             datetime.combine(previous_day, dt_time()), is_dst=None
         )
-        return int(midnight_utc.timestamp())
+        return int(previous_day_midnight.timestamp())
 
     def _construct_url(self):
         """
@@ -105,7 +105,9 @@ class UCPDScraper:
 
         # Loop until function arrives at last page
         while not at_last_page:
-            rev_dict, at_last_page = self._get_table(self.base_url + str(offset))
+            rev_dict, at_last_page = self._get_table(
+                self.base_url + str(offset)
+            )
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
