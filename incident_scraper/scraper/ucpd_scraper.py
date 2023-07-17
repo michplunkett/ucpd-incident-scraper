@@ -20,14 +20,6 @@ class UCPDScraper:
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
-
-        # Today's date and time in the Chicago time zone when
-        # the scraper is initialized
-        self.tz = pytz.timezone(TIMEZONE_CHICAGO)
-        self.today = datetime.now(self.tz).date()
-
-        print(f"Today's date: {self.today}")
-        print("Constructing URL...")
         self.base_url = self._construct_url()
 
     def _get_previous_day_epoch(self, num_days=1):
@@ -37,11 +29,12 @@ class UCPDScraper:
         time of that day at midnight.
         """
         # Current date and time in the Chicago time zone
-        today = datetime.now(self.tz).date()
+        tz = pytz.timezone(TIMEZONE_CHICAGO)
+        today = datetime.now(tz).date()
 
         # Subtract one day from the current date
         previous_day = today - timedelta(days=num_days)
-        midnight_utc = self.tz.localize(
+        midnight_utc = tz.localize(
             datetime.combine(previous_day, dt_time()), is_dst=None
         )
         return int(midnight_utc.timestamp())
@@ -57,11 +50,12 @@ class UCPDScraper:
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
-            self.today - datetime(self.today.year, 1, 1).date()
+            current_day - datetime(current_day.year, 1, 1).date()
         ).days
         first_day_of_year = self._get_previous_day_epoch(days_since_start)
 
-        # Construct the URL
+        print(f"Today's date: {current_day}")
+        print("Constructing URL...")
         return (
             f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate="
             f"{current_day}&offset="
@@ -88,36 +82,29 @@ class UCPDScraper:
         for incident in incident_rows:
             if len(incident) == 1:
                 continue
-            incident_id = str(incident[INCIDENT_INDEX].text)
+            incident_id = incident[INCIDENT_INDEX].text.strip()
             if incident_id == "None":
                 continue
             incident_dict[incident_id] = dict()
             for index in range(len(categories) - 1):
                 incident_dict[incident_id][
-                    str(categories[index].text)
-                ] = incident[index].text
+                    str(categories[index].text.strip())
+                ] = incident[index].text.strip()
 
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")
-        slash_index = pages[FIRST_INDEX].text.find("/")
-        page_number = (
-            int(pages[FIRST_INDEX].text[: slash_index - 1])
-            if slash_index != -1
-            else 0
-        )
-        return incident_dict, page_number
+        page_numbers = pages[FIRST_INDEX].text.split(" / ")
+        return incident_dict, page_numbers[0] == page_numbers[1]
 
     def get_all_tables(self):
         """Go through all queried tables until we offset back to the first table."""
-        page_number = 100000000
+        at_last_page = False
+        incidents = {}
         offset = 0
-        incidents, _ = self.get_table(url=self.base_url + str(offset))
 
         # Loop until you offset to the start of query
-        while page_number != 1:
-            rev_dict, page_number = self.get_table(self.base_url + offset)
-            if page_number == 1:
-                break
+        while not at_last_page:
+            rev_dict, at_last_page = self.get_table(self.base_url + str(offset))
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
