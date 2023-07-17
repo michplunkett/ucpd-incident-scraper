@@ -62,7 +62,7 @@ class UCPDScraper:
             f"{current_day}&offset="
         )
 
-    def get_table(self, url: str):
+    def _get_table(self, url: str):
         """
         Get the table information from that UCPD incident page.
 
@@ -105,7 +105,7 @@ class UCPDScraper:
 
         # Loop until function arrives at last page
         while not at_last_page:
-            rev_dict, at_last_page = self.get_table(self.base_url + str(offset))
+            rev_dict, at_last_page = self._get_table(self.base_url + str(offset))
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
