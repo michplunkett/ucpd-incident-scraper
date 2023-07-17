@@ -4,7 +4,6 @@ BASEDIR=incident_scraper
 format:
 	black ${BASEDIR}/ test/ ./
 	isort ${BASEDIR}/ test/
-	nbqa isort ./scratch_notebook.ipynb
 
 .PHONY: lint
 lint:

@@ -40,6 +40,11 @@ class CensusClient:
                 pass
 
         if response:
-            return response[0]["matchedAddress"]
+            coordinates = response[0]["coordinates"]
+            return (
+                response[0]["matchedAddress"],
+                coordinates["x"],
+                coordinates["y"],
+            )
         else:
             return None
