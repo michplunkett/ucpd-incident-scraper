@@ -22,7 +22,8 @@ class UCPDScraper:
         self.request_delay = request_delay
         self.base_url = self._construct_url()
 
-    def _get_previous_day_epoch(self, num_days=1):
+    @staticmethod
+    def _get_previous_day_epoch(num_days=1):
         """Return epoch time of a previous day at midnight.
 
         Given the number of days to subtract from the current date, return the epoch
