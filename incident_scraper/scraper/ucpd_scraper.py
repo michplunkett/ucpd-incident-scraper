@@ -17,7 +17,6 @@ class UCPDScraper:
     BASE_UCPD_URL = (
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
-    UCPD_URL_REPORT_DATE = BASE_UCPD_URL + "?reportDate="
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
@@ -29,7 +28,7 @@ class UCPDScraper:
 
         print(f"Today's date: {self.today}")
         print("Constructing URL...")
-        self.construct_url()
+        self.base_url = self._construct_url()
 
     def get_previous_day_epoch(self, num_days=1):
         """Return epoch time of a previous day at midnight.
@@ -47,25 +46,23 @@ class UCPDScraper:
         )
         return int(midnight_utc.timestamp())
 
-    def construct_url(self):
+    def _construct_url(self):
         """
         Construct the url to scrape from.
 
         Constructs the url to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
-        INITIAL_OFFSET = 0
-
-        self.todays_epoch = self.get_previous_day_epoch(num_days=0)
+        current_day = self.get_previous_day_epoch(num_days=0)
         # Difference in number of days between today and the first day of the year
         # This is used to calculate the number of pages to scrape
         days_since_start = (
             self.today - datetime(self.today.year, 1, 1).date()
         ).days
-        self.first_day_epoch = self.get_previous_day_epoch(days_since_start)
+        first_day_of_year = self.get_previous_day_epoch(days_since_start)
 
         # Construct the URL
-        self.constructed_url = f"{self.BASE_UCPD_URL}?startDate={self.first_day_epoch}&endDate={self.todays_epoch}&offset={INITIAL_OFFSET}"
+        return f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate={current_day}&offset="
 
     def get_table(self, url: str):
         """
@@ -110,16 +107,12 @@ class UCPDScraper:
     def get_all_tables(self):
         """Go through all queried tables until we offset back to the first table."""
         page_number = 100000000
-        incidents, _ = self.get_table(url=self.constructed_url)
-
-        # Find starting offset
-        offset_index = int(self.constructed_url.find("offset="))
-        offset = int(self.constructed_url[offset_index + 7 :]) + 5
+        offset = 0
+        incidents, _ = self.get_table(url=self.base_url + str(offset))
 
         # Loop until you offset to the start of query
         while page_number != 1:
-            new_url = f"{self.BASE_UCPD_URL}?startDate={self.first_day_epoch}&endDate={self.todays_epoch}&offset={offset}"
-            rev_dict, page_number = self.get_table(new_url)
+            rev_dict, page_number = self.get_table(self.base_url + offset)
             if page_number == 1:
                 break
             incidents.update(rev_dict)
