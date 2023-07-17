@@ -17,12 +17,12 @@ class UCPDScraper:
     BASE_UCPD_URL = (
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
+    TZ = pytz.timezone(TIMEZONE_CHICAGO)
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
+        self.today = datetime.now(self.TZ).date()
         self.base_url = self._construct_url()
-        self.tz = pytz.timezone(TIMEZONE_CHICAGO)
-        self.today = datetime.now(tz).date()
 
     def _get_previous_day_epoch(self, num_days=1):
         """Return epoch time of a previous day at midnight.
@@ -32,7 +32,7 @@ class UCPDScraper:
         """
         # Subtract one day from the current date
         previous_day = self.today - timedelta(days=num_days)
-        previous_day_midnight = self.tz.localize(
+        previous_day_midnight = self.TZ.localize(
             datetime.combine(previous_day, dt_time()), is_dst=None
         )
         return int(previous_day_midnight.timestamp())
