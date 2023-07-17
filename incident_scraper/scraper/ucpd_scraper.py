@@ -70,7 +70,7 @@ class UCPDScraper:
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
-        incident_dict = {}
+        incident_dict = dict()
 
         print(f"Fetching {url}")
         time.sleep(self.request_delay)
@@ -100,7 +100,7 @@ class UCPDScraper:
     def get_all_tables(self):
         """Go through all queried tables until we offset back to the first table."""
         at_last_page = False
-        incidents = {}
+        incidents = dict()
         offset = 0
 
         # Loop until function arrives at last page
