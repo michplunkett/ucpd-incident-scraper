@@ -34,8 +34,8 @@ class UCPDScraper:
     def get_previous_day_epoch(self, num_days=1):
         """Return epoch time of a previous day at midnight.
 
-        Given the number of days to subtract from the current date,
-        return the epoch time of that day at midnight.
+        Given the number of days to subtract from the current date, return the epoch
+        time of that day at midnight.
         """
         # Current date and time in the Chicago time zone
         today = datetime.now(self.tz).date()
@@ -51,8 +51,8 @@ class UCPDScraper:
         """
         Construct the url to scrape from.
 
-        Constructs the url to scrape from by getting the epochs of the
-        present day and the first day of the current year.
+        Constructs the url to scrape from by getting the epochs of the present day and
+        the first day of the current year.
         """
         INITIAL_OFFSET = 0
 
