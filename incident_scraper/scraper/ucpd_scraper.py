@@ -63,7 +63,8 @@ class UCPDScraper:
         """
         Get the table information from that UCPD incident page.
 
-        Scrapes the table from the given url and returns a dictionary.
+        Scrapes the table from the given url and returns a dictionary and a boolean
+        stating if it scraped the last page..
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
