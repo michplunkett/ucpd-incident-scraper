@@ -30,8 +30,6 @@ class UCPDScraper:
         Given the number of days to subtract from the current date, return the epoch
         time of that day at midnight.
         """
-        # Current date and time in the Chicago time zone
-
         # Subtract one day from the current date
         previous_day = self.today - timedelta(days=num_days)
         previous_day_midnight = self.tz.localize(
@@ -54,6 +52,7 @@ class UCPDScraper:
         ).days
         first_day_of_year = self._get_previous_day_epoch(days_since_start)
 
+        print(f"Today's date: {self.today}")
         print("Constructing URL...")
         return (
             f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate="
