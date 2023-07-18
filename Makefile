@@ -2,20 +2,12 @@ BASEDIR=incident_scraper
 
 .PHONY: format
 format:
-	black ${BASEDIR}/ test/ ./
-	isort ${BASEDIR}/ test/
+	black ${BASEDIR}/ ./
+	isort ${BASEDIR}/
 
 .PHONY: lint
 lint:
-	ruff ${BASEDIR}/ test/
-
-.PHONY: test
-test:
-	pytest -vs test/
-
-.PHONY: test-and-fail
-test-and-fail:
-	pytest -vsx test/
+	ruff ${BASEDIR}/
 
 .PHONY: run
 run:
