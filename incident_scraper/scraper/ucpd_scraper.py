@@ -24,6 +24,14 @@ class UCPDScraper:
         self.today = datetime.now(self.TZ).date()
         self.base_url = self._construct_url()
 
+    def scrape_from_beginning_2023(self):
+        """Scrape and parse all tables from January 1, 2023 to today."""
+        pass
+
+    def scrape_last_five_days(self):
+        """Scrape and parse all tables from five days ago to today."""
+        pass
+
     def _get_previous_day_epoch(self, num_days=1):
         """Return epoch time of a previous day at midnight.
 
