@@ -28,8 +28,16 @@ class UCPDScraper:
         """Scrape and parse all tables from January 1, 2023 to today."""
         pass
 
+    def scrape_last_three_days(self):
+        """Scrape and parse all tables from three days ago to today."""
+        pass
+
     def scrape_last_five_days(self):
         """Scrape and parse all tables from five days ago to today."""
+        pass
+
+    def scrape_last_ten_days(self):
+        """Scrape and parse all tables from ten days ago to today."""
         pass
 
     def _get_previous_day_epoch(self, num_days=1):
