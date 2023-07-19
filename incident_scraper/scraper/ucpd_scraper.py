@@ -29,18 +29,22 @@ class UCPDScraper:
 
     def scrape_from_beginning_2023(self):
         """Scrape and parse all tables from January 1, 2023 to today."""
+        new_url = self._construct_url(0, year_beginning=True)
         pass
 
     def scrape_last_three_days(self):
         """Scrape and parse all tables from three days ago to today."""
+        new_url = self._construct_url(3, year_beginning=False)
         pass
 
     def scrape_last_five_days(self):
         """Scrape and parse all tables from five days ago to today."""
+        new_url = self._construct_url(5, year_beginning=False)
         pass
 
     def scrape_last_ten_days(self):
         """Scrape and parse all tables from ten days ago to today."""
+        new_url = self._construct_url(10, year_beginning=False)
         pass
 
     def _get_previous_day_epoch(self, num_days=1):
