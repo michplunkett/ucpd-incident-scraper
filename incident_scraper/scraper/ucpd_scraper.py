@@ -24,7 +24,7 @@ class UCPDScraper:
         self.today = datetime.now(self.TZ).date()
         self.str_today = self.today.strftime("%m/%d/%Y")
         self.base_url = self._construct_url(0)
-        self.headers = HEADERS
+        self.headers = HEADERS.copy()
         self.user_agent_rotator = Headers()
 
     def scrape_from_beginning_2023(self):
