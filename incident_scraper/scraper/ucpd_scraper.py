@@ -8,7 +8,8 @@ import lxml.html
 import pytz
 import requests
 
-from incident_scraper.utils.constants import HEADERS, TIMEZONE_CHICAGO
+from incident_scraper.scraper.headers import Headers
+from incident_scraper.utils.constants import TIMEZONE_CHICAGO
 
 
 class UCPDScraper:
@@ -18,13 +19,13 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
     TZ = pytz.timezone(TIMEZONE_CHICAGO)
-    HEADERS = HEADERS
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
         self.str_today = self.today.strftime("%m/%d/%Y")
         self.base_url = self._construct_url()
+        self.headers = Headers()
 
     def scrape_from_beginning_2023(self):
         """Scrape and parse all tables from January 1, 2023 to today."""
