@@ -56,26 +56,26 @@ class UCPDScraper:
         )
         return int(previous_day_midnight.timestamp())
 
-    def _construct_url(self):
+    def _construct_url(self, num_days, year_beginning=False):
         """
         Construct the url to scrape from.
 
         Constructs the url to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
-        current_day = self._get_previous_day_epoch(num_days=0)
-        # Difference in number of days between today and the first day of the year
-        # This is used to calculate the number of pages to scrape
-        days_since_start = (
-            self.today - datetime(self.today.year, 1, 1).date()
-        ).days
-        first_day_of_year = self._get_previous_day_epoch(days_since_start)
+        if not year_beginning:
+            previous_datetime = self.today - timedelta(days=num_days)
+            previous_date_str = previous_datetime.strftime("%m/%d/%Y")
+        else:
+            # Get first day of the year in %m/%d/%Y format
+            year_beginning = datetime(self.today.year, 1, 1).date()
+            previous_date_str = year_beginning.strftime("%m/%d/%Y")
 
         print(f"Today's date: {self.today}")
         print("Constructing URL...")
         return (
-            f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate="
-            f"{current_day}&offset="
+            f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
+            f"{self.str_today}&offset="
         )
 
     def _get_table(self, url: str):
