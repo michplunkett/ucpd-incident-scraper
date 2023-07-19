@@ -8,7 +8,7 @@ import lxml.html
 import pytz
 import requests
 
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO
+from incident_scraper.utils.constants import TIMEZONE_CHICAGO, HEADERS
 
 
 class UCPDScraper:
@@ -18,6 +18,7 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
     TZ = pytz.timezone(TIMEZONE_CHICAGO)
+    HEADERS = HEADERS
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
@@ -89,7 +90,7 @@ class UCPDScraper:
 
         print(f"Fetching {url}")
         time.sleep(self.request_delay)
-        r = requests.get(url)
+        r = requests.get(url, headers=self.HEADERS)
         response = lxml.html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")
