@@ -30,35 +30,22 @@ class UCPDScraper:
     def scrape_from_beginning_2023(self):
         """Scrape and parse all tables from January 1, 2023 to today."""
         new_url = self._construct_url(0, year_beginning=True)
-        pass
+        self.get_all_tables(new_url)
 
     def scrape_last_three_days(self):
         """Scrape and parse all tables from three days ago to today."""
         new_url = self._construct_url(3, year_beginning=False)
-        pass
+        self.get_all_tables(new_url)
 
     def scrape_last_five_days(self):
         """Scrape and parse all tables from five days ago to today."""
         new_url = self._construct_url(5, year_beginning=False)
-        pass
+        self.get_all_tables(new_url)
 
     def scrape_last_ten_days(self):
         """Scrape and parse all tables from ten days ago to today."""
         new_url = self._construct_url(10, year_beginning=False)
-        pass
-
-    def _get_previous_day_epoch(self, num_days=1):
-        """Return epoch time of a previous day at midnight.
-
-        Given the number of days to subtract from the current date, return the epoch
-        time of that day at midnight.
-        """
-        # Subtract one day from the current date
-        previous_day = self.today - timedelta(days=num_days)
-        previous_day_midnight = self.TZ.localize(
-            datetime.combine(previous_day, dt_time()), is_dst=None
-        )
-        return int(previous_day_midnight.timestamp())
+        self.get_all_tables(new_url)
 
     def _construct_url(self, num_days, year_beginning=False):
         """
@@ -118,7 +105,7 @@ class UCPDScraper:
         page_numbers = pages[FIRST_INDEX].text.split(" / ")
         return incident_dict, page_numbers[0] == page_numbers[1]
 
-    def get_all_tables(self):
+    def get_all_tables(self, new_url):
         """Go through all queried tables until we offset back to the first table."""
         at_last_page = False
         incidents = dict()
@@ -126,9 +113,7 @@ class UCPDScraper:
 
         # Loop until function arrives at last page
         while not at_last_page:
-            rev_dict, at_last_page = self._get_table(
-                self.base_url + str(offset)
-            )
+            rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
