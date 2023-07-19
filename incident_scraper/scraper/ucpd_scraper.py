@@ -118,8 +118,3 @@ class UCPDScraper:
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
-
-
-if __name__ == "__main__":
-    scraper = UCPDScraper()
-    scraper.scrape_last_three_days()

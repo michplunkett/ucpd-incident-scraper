@@ -17,7 +17,6 @@ class Headers:
             os.getcwd().replace("\\", "/")
             + "/incident_scraper/data/http_headers.json"
         )
-        print(path)
         with open(path, "r") as json_file:
             self.list_of_headers = json.load(json_file)
 
