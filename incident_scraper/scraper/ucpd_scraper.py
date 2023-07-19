@@ -8,7 +8,7 @@ import lxml.html
 import pytz
 import requests
 
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO, HEADERS
+from incident_scraper.utils.constants import HEADERS, TIMEZONE_CHICAGO
 
 
 class UCPDScraper:
