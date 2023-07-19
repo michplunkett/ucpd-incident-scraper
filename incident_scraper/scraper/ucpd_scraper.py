@@ -17,6 +17,7 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
     TZ = pytz.timezone(TIMEZONE_CHICAGO)
+    UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
@@ -28,38 +29,42 @@ class UCPDScraper:
 
     def scrape_from_beginning_2023(self):
         """Scrape and parse all tables from January 1, 2023 to today."""
-        new_url = self._construct_url(0, year_beginning=True)
+        new_url = self._construct_url(year_beginning=True)
         self.get_all_tables(new_url)
 
     def scrape_last_three_days(self):
         """Scrape and parse all tables from three days ago to today."""
-        new_url = self._construct_url(3, year_beginning=False)
+        new_url = self._construct_url(num_days=3)
         self.get_all_tables(new_url)
 
     def scrape_last_five_days(self):
         """Scrape and parse all tables from five days ago to today."""
-        new_url = self._construct_url(5, year_beginning=False)
+        new_url = self._construct_url(num_days=5)
         self.get_all_tables(new_url)
 
     def scrape_last_ten_days(self):
         """Scrape and parse all tables from ten days ago to today."""
-        new_url = self._construct_url(10, year_beginning=False)
+        new_url = self._construct_url(num_days=10)
         self.get_all_tables(new_url)
 
-    def _construct_url(self, num_days, year_beginning=False):
+    def _construct_url(self, num_days=0, year_beginning=False):
         """
-        Construct the url to scrape from.
+        Construct the scraping URL.
 
-        Constructs the url to scrape from by getting the epochs of the present day and
+        Constructs the URL to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
         if not year_beginning:
             previous_datetime = self.today - timedelta(days=num_days)
-            previous_date_str = previous_datetime.strftime("%m/%d/%Y")
+            previous_date_str = previous_datetime.strftime(
+                self.UCPD_MDY_DATE_FORMAT
+            )
         else:
             # Get first day of the year in %m/%d/%Y format
             year_beginning = datetime(self.today.year, 1, 1).date()
-            previous_date_str = year_beginning.strftime("%m/%d/%Y")
+            previous_date_str = year_beginning.strftime(
+                self.UCPD_MDY_DATE_FORMAT
+            )
 
         print(f"Today's date: {self.today}")
         print("Constructing URL...")
@@ -106,7 +111,7 @@ class UCPDScraper:
         page_numbers = pages[FIRST_INDEX].text.split(" / ")
         return incident_dict, page_numbers[0] == page_numbers[1]
 
-    def get_all_tables(self, new_url):
+    def get_all_tables(self, new_url: str):
         """Go through all queried tables until we offset back to the first table."""
         at_last_page = False
         incidents = dict()
