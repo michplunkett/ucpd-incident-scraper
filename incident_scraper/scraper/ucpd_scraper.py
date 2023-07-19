@@ -22,6 +22,7 @@ class UCPDScraper:
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
+        self.str_today = self.today.strftime("%m/%d/%Y")
         self.base_url = self._construct_url()
 
     def scrape_from_beginning_2023(self):
