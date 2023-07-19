@@ -7,30 +7,23 @@ from click import IntRange
 def main():
     """Run the UCPD Incident Scraper."""
     parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group(required=True)
+    subparser = parser.add_subparsers(dest="command")
 
-    group.add_argument(
-        "-db",
-        "--days-back",
-        help="Number of days back to scrape the UCPD incident site.",
-        # The range is
+    days_back = subparser.add_parser("days-back")
+    days_back.add_argument(
+        "days",
+        # The range is locked between 3 and 10.
         type=IntRange(3, 10),
-        default=False,
-        action=argparse.BooleanOptionalAction,
+        default=3,
     )
-    group.add_argument(
-        "-s" "--seed",
-        help="Get all UCPD incidents starting from the beginning of the year.",
-        type=bool,
-        default=False,
-        action=argparse.BooleanOptionalAction,
-    )
+
+    subparser.add_parser("seed")
 
     args = parser.parse_args()
 
-    if args.days_back:
-        print(f"Gonna go {args.days_back} days back.")
-    elif args.seed:
+    if args.command == "days-back":
+        print(f"Gonna go {args.days} days back.")
+    elif args.command == "seed":
         print("Gonna get ALL the incidents")
 
 
