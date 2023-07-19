@@ -1,15 +1,13 @@
 """Contains code related to scraping UCPD incident reports."""
 import time
-from datetime import datetime
-from datetime import time as dt_time
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import lxml.html
 import pytz
 import requests
 
 from incident_scraper.scraper.headers import Headers
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO
+from incident_scraper.utils.constants import HEADERS, TIMEZONE_CHICAGO
 
 
 class UCPDScraper:
@@ -24,8 +22,9 @@ class UCPDScraper:
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
         self.str_today = self.today.strftime("%m/%d/%Y")
-        self.base_url = self._construct_url()
-        self.headers = Headers()
+        self.base_url = self._construct_url(0)
+        self.headers = HEADERS
+        self.user_agent_rotator = Headers()
 
     def scrape_from_beginning_2023(self):
         """Scrape and parse all tables from January 1, 2023 to today."""
@@ -82,7 +81,9 @@ class UCPDScraper:
 
         print(f"Fetching {url}")
         time.sleep(self.request_delay)
-        r = requests.get(url, headers=self.HEADERS)
+        # Change user_agent randomly
+        self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
+        r = requests.get(url, headers=self.headers)
         response = lxml.html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")
@@ -117,3 +118,8 @@ class UCPDScraper:
             incidents.update(rev_dict)
             offset += 5
         return str(incidents)
+
+
+if __name__ == "__main__":
+    scraper = UCPDScraper()
+    scraper.scrape_last_three_days()

@@ -17,7 +17,9 @@ class Headers:
             os.getcwd().replace("\\", "/")
             + "/incident_scraper/data/http_headers.json"
         )
-        self.list_of_headers = json.load(path)
+        print(path)
+        with open(path, "r") as json_file:
+            self.list_of_headers = json.load(json_file)
 
     def get_random_header(self):
         """Use random number generator to get random header from list."""
