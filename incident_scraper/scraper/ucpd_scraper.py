@@ -30,22 +30,22 @@ class UCPDScraper:
     def scrape_from_beginning_2023(self):
         """Scrape and parse all tables from January 1, 2023, to today."""
         new_url = self._construct_url(year_beginning=True)
-        self._get_incidents(new_url)
+        return self._get_incidents(new_url)
 
     def scrape_last_three_days(self):
         """Scrape and parse all tables from three days ago to today."""
         new_url = self._construct_url(num_days=3)
-        self._get_incidents(new_url)
+        return self._get_incidents(new_url)
 
     def scrape_last_five_days(self):
         """Scrape and parse all tables from five days ago to today."""
         new_url = self._construct_url(num_days=5)
-        self._get_incidents(new_url)
+        return self._get_incidents(new_url)
 
     def scrape_last_ten_days(self):
         """Scrape and parse all tables from ten days ago to today."""
         new_url = self._construct_url(num_days=10)
-        self._get_incidents(new_url)
+        return self._get_incidents(new_url)
 
     def _construct_url(self, num_days: int = 0, year_beginning: bool = False):
         """
