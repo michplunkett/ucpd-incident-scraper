@@ -1,89 +1,10 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 import os
-from datetime import datetime
 
-import pytz
 from google.cloud.datastore import Client, Entity
-from jsonic import Serializable, deserialize, serialize
+from jsonic import deserialize, serialize
 
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO
-
-
-class Incident(Serializable):
-    """Standard data structure for recovered UCPD incidents."""
-
-    UCPD_DATE_FORMAT = "%x %I:%M %p"
-    UCPD_DOY_DATE_FORMAT = "%x"
-
-    def __init__(
-        self,
-        ucpd_id: str = "",
-        incident: str = "",
-        location: str = "",
-        reported: str = "",
-        occurred: str = "",
-        comments: str = "",
-        disposition: str = "",
-        gcp_response: dict = None,
-    ):
-        super().__init__()
-        if gcp_response:
-            self.ucpd_id = gcp_response["ucpd_id"]
-            self.incident = gcp_response["incident"]
-            self.location = gcp_response["location"]
-            self.reported = gcp_response["reported"]
-            self.reported_date = gcp_response["reported_date"]
-            self.occurred = gcp_response["occurred"]
-            self.comments = gcp_response["comments"]
-            self.disposition = gcp_response["disposition"]
-            self.validated_location = gcp_response["validated_location"]
-            self.validated_latitude = float(gcp_response["validated_latitude"])
-            self.validate_longitude = float(gcp_response["validate_longitude"])
-        else:
-            self.ucpd_id = ucpd_id
-            # incident example: "Information / Theft"
-            self.incident = incident.split(" / ")
-            # location example: "8675309 NSW. Texas (DDR)"
-            self.location = location.split(" (")[0]
-            self.reported = self._date_str_to_iso_format(reported)
-            self.reported_date = self._date_str_to_datastore_format(reported)
-            self.occurred = self._date_str_to_iso_format(occurred)
-            self.comments = comments
-            self.disposition = disposition
-            self.validated_location = None
-            self.validated_latitude = None
-            self.validate_longitude = None
-
-    def _date_str_to_iso_format(self, date_str: str):
-        """Take a date and return in it a localized ISO format."""
-        return (
-            datetime.strptime(date_str, self.UCPD_DATE_FORMAT)
-            .astimezone(pytz.timezone(TIMEZONE_CHICAGO))
-            .isoformat()
-        )
-
-    def _date_str_to_datastore_format(self, date_str: str):
-        """Take a date and return it as a localized MM/DD/YYYY format."""
-        return (
-            datetime.strptime(date_str, self.UCPD_DATE_FORMAT)
-            .astimezone(pytz.timezone(TIMEZONE_CHICAGO))
-            .strftime(self.UCPD_DOY_DATE_FORMAT)
-        )
-
-    def get_parsed_location(self):
-        """Parse UCPD sourced location for validation."""
-        return self.location.split(" (")[0]
-
-    def set_validated_location(self, census_response: str):
-        """Set the validated locations properties."""
-        if not census_response:
-            return False
-
-        self.validated_location = census_response[0]
-        self.validated_latitude = census_response[1]
-        self.validate_longitude = census_response[2]
-
-        return True
+from incident_scraper.models.incident import Incident
 
 
 class GoogleDatastore:
