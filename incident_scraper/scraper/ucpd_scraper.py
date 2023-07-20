@@ -22,7 +22,7 @@ class UCPDScraper:
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
-        self.str_today = self.today.strftime("%m/%d/%Y")
+        self.str_today = self.today.strftime(self.UCPD_MDY_DATE_FORMAT)
         self.base_url = self._construct_url(0)
         self.headers = HEADERS.copy()
         self.user_agent_rotator = Headers()
