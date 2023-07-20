@@ -106,7 +106,7 @@ class UCPDScraper:
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")
         page_numbers = pages[FIRST_INDEX].text.split(" / ")
-        return incident_dict, page_numbers[0] == page_numbers[1]
+        return incident_dict, page_numbers[0].strip() == page_numbers[1].strip()
 
     def _get_incidents(self, new_url: str):
         """Get all incidents for a given URL."""
