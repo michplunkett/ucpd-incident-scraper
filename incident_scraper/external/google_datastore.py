@@ -17,15 +17,26 @@ class GoogleDatastore:
         self.client = Client(self.PROJECT_ID)
 
     def add_incident(self, incident: Incident):
-        """Add incident to datastore."""
-        complete_key = self.client.key(self.ENTITY_TYPE, incident.ucpd_id)
-
-        gcp_incident = Entity(key=complete_key)
+        """Add Incident to datastore."""
+        gcp_incident = Entity(
+            key=self.client.key(self.ENTITY_TYPE, incident.ucpd_id)
+        )
         gcp_incident.update(serialize(incident))
         self.client.put(gcp_incident)
 
+    def add_incidents(self, incidents: [Incident]):
+        """Add Incidents to datastore in bulk."""
+        json_incidents = []
+        for i in incidents:
+            gcp_incident = Entity(
+                key=self.client.key(self.ENTITY_TYPE, i.ucpd_id)
+            )
+            gcp_incident.update(serialize(i))
+            json_incidents.append(gcp_incident)
+        self.client.put_multi(json_incidents)
+
     def get_incident(self, ucpd_id: str):
-        """Get incident from datastore."""
+        """Get Incident from datastore."""
         datastore_response = self.client.get(
             self.client.key(self.ENTITY_TYPE, ucpd_id)
         )
