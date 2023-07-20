@@ -1,12 +1,9 @@
 BASEDIR=incident_scraper
 
-.PHONY: format
-format:
-	black ${BASEDIR}/ ./
-	isort ${BASEDIR}/
-
 .PHONY: lint
 lint:
+	black ${BASEDIR}/ ./
+	isort ${BASEDIR}/
 	ruff ${BASEDIR}/
 
 .PHONY: seed_datastore

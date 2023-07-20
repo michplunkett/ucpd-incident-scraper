@@ -15,10 +15,8 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
 
 ### Technical Notes
 - Any modules should be added via the `poetry add [module]` command.
-  - Example: `poetry add pytest`
+  - Example: `poetry add black`
 
 ## Standard Commands
-- `make format`: Runs `Black` on the codebase
-- `make lint`: Runs `ruff` on the codebase
-- `make test`: Runs test cases in the `test` directory
+- `make lint`: Runs `Black`, `isort`, and `ruff` on the codebase
 - `make run`: Runs the `main` function in the `incident_scraper` folder

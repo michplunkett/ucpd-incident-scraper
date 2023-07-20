@@ -1,14 +1,17 @@
 """Contains code related to scraping UCPD incident reports."""
 import time
-from datetime import datetime
-from datetime import time as dt_time
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import lxml.html
 import pytz
 import requests
 
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO
+from incident_scraper.scraper.headers import Headers
+from incident_scraper.utils.constants import (
+    HEADERS,
+    TIMEZONE_CHICAGO,
+    UCPD_MDY_DATE_FORMAT,
+)
 
 
 class UCPDScraper:
@@ -22,41 +25,49 @@ class UCPDScraper:
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
-        self.base_url = self._construct_url()
+        self.today_str = self.today.strftime(UCPD_MDY_DATE_FORMAT)
+        self.headers = HEADERS.copy()
+        self.user_agent_rotator = Headers()
 
-    def _get_previous_day_epoch(self, num_days=1):
-        """Return epoch time of a previous day at midnight.
+    def scrape_from_beginning_2023(self):
+        """Scrape and parse all tables from January 1, 2023, to today."""
+        new_url = self._construct_url(year_beginning=True)
+        return self._get_incidents(new_url)
 
-        Given the number of days to subtract from the current date, return the epoch
-        time of that day at midnight.
+    def scrape_last_three_days(self):
+        """Scrape and parse all tables from three days ago to today."""
+        new_url = self._construct_url(num_days=3)
+        return self._get_incidents(new_url)
+
+    def scrape_last_five_days(self):
+        """Scrape and parse all tables from five days ago to today."""
+        new_url = self._construct_url(num_days=5)
+        return self._get_incidents(new_url)
+
+    def scrape_last_ten_days(self):
+        """Scrape and parse all tables from ten days ago to today."""
+        new_url = self._construct_url(num_days=10)
+        return self._get_incidents(new_url)
+
+    def _construct_url(self, num_days: int = 0, year_beginning: bool = False):
         """
-        # Subtract one day from the current date
-        previous_day = self.today - timedelta(days=num_days)
-        previous_day_midnight = self.TZ.localize(
-            datetime.combine(previous_day, dt_time()), is_dst=None
-        )
-        return int(previous_day_midnight.timestamp())
+        Construct the scraping URL.
 
-    def _construct_url(self):
-        """
-        Construct the url to scrape from.
-
-        Constructs the url to scrape from by getting the epochs of the present day and
+        Constructs the URL to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
-        current_day = self._get_previous_day_epoch(num_days=0)
-        # Difference in number of days between today and the first day of the year
-        # This is used to calculate the number of pages to scrape
-        days_since_start = (
-            self.today - datetime(self.today.year, 1, 1).date()
-        ).days
-        first_day_of_year = self._get_previous_day_epoch(days_since_start)
+        previous_datetime = (
+            datetime(2023, 1, 1).date()
+            if year_beginning
+            else self.today - timedelta(days=num_days)
+        )
+        previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
 
         print(f"Today's date: {self.today}")
         print("Constructing URL...")
         return (
-            f"{self.BASE_UCPD_URL}?startDate={first_day_of_year}&endDate="
-            f"{current_day}&offset="
+            f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
+            f"{self.today_str}&offset="
         )
 
     def _get_table(self, url: str):
@@ -64,7 +75,7 @@ class UCPDScraper:
         Get the table information from that UCPD incident page.
 
         Scrapes the table from the given url and returns a dictionary and a boolean
-        stating if it scraped the last page..
+        stating if it scraped the last page.
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
@@ -72,7 +83,9 @@ class UCPDScraper:
 
         print(f"Fetching {url}")
         time.sleep(self.request_delay)
-        r = requests.get(url)
+        # Change user_agent randomly
+        self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
+        r = requests.get(url, headers=self.headers)
         response = lxml.html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")
@@ -93,19 +106,17 @@ class UCPDScraper:
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")
         page_numbers = pages[FIRST_INDEX].text.split(" / ")
-        return incident_dict, page_numbers[0] == page_numbers[1]
+        return incident_dict, page_numbers[0].strip() == page_numbers[1].strip()
 
-    def get_all_tables(self):
-        """Go through all queried tables until we offset back to the first table."""
+    def _get_incidents(self, new_url: str):
+        """Get all incidents for a given URL."""
         at_last_page = False
         incidents = dict()
         offset = 0
 
         # Loop until function arrives at last page
         while not at_last_page:
-            rev_dict, at_last_page = self._get_table(
-                self.base_url + str(offset)
-            )
+            rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
             offset += 5
-        return str(incidents)
+        return incidents
