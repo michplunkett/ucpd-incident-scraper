@@ -27,11 +27,11 @@ def main():
 
     incidents: dict
     if args.command == "days-back":
-        if days_back == 3:
+        if args.days == 3:
             incidents = scraper.scrape_last_three_days()
-        elif days_back == 5:
+        elif args.days == 5:
             incidents = scraper.scrape_last_five_days()
-        elif days_back == 10:
+        elif args.days == 10:
             incidents = scraper.scrape_last_ten_days()
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
