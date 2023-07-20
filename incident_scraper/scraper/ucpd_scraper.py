@@ -47,7 +47,7 @@ class UCPDScraper:
         new_url = self._construct_url(num_days=10)
         self._get_incidents(new_url)
 
-    def _construct_url(self, num_days=0, year_beginning=False):
+    def _construct_url(self, num_days: int = 0, year_beginning: bool = False):
         """
         Construct the scraping URL.
 
@@ -119,4 +119,4 @@ class UCPDScraper:
             rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
             offset += 5
-        return str(incidents)
+        return incidents
