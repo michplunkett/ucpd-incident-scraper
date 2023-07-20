@@ -3,6 +3,8 @@ import argparse
 
 from click import IntRange
 
+from incident_scraper.scraper.ucpd_scraper import UCPDScraper
+
 
 def main():
     """Run the UCPD Incident Scraper."""
@@ -21,10 +23,20 @@ def main():
 
     args = parser.parse_args()
 
+    scraper = UCPDScraper()
+
+    incidents: dict
     if args.command == "days-back":
-        print(f"Gonna go {args.days} days back.")
+        if days_back == 3:
+            incidents = scraper.scrape_last_three_days()
+        elif days_back == 5:
+            incidents = scraper.scrape_last_five_days()
+        elif days_back == 10:
+            incidents = scraper.scrape_last_ten_days()
     elif args.command == "seed":
-        print("Gonna get ALL the incidents")
+        incidents = scraper.scrape_from_beginning_2023()
+
+    print(f"We scraped this many incidents: {len(incidents)}")
 
 
 if __name__ == "__main__":
