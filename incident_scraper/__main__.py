@@ -4,7 +4,7 @@ import argparse
 from click import IntRange
 
 from incident_scraper.external.census import CensusClient
-from incident_scraper.external.google_datastore import GoogleNBD
+from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.models.incident import (
     date_str_to_date_format,
     date_str_to_iso_format,
