@@ -6,7 +6,11 @@ from typing import Any
 import pytz
 from jsonic import Serializable
 
-from incident_scraper.utils.constants import TIMEZONE_CHICAGO, UCPD_DATE_FORMAT
+from incident_scraper.utils.constants import (
+    TIMEZONE_CHICAGO,
+    UCPD_DATE_FORMAT,
+    UCPD_MDY_DATE_FORMAT,
+)
 
 
 class Incident(Serializable):
@@ -24,7 +28,7 @@ class Incident(Serializable):
     validated_latitude: float
     validate_longitude: float
 
-    def __init__(self, gcp_response: dict, scrape_response: dict):
+    def __init__(self, gcp_response: dict = None, scrape_response: dict = None):
         super().__init__()
         if gcp_response:
             self.ucpd_id = gcp_response["ucpd_id"]
@@ -37,19 +41,20 @@ class Incident(Serializable):
             self.occurred = gcp_response["occurred"]
             self.comments = gcp_response["comments"]
             self.disposition = gcp_response["disposition"]
+            self.validated_location = gcp_response["validated_location"]
+            self.validated_latitude = float(gcp_response["validated_latitude"])
+            self.validate_longitude = float(gcp_response["validate_longitude"])
         elif scrape_response:
             self.ucpd_id = scrape_response["UCPD_ID"]
             self.incident = scrape_response["Incident"]
             self.location = scrape_response["Location"]
             self.reported = scrape_response["Reported"]
-            self.reported_date = scrape_response["Reported"]
+            self.reported_date = datetime.strptime(
+                scrape_response["Reported"], UCPD_DATE_FORMAT
+            ).strftime(UCPD_MDY_DATE_FORMAT)
             self.occurred = scrape_response["Occurred"]
             self.comments = scrape_response["Comments / Nature of Fire"]
             self.disposition = scrape_response["Disposition"]
-
-        self.validated_location = gcp_response["validated_location"]
-        self.validated_latitude = float(gcp_response["validated_latitude"])
-        self.validate_longitude = float(gcp_response["validate_longitude"])
 
     def _date_str_to_iso_format(self, date_str: str):
         """Take a date and return in it a localized ISO format."""
