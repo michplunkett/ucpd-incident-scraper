@@ -23,7 +23,6 @@ class UCPDScraper:
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
         self.today_str = self.today.strftime(self.UCPD_MDY_DATE_FORMAT)
-        self.base_url = self._construct_url(0)
         self.headers = HEADERS.copy()
         self.user_agent_rotator = Headers()
 
