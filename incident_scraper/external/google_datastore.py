@@ -1,13 +1,22 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 import os
 
-from google.cloud.datastore import Client, Entity
+from google.cloud.ndb import Client, GeoPt, put_multi
 
 from incident_scraper.models.incident import Incident
 
 
-class GoogleDatastore:
-    """Create the client and access GCP datastore functionality."""
+def get_incident(ucpd_id: str):
+    """Get Incident from datastore."""
+    incident = Incident.get_by_id(ucpd_id)
+    if incident:
+        return incident
+    else:
+        return None
+
+
+class GoogleNBD:
+    """Create the client and access GCP NBD functionality."""
 
     ENTITY_TYPE = "Incident"
     PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
@@ -15,35 +24,42 @@ class GoogleDatastore:
     def __init__(self):
         self.client = Client(self.PROJECT_ID)
 
-    def add_incident(self, incident: Incident):
-        """Add Incident to datastore."""
-        gcp_incident = Entity(
-            key=self.client.key(self.ENTITY_TYPE, incident.ucpd_id)
+    @staticmethod
+    def _create_incident_from_dict(incident: dict):
+        """Convert an incident dict to a Incident Model."""
+        return Incident(
+            ucpd_id=incident["UCPD_ID"],
+            incident=incident["Incident"],
+            reported=incident["Reported"],
+            reported_date=incident["ReportedDate"],
+            occurred=incident["Occurred"],
+            comments=incident["Comments / Nature of Fire"],
+            disposition=incident["Disposition"],
+            location=incident["Location"],
+            validated_address=incident["ValidatedAddress"],
+            validated_location=GeoPt(
+                incident["ValidatedLongitude"],
+                incident["ValidatedLatitude"],
+            ),
         )
-        gcp_incident.update(incident)
-        self.client.put(gcp_incident)
+
+    def add_incident(self, incident: dict):
+        """Add Incident to datastore."""
+        with self.client.context():
+            nbd_incident = self._create_incident_from_dict(incident)
+            nbd_incident.put(incident)
 
     def add_incidents(self, incidents: [Incident]):
         """Add Incidents to datastore in bulk."""
-        json_incidents = []
-        for i in incidents:
-            gcp_incident = Entity(
-                key=self.client.key(self.ENTITY_TYPE, i.ucpd_id)
-            )
-            gcp_incident.update(i)
-            json_incidents.append(gcp_incident)
-        self.client.put_multi(json_incidents)
-
-    def get_incident(self, ucpd_id: str):
-        """Get Incident from datastore."""
-        datastore_response = self.client.get(
-            self.client.key(self.ENTITY_TYPE, ucpd_id)
-        )
-        if datastore_response:
-            return Incident(gcp_response=datastore_response)
-        else:
-            return None
+        with self.client.context():
+            incident_keys = []
+            for i in incidents:
+                nbd_incident = self._create_incident_from_dict(i)
+                incident_keys.append(nbd_incident)
+            put_multi(incident_keys)
 
     def remove_incident(self, ucpd_id: str):
         """Remove incident from datastore."""
-        self.client.delete(self.client.key(self.ENTITY_TYPE, ucpd_id))
+        with self.client.context():
+            incident = Incident(ucpd_id=ucpd_id)
+            incident.delete()
