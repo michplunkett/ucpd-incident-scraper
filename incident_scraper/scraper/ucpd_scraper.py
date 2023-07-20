@@ -22,13 +22,13 @@ class UCPDScraper:
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
-        self.str_today = self.today.strftime(self.UCPD_MDY_DATE_FORMAT)
+        self.today_str = self.today.strftime(self.UCPD_MDY_DATE_FORMAT)
         self.base_url = self._construct_url(0)
         self.headers = HEADERS.copy()
         self.user_agent_rotator = Headers()
 
     def scrape_from_beginning_2023(self):
-        """Scrape and parse all tables from January 1, 2023 to today."""
+        """Scrape and parse all tables from January 1, 2023, to today."""
         new_url = self._construct_url(year_beginning=True)
         self._get_incidents(new_url)
 
@@ -54,23 +54,20 @@ class UCPDScraper:
         Constructs the URL to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
-        if not year_beginning:
-            previous_datetime = self.today - timedelta(days=num_days)
-            previous_date_str = previous_datetime.strftime(
-                self.UCPD_MDY_DATE_FORMAT
-            )
-        else:
-            # Get first day of the year in %m/%d/%Y format
-            year_beginning = datetime(self.today.year, 1, 1).date()
-            previous_date_str = year_beginning.strftime(
-                self.UCPD_MDY_DATE_FORMAT
-            )
+        previous_datetime = (
+            datetime(self.today.year, 1, 1).date()
+            if year_beginning
+            else self.today - timedelta(days=num_days)
+        )
+        previous_date_str = previous_datetime.strftime(
+            self.UCPD_MDY_DATE_FORMAT
+        )
 
         print(f"Today's date: {self.today}")
         print("Constructing URL...")
         return (
             f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
-            f"{self.str_today}&offset="
+            f"{self.today_str}&offset="
         )
 
     def _get_table(self, url: str):
@@ -78,7 +75,7 @@ class UCPDScraper:
         Get the table information from that UCPD incident page.
 
         Scrapes the table from the given url and returns a dictionary and a boolean
-        stating if it scraped the last page..
+        stating if it scraped the last page.
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
