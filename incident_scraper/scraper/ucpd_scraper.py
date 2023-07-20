@@ -55,7 +55,7 @@ class UCPDScraper:
         the first day of the current year.
         """
         previous_datetime = (
-            datetime(self.today.year, 1, 1).date()
+            datetime(2023, 1, 1).date()
             if year_beginning
             else self.today - timedelta(days=num_days)
         )
