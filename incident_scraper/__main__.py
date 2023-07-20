@@ -3,6 +3,9 @@ import argparse
 
 from click import IntRange
 
+from incident_scraper.external.census import CensusClient
+from incident_scraper.external.google_datastore import GoogleDatastore
+from incident_scraper.models.incident import Incident
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 
 
@@ -36,7 +39,37 @@ def main():
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
 
-    print(f"We scraped this many incidents: {len(incidents)}")
+    print(
+        f"{len(incidents.keys())} incidents were scraped from the UCPD Incidents' site."
+    )
+    if len(incidents.keys()):
+        census = CensusClient()
+        incident_objs = []
+        print("Grabbing official address information from the Census Geocoder.")
+        for key in incidents.keys():
+            i = incidents[key]
+            census_resp = census.validate_address(i["Location"])
+            if census_resp:
+                i["UCPD_ID"] = key
+                (
+                    i["validated_location"],
+                    i["validate_longitude"],
+                    i["validated_latitude"],
+                ) = census_resp
+                incident_objs.append(Incident(scrape_response=i))
+        print("Finished official address information from Census.")
+        print(
+            f"{len(incident_objs)} incidents were recovered from the Census Geocoder."
+        )
+        if len(incident_objs):
+            print(
+                f"Adding {len(incident_objs)} incidents are being added to the GCP "
+                f"Datastore. "
+            )
+            GoogleDatastore().add_incidents(incident_objs)
+            print(
+                f"Finished adding {len(incident_objs)} incidents to the GCP Datastore."
+            )
 
 
 if __name__ == "__main__":
