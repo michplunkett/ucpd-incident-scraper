@@ -2,7 +2,6 @@
 import os
 
 from google.cloud.datastore import Client, Entity
-from jsonic import deserialize, serialize
 
 from incident_scraper.models.incident import Incident
 
@@ -21,7 +20,7 @@ class GoogleDatastore:
         gcp_incident = Entity(
             key=self.client.key(self.ENTITY_TYPE, incident.ucpd_id)
         )
-        gcp_incident.update(serialize(incident))
+        gcp_incident.update(incident)
         self.client.put(gcp_incident)
 
     def add_incidents(self, incidents: [Incident]):
@@ -31,7 +30,7 @@ class GoogleDatastore:
             gcp_incident = Entity(
                 key=self.client.key(self.ENTITY_TYPE, i.ucpd_id)
             )
-            gcp_incident.update(serialize(i))
+            gcp_incident.update(i)
             json_incidents.append(gcp_incident)
         self.client.put_multi(json_incidents)
 
@@ -41,7 +40,7 @@ class GoogleDatastore:
             self.client.key(self.ENTITY_TYPE, ucpd_id)
         )
         if datastore_response:
-            return Incident(gcp_response=deserialize(datastore_response))
+            return Incident(gcp_response=datastore_response)
         else:
             return None
 
