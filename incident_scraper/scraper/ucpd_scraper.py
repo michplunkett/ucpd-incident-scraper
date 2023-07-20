@@ -7,7 +7,11 @@ import pytz
 import requests
 
 from incident_scraper.scraper.headers import Headers
-from incident_scraper.utils.constants import HEADERS, TIMEZONE_CHICAGO
+from incident_scraper.utils.constants import (
+    HEADERS,
+    TIMEZONE_CHICAGO,
+    UCPD_MDY_DATE_FORMAT,
+)
 
 
 class UCPDScraper:
@@ -17,12 +21,11 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
     TZ = pytz.timezone(TIMEZONE_CHICAGO)
-    UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.today = datetime.now(self.TZ).date()
-        self.today_str = self.today.strftime(self.UCPD_MDY_DATE_FORMAT)
+        self.today_str = self.today.strftime(UCPD_MDY_DATE_FORMAT)
         self.headers = HEADERS.copy()
         self.user_agent_rotator = Headers()
 
@@ -58,9 +61,7 @@ class UCPDScraper:
             if year_beginning
             else self.today - timedelta(days=num_days)
         )
-        previous_date_str = previous_datetime.strftime(
-            self.UCPD_MDY_DATE_FORMAT
-        )
+        previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
 
         print(f"Today's date: {self.today}")
         print("Constructing URL...")
