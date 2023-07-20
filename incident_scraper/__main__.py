@@ -48,7 +48,7 @@ def main():
         print("Grabbing official address information from the Census Geocoder.")
         for key in incidents.keys():
             i = incidents[key]
-            census_resp = census.validate_address(i["Location"])
+            census_resp = census.validate_address(i["Location"].split(" (")[0])
             if census_resp:
                 i["UCPD_ID"] = key
                 (
