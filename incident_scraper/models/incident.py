@@ -11,7 +11,6 @@ from incident_scraper.utils.constants import TIMEZONE_CHICAGO, UCPD_DATE_FORMAT
 class Incident(Model):
     """Standard data structure for recovered UCPD incidents."""
 
-    id = StringProperty(indexed=True)
     ucpd_id = StringProperty(indexed=True)
     incident = StringProperty(indexed=True)
     reported = StringProperty()
