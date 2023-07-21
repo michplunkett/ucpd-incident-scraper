@@ -1,4 +1,5 @@
 """Contains code relating to the Census Geocode API."""
+import logging
 from time import sleep
 
 import requests
@@ -33,7 +34,7 @@ class CensusClient:
                 if response:
                     break
             except requests.exceptions.RequestException:
-                print(
+                logging.info(
                     f"Pausing {self.TIMEOUT}s between Census Geocode requests."
                 )
                 sleep(self.TIMEOUT)
