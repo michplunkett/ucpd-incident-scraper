@@ -5,6 +5,7 @@ TIMEZONE_CHICAGO = "America/Chicago"
 UCPD_DATE_FORMAT = "%x %I:%M %p"
 UCPD_DOY_DATE_FORMAT = "%x"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
+UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
 # File Constants
 FILE_OPEN_MODE_READ = "r"
