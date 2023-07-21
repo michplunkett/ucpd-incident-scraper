@@ -65,7 +65,6 @@ class UCPDScraper:
         previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
 
         logging.info(f"Today's date: {self.today}")
-        logging.info("Constructing URL...")
         return (
             f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
             f"{self.today_str}&offset="
