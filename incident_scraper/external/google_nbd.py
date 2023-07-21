@@ -28,6 +28,7 @@ class GoogleNBD:
     def _create_incident_from_dict(incident: dict):
         """Convert an incident dict to a Incident Model."""
         return Incident(
+            id=incident["UCPD_ID"],
             ucpd_id=incident["UCPD_ID"],
             incident=incident["Incident"],
             reported=incident["Reported"],
