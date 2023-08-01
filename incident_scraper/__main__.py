@@ -1,10 +1,13 @@
 """Serves as the entry point for the project module."""
 import argparse
+import logging
+import sys
 
+import google.cloud.logging as gcp_logging
 from click import IntRange
 
 from incident_scraper.external.census import CensusClient
-from incident_scraper.external.google_datastore import GoogleNBD
+from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.models.incident import (
     date_str_to_date_format,
     date_str_to_iso_format,
@@ -30,7 +33,11 @@ def main():
 
     args = parser.parse_args()
 
+    # General setup
     scraper = UCPDScraper()
+    logging_client = gcp_logging.Client()
+    logging_client.setup_logging()
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     incidents: dict
     if args.command == "days-back":
@@ -43,13 +50,15 @@ def main():
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
 
-    print(
+    logging.info(
         f"{len(incidents.keys())} incidents were scraped from the UCPD Incidents' site."
     )
     if len(incidents.keys()):
         census = CensusClient()
         incident_objs = []
-        print("Grabbing official address information from the Census Geocoder.")
+        logging.info(
+            "Grabbing official address information from the Census Geocoder."
+        )
         for key in incidents.keys():
             i = incidents[key]
             i["UCPD_ID"] = key
@@ -59,17 +68,17 @@ def main():
                 i["ReportedDate"] = date_str_to_date_format(i["Reported"])
                 i["Reported"] = date_str_to_iso_format(i["Reported"])
                 incident_objs.append(i)
-        print("Finished official address information from Census.")
-        print(
+        logging.info("Finished official address information from Census.")
+        logging.info(
             f"{len(incident_objs)} incidents were recovered from the Census Geocoder."
         )
         if len(incident_objs):
-            print(
+            logging.info(
                 f"Adding {len(incident_objs)} incidents are being added to the GCP "
                 f"Datastore."
             )
             GoogleNBD().add_incidents(incident_objs)
-            print(
+            logging.info(
                 f"Finished adding {len(incident_objs)} incidents to the GCP Datastore."
             )
 

@@ -1,4 +1,5 @@
 """Contains code related to scraping UCPD incident reports."""
+import logging
 import time
 from datetime import datetime, timedelta
 
@@ -63,8 +64,7 @@ class UCPDScraper:
         )
         previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
 
-        print(f"Today's date: {self.today}")
-        print("Constructing URL...")
+        logging.info(f"Today's date: {self.today}")
         return (
             f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
             f"{self.today_str}&offset="
@@ -81,7 +81,7 @@ class UCPDScraper:
         INCIDENT_INDEX = 6
         incident_dict = dict()
 
-        print(f"Fetching {url}")
+        logging.info(f"Fetching {url}")
         time.sleep(self.request_delay)
         # Change user_agent randomly
         self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
@@ -105,8 +105,10 @@ class UCPDScraper:
 
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")
-        page_numbers = pages[FIRST_INDEX].text.split(" / ")
-        return incident_dict, page_numbers[0].strip() == page_numbers[1].strip()
+        page_numbers = [
+            num.strip() for num in pages[FIRST_INDEX].text.split(" / ")
+        ]
+        return incident_dict, page_numbers[0] == page_numbers[1]
 
     def _get_incidents(self, new_url: str):
         """Get all incidents for a given URL."""
