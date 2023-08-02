@@ -1,9 +1,13 @@
 FROM python:3.11-slim
 
-ENV PYTHONPATH=${PYTHONPATH}:${PWD}
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PIP_NO_CACHE_DIR=1
+ENV PYTHONPATH=${PYTHONPATH}:${PWD} \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
 
 RUN mkdir /incident_scraper
 COPY pyproject.toml /incident_scraper
@@ -16,4 +20,4 @@ RUN pip3 install poetry && \
 
 COPY /incident_scraper /incident_scraper
 
-CMD ["python", "-m", "incident_scraper", "days-back"]
+CMD ["poetry", "run", "python", "-m", "incident_scraper", "days-back"]
