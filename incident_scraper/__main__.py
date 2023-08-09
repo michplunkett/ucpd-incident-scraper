@@ -63,6 +63,9 @@ def main():
         ]
         for key_list in list_of_key_lists:
             incident_objs = []
+            logging.info(
+                "Getting official address information from the Census Geocoder."
+            )
             for key in key_list:
                 i = incidents[key]
                 i["UCPD_ID"] = key
@@ -74,6 +77,8 @@ def main():
                     i["ReportedDate"] = date_str_to_date_format(i["Reported"])
                     i["Reported"] = date_str_to_iso_format(i["Reported"])
                     incident_objs.append(i)
+                else:
+                    logging.debug(i)
             added_incidents += len(incident_objs)
             logging.info("Finished official address information from Census.")
             logging.info(
