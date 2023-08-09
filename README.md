@@ -19,4 +19,3 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
 
 ## Standard Commands
 - `make lint`: Runs `Black`, `isort`, and `ruff` on the codebase
-- `make run`: Runs the `main` function in the `incident_scraper` folder
