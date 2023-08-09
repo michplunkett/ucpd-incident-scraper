@@ -41,7 +41,7 @@ def main():
 
     incidents: dict
     if args.command == "days-back":
-        incidents = scraper.scrape_last_days(args.days)
+        incidents = scraper.scrape_back_n_days(args.days)
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
 
