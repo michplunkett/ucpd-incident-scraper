@@ -71,7 +71,7 @@ class UCPDScraper:
         INCIDENT_INDEX = 6
         incident_dict = dict()
 
-        logging.info(f"Fetching {url}")
+        logging.debug(f"Fetching {url}")
         time.sleep(self.request_delay)
         # Change user_agent randomly
         self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
@@ -107,8 +107,10 @@ class UCPDScraper:
         offset = 0
 
         # Loop until function arrives at last page
+        logging.info("Beginning the UCPD Incident scraping process.")
         while not at_last_page:
             rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
             offset += 5
+        logging.info("Finished with the UCPD Incident scraping process.")
         return incidents
