@@ -45,17 +45,17 @@ def main():
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
 
+    total_incidents = len(incidents.keys())
     logging.info(
-        f"{len(incidents.keys())} incidents were scraped from the UCPD Incidents' site."
+        f"{total_incidents} incidents were scraped from the UCPD Incidents' site."
     )
-    if len(incidents.keys()):
+    if total_incidents:
         census = CensusClient()
         logging.info(
             "Grabbing official address information from the Census Geocoder."
         )
         # Split list of incidents into groups of 30 and submit them
         n = 30
-        total_incidents = len(incidents.keys())
         added_incidents = 0
         list_of_key_lists = [
             list(incidents.keys())[i * n : (i + 1) * n]
@@ -82,14 +82,20 @@ def main():
             )
             if len(incident_objs):
                 logging.info(
-                    f"Adding {added_incidents} of {total_incidents} incidents are being"
-                    " added to the GCP Datastore."
+                    f"Adding {added_incidents} of {total_incidents} incidents to the "
+                    "GCP Datastore."
                 )
                 GoogleNBD().add_incidents(incident_objs)
                 logging.info(
                     f"Finished adding {added_incidents} of {total_incidents} incidents "
                     "to the GCP Datastore."
                 )
+        logging.info(
+            f"Completed adding {added_incidents} of {total_incidents} incidents to the "
+            f"GCP Datastore. {total_incidents - added_incidents} of {total_incidents} "
+            "incidents were not added to the GCP Datastore due to bad Census Geocoder "
+            "responses."
+        )
 
 
 if __name__ == "__main__":
