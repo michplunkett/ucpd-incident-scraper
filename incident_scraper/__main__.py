@@ -61,7 +61,7 @@ def main():
         for key_list in list_of_key_lists:
             incident_objs = []
             logging.info(
-                "Getting official address information from the Census Geocoder."
+                "Getting address information from the Census Geocoder."
             )
             for key in key_list:
                 i = incidents[key]
@@ -77,7 +77,7 @@ def main():
                 else:
                     logging.debug(i)
             added_incidents += len(incident_objs)
-            logging.info("Finished official address information from Census.")
+            logging.info("Finished getting address information from Census.")
             logging.info(
                 f"{added_incidents} of {total_incidents} incidents were recovered from "
                 "the Census Geocoder."
@@ -94,9 +94,11 @@ def main():
                 )
         logging.info(
             f"Completed adding {added_incidents} of {total_incidents} incidents to the "
-            f"GCP Datastore. {total_incidents - added_incidents} of {total_incidents} "
-            "incidents were not added to the GCP Datastore due to bad Census Geocoder "
-            "responses."
+            "GCP Datastore."
+        )
+        logging.info(
+            f"{total_incidents - added_incidents} of {total_incidents} incidents were "
+            f"not added to the GCP Datastore due to bad Census Geocoder responses."
         )
 
 
