@@ -3,9 +3,9 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-import lxml.html
 import pytz
 import requests
+from lxml import etree, html
 
 from incident_scraper.scraper.headers import Headers
 from incident_scraper.utils.constants import (
@@ -54,7 +54,6 @@ class UCPDScraper:
         )
         previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
 
-        logging.info(f"Today's date: {self.today}")
         return (
             f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
             f"{self.today_str}&offset="
@@ -76,22 +75,30 @@ class UCPDScraper:
         # Change user_agent randomly
         self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
         r = requests.get(url, headers=self.headers)
-        response = lxml.html.fromstring(r.content)
+        response = html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")
         incidents = response.cssselect("tbody")
         incident_rows = incidents[FIRST_INDEX].cssselect("tr")
         for incident in incident_rows:
             if len(incident) == 1:
+                logging.error(
+                    f"This incident had a length of 1: {etree.tostring(incident)}"
+                )
                 continue
-            incident_id = incident[INCIDENT_INDEX].text.strip()
-            if incident_id == "None":
+
+            incident_id = incident[INCIDENT_INDEX].text
+            if incident_id == "None" or "No Incident Reports" in incident.text:
+                logging.error(
+                    f"This incident had an ID of 'None': {etree.tostring(incident)}"
+                )
                 continue
+
             incident_dict[incident_id] = dict()
             for index in range(len(categories) - 1):
                 incident_dict[incident_id][
-                    str(categories[index].text.strip())
-                ] = incident[index].text.strip()
+                    str(categories[index].text).strip()
+                ] = str(incident[index].text).strip()
 
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")
