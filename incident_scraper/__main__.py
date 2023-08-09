@@ -25,8 +25,8 @@ def main():
     days_back.add_argument(
         "days",
         # The range is locked between 3 and 10.
-        type=IntRange(3, 10),
-        default=3,
+        type=IntRange(0, 10),
+        default=0,
     )
 
     subparser.add_parser("seed")
@@ -41,7 +41,10 @@ def main():
 
     incidents: dict
     if args.command == "days-back":
-        if args.days == 3:
+        if args.days == 0:
+            print("IT WORK")
+            return
+        elif args.days == 3:
             incidents = scraper.scrape_last_three_days()
         elif args.days == 5:
             incidents = scraper.scrape_last_five_days()
