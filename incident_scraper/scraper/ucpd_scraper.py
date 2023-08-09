@@ -35,7 +35,7 @@ class UCPDScraper:
         new_url = self._construct_url(year_beginning=True)
         return self._get_incidents(new_url)
 
-    def scrape_last_days(self, num_days: int = 3):
+    def scrape_back_n_days(self, num_days: int = 3):
         """Scrape and parse all tables from num_days ago to today."""
         new_url = self._construct_url(num_days=num_days)
         return self._get_incidents(new_url)
