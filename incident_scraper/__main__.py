@@ -51,9 +51,6 @@ def main():
     )
     if total_incidents:
         census = CensusClient()
-        logging.info(
-            "Grabbing official address information from the Census Geocoder."
-        )
         # Split list of incidents into groups of 30 and submit them
         n = 30
         added_incidents = 0
