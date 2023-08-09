@@ -35,19 +35,9 @@ class UCPDScraper:
         new_url = self._construct_url(year_beginning=True)
         return self._get_incidents(new_url)
 
-    def scrape_last_three_days(self):
-        """Scrape and parse all tables from three days ago to today."""
-        new_url = self._construct_url(num_days=3)
-        return self._get_incidents(new_url)
-
-    def scrape_last_five_days(self):
-        """Scrape and parse all tables from five days ago to today."""
-        new_url = self._construct_url(num_days=5)
-        return self._get_incidents(new_url)
-
-    def scrape_last_ten_days(self):
-        """Scrape and parse all tables from ten days ago to today."""
-        new_url = self._construct_url(num_days=10)
+    def scrape_last_days(self, num_days: int = 3):
+        """Scrape and parse all tables from num_days ago to today."""
+        new_url = self._construct_url(num_days=num_days)
         return self._get_incidents(new_url)
 
     def _construct_url(self, num_days: int = 0, year_beginning: bool = False):
