@@ -36,7 +36,7 @@ def main():
     # General setup
     scraper = UCPDScraper()
     logging_client = gcp_logging.Client()
-    logging_client.setup_logging()
+    logging_client.setup_logging(log_level=logging.DEBUG)
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     incidents: dict
@@ -60,9 +60,6 @@ def main():
         ]
         for key_list in list_of_key_lists:
             incident_objs = []
-            logging.info(
-                "Getting address information from the Census Geocoder."
-            )
             for key in key_list:
                 i = incidents[key]
                 i["UCPD_ID"] = key
@@ -71,13 +68,16 @@ def main():
                 )
                 if census_resp:
                     set_validated_location(i, census_resp)
+                    i["Reported"] = i["Reported"].replace(";", ":")
                     i["ReportedDate"] = date_str_to_date_format(i["Reported"])
                     i["Reported"] = date_str_to_iso_format(i["Reported"])
                     incident_objs.append(i)
                 else:
-                    logging.debug(i)
+                    logging.error(
+                        "This incident failed to get a location with the Census "
+                        f"Geocoder: {i}"
+                    )
             added_incidents += len(incident_objs)
-            logging.info("Finished getting address information from Census.")
             logging.info(
                 f"{added_incidents} of {total_incidents} incidents were recovered from "
                 "the Census Geocoder."
