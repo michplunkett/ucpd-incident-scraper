@@ -21,3 +21,7 @@ five_days:
 .PHONY: ten_days
 ten_days:
 	python -m incident_scraper days-back 10
+
+.PHONY: twenty_days
+ten_days:
+	python -m incident_scraper days-back 20
