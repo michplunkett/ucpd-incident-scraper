@@ -25,7 +25,7 @@ def main():
     days_back.add_argument(
         "days",
         # The range is locked between 3 and 10.
-        type=IntRange(3, 10),
+        type=IntRange(3, 20),
         default=3,
     )
 
@@ -41,46 +41,65 @@ def main():
 
     incidents: dict
     if args.command == "days-back":
-        if args.days == 3:
-            incidents = scraper.scrape_last_three_days()
-        elif args.days == 5:
-            incidents = scraper.scrape_last_five_days()
-        elif args.days == 10:
-            incidents = scraper.scrape_last_ten_days()
+        incidents = scraper.scrape_last_days(args.days)
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
 
+    total_incidents = len(incidents.keys())
     logging.info(
-        f"{len(incidents.keys())} incidents were scraped from the UCPD Incidents' site."
+        f"{total_incidents} incidents were scraped from the UCPD Incidents' site."
     )
-    if len(incidents.keys()):
+    if total_incidents:
         census = CensusClient()
-        incident_objs = []
-        logging.info(
-            "Grabbing official address information from the Census Geocoder."
-        )
-        for key in incidents.keys():
-            i = incidents[key]
-            i["UCPD_ID"] = key
-            census_resp = census.validate_address(i["Location"].split(" (")[0])
-            if census_resp:
-                set_validated_location(i, census_resp)
-                i["ReportedDate"] = date_str_to_date_format(i["Reported"])
-                i["Reported"] = date_str_to_iso_format(i["Reported"])
-                incident_objs.append(i)
-        logging.info("Finished official address information from Census.")
-        logging.info(
-            f"{len(incident_objs)} incidents were recovered from the Census Geocoder."
-        )
-        if len(incident_objs):
+        # Split list of incidents into groups of 30 and submit them
+        n = 30
+        added_incidents = 0
+        list_of_key_lists = [
+            list(incidents.keys())[i * n : (i + 1) * n]
+            for i in range((total_incidents + n - 1) // n)
+        ]
+        for key_list in list_of_key_lists:
+            incident_objs = []
             logging.info(
-                f"Adding {len(incident_objs)} incidents are being added to the GCP "
-                f"Datastore."
+                "Getting address information from the Census Geocoder."
             )
-            GoogleNBD().add_incidents(incident_objs)
+            for key in key_list:
+                i = incidents[key]
+                i["UCPD_ID"] = key
+                census_resp = census.validate_address(
+                    i["Location"].split(" (")[0]
+                )
+                if census_resp:
+                    set_validated_location(i, census_resp)
+                    i["ReportedDate"] = date_str_to_date_format(i["Reported"])
+                    i["Reported"] = date_str_to_iso_format(i["Reported"])
+                    incident_objs.append(i)
+                else:
+                    logging.debug(i)
+            added_incidents += len(incident_objs)
+            logging.info("Finished getting address information from Census.")
             logging.info(
-                f"Finished adding {len(incident_objs)} incidents to the GCP Datastore."
+                f"{added_incidents} of {total_incidents} incidents were recovered from "
+                "the Census Geocoder."
             )
+            if len(incident_objs):
+                logging.info(
+                    f"Adding {added_incidents} of {total_incidents} incidents to the "
+                    "GCP Datastore."
+                )
+                GoogleNBD().add_incidents(incident_objs)
+                logging.info(
+                    f"Finished adding {added_incidents} of {total_incidents} incidents "
+                    "to the GCP Datastore."
+                )
+        logging.info(
+            f"Completed adding {added_incidents} of {total_incidents} incidents to the "
+            "GCP Datastore."
+        )
+        logging.info(
+            f"{total_incidents - added_incidents} of {total_incidents} incidents were "
+            f"not added to the GCP Datastore due to bad Census Geocoder responses."
+        )
 
 
 if __name__ == "__main__":
