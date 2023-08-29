@@ -36,7 +36,7 @@ def main():
     # General setup
     scraper = UCPDScraper()
     logging_client = gcp_logging.Client()
-    logging_client.setup_logging(log_level=logging.DEBUG)
+    logging_client.setup_logging(log_level=logging.INFO)
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
     incidents: dict
@@ -58,10 +58,17 @@ def main():
             list(incidents.keys())[i * n : (i + 1) * n]
             for i in range((total_incidents + n - 1) // n)
         ]
+        geocode_error_incidents = []
+        void_incidents = []
         for key_list in list_of_key_lists:
             incident_objs = []
             for key in key_list:
                 i = incidents[key]
+
+                if not [k for k in i.keys() if i[k] != "Void"]:
+                    void_incidents.append(i)
+                    continue
+
                 i["UCPD_ID"] = key
                 census_resp = census.validate_address(
                     i["Location"].split(" (")[0]
@@ -73,14 +80,20 @@ def main():
                     i["Reported"] = date_str_to_iso_format(i["Reported"])
                     incident_objs.append(i)
                 else:
+                    geocode_error_incidents.append(i)
                     logging.error(
                         "This incident failed to get a location with the Census "
                         f"Geocoder: {i}"
                     )
             added_incidents += len(incident_objs)
             logging.info(
-                f"{added_incidents} of {total_incidents} incidents were recovered from "
-                "the Census Geocoder."
+                f"{len(void_incidents)} of {total_incidents} contained voided information."
+            )
+            logging.info(
+                f"{len(geocode_error_incidents)} of {total_incidents} could not be processed by the Census Geocoder."
+            )
+            logging.info(
+                f"{added_incidents} of {total_incidents} incidents were successfully processed."
             )
             if len(incident_objs):
                 logging.info(
@@ -88,17 +101,13 @@ def main():
                     "GCP Datastore."
                 )
                 GoogleNBD().add_incidents(incident_objs)
-                logging.info(
-                    f"Finished adding {added_incidents} of {total_incidents} incidents "
-                    "to the GCP Datastore."
-                )
         logging.info(
             f"Completed adding {added_incidents} of {total_incidents} incidents to the "
             "GCP Datastore."
         )
         logging.info(
             f"{total_incidents - added_incidents} of {total_incidents} incidents were "
-            f"not added to the GCP Datastore due to bad Census Geocoder responses."
+            f"NOT added to the GCP Datastore."
         )
 
 
