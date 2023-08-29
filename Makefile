@@ -10,6 +10,10 @@ lint:
 seed_datastore:
 	python -m incident_scraper seed
 
+.PHONY: update
+update:
+	python -m incident_scraper update
+
 .PHONY: three_days
 three_days:
 	python -m incident_scraper days-back 3

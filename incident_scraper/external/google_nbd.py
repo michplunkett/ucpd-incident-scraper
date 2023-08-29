@@ -1,5 +1,6 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 import os
+from datetime import date, datetime
 
 from google.cloud.ndb import Client, GeoPt, put_multi
 
@@ -60,6 +61,15 @@ class GoogleNBD:
                 nbd_incident = self._create_incident_from_dict(i)
                 incident_keys.append(nbd_incident)
             put_multi(incident_keys)
+
+    def get_latest_date(self) -> date:
+        """Get latest incident date."""
+        with self.client.context():
+            query = Incident.query().order(-Incident.reported_date).fetch(1)
+            if query:
+                return query[0].reported_date
+            else:
+                return datetime.now().date()
 
     def remove_incident(self, ucpd_id: str):
         """Remove incident from datastore."""

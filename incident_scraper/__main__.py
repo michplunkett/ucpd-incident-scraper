@@ -2,6 +2,7 @@
 import argparse
 import logging
 import sys
+from datetime import datetime
 
 import google.cloud.logging as gcp_logging
 from click import IntRange
@@ -30,10 +31,12 @@ def main():
     )
 
     subparser.add_parser("seed")
+    subparser.add_parser("update")
 
     args = parser.parse_args()
 
     # General setup
+    nbd_client = GoogleNBD()
     scraper = UCPDScraper()
     logging_client = gcp_logging.Client()
     logging_client.setup_logging(log_level=logging.INFO)
@@ -44,6 +47,13 @@ def main():
         incidents = scraper.scrape_back_n_days(args.days)
     elif args.command == "seed":
         incidents = scraper.scrape_from_beginning_2023()
+    elif args.command == "update":
+        day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
+        if day_diff > 0:
+            incidents = scraper.scrape_last_days(day_diff - 1)
+        else:
+            logging.info("Saved incidents are up-to-date.")
+            return 0
 
     total_incidents = len(incidents.keys())
     logging.info(
@@ -87,20 +97,23 @@ def main():
                     )
             added_incidents += len(incident_objs)
             logging.info(
-                f"{len(void_incidents)} of {total_incidents} contained voided information."
+                f"{len(void_incidents)} of {total_incidents} contained voided "
+                f"information."
             )
             logging.info(
-                f"{len(geocode_error_incidents)} of {total_incidents} could not be processed by the Census Geocoder."
+                f"{len(geocode_error_incidents)} of {total_incidents} could not be "
+                f"processed by the Census Geocoder."
             )
             logging.info(
-                f"{added_incidents} of {total_incidents} incidents were successfully processed."
+                f"{added_incidents} of {total_incidents} incidents were successfully "
+                f"processed."
             )
             if len(incident_objs):
                 logging.info(
                     f"Adding {added_incidents} of {total_incidents} incidents to the "
                     "GCP Datastore."
                 )
-                GoogleNBD().add_incidents(incident_objs)
+                nbd_client.add_incidents(incident_objs)
         logging.info(
             f"Completed adding {added_incidents} of {total_incidents} incidents to the "
             "GCP Datastore."
