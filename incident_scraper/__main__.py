@@ -64,15 +64,16 @@ def main():
         census = CensusClient()
         # Split list of incidents into groups of 30 and submit them
         n = 30
-        added_incidents = 0
+        total_added_incidents = 0
         list_of_key_lists = [
             list(incidents.keys())[i * n : (i + 1) * n]
             for i in range((total_incidents + n - 1) // n)
         ]
-        geocode_error_incidents = []
-        void_incidents = []
         for key_list in list_of_key_lists:
+            added_incidents = 0
             incident_objs = []
+            geocode_error_incidents = []
+            void_incidents = []
             inter_incidents = len(key_list)
             for key in key_list:
                 i = incidents[key]
@@ -124,9 +125,11 @@ def main():
                     f"Completed adding {added_incidents} of {inter_incidents} "
                     "incidents to the GCP Datastore."
                 )
+            total_added_incidents += added_incidents
+
 
         logging.info(
-            f"{total_incidents - added_incidents} of {total_incidents} incidents were "
+            f"{total_added_incidents} of {total_incidents} incidents were "
             f"NOT added to the GCP Datastore."
         )
 
