@@ -5,7 +5,6 @@ from datetime import date, datetime
 from google.cloud.ndb import Client, GeoPt, put_multi
 
 from incident_scraper.models.incident import Incident
-from incident_scraper.utils.constants import UCPD_MDY_KEY_DATE_FORMAT
 
 
 def get_incident(ucpd_id: str):
@@ -30,11 +29,10 @@ class GoogleNBD:
     def _create_incident_from_dict(incident: dict):
         """Convert an incident dict to a Incident Model."""
         return Incident(
-            id=f"{incident['UCPD_ID']}_"
-            f"{incident['ReportedDate'].strftime(UCPD_MDY_KEY_DATE_FORMAT)}",
+            id=f"{incident['UCPD_ID']}_{incident['ReportedDate']}",
             ucpd_id=incident["UCPD_ID"],
             incident=incident["Incident"],
-            reported=incident["Reported"],
+            reported=incident["Reported"].isoformat(),
             reported_date=incident["ReportedDate"],
             occurred=incident["Occurred"],
             comments=incident["Comments / Nature of Fire"],

@@ -3,7 +3,6 @@ import logging
 import time
 from datetime import datetime, timedelta
 
-import pytz
 import requests
 from lxml import etree, html
 
@@ -21,11 +20,10 @@ class UCPDScraper:
     BASE_UCPD_URL = (
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
-    TZ = pytz.timezone(TIMEZONE_CHICAGO)
 
     def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
-        self.today = datetime.now(self.TZ).date()
+        self.today = datetime.now(TIMEZONE_CHICAGO).date()
         self.today_str = self.today.strftime(UCPD_MDY_DATE_FORMAT)
         self.headers = HEADERS.copy()
         self.user_agent_rotator = Headers()

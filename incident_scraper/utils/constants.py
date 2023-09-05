@@ -1,9 +1,9 @@
 """Contains constants that are used throughout the application."""
+import pytz
 
 # Date/Time Constants
-TIMEZONE_CHICAGO = "America/Chicago"
-UCPD_DATE_FORMAT = "%x %I:%M %p"
-UCPD_DOY_DATE_FORMAT = "%x"
+TIMEZONE_CHICAGO = pytz.timezone("America/Chicago")
+UCPD_DATE_FORMAT = "%m/%d/%y %I:%M %p"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
