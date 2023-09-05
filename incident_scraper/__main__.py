@@ -9,12 +9,13 @@ from click import IntRange
 
 from incident_scraper.external.census import CensusClient
 from incident_scraper.external.google_nbd import GoogleNBD
-from incident_scraper.models.incident import (
-    date_str_to_date_format,
-    date_str_to_iso_format,
-    set_validated_location,
-)
+from incident_scraper.models.incident import set_validated_location
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
+from incident_scraper.utils.constants import (
+    TIMEZONE_CHICAGO,
+    UCPD_DATE_FORMAT,
+    UCPD_MDY_KEY_DATE_FORMAT,
+)
 
 
 def main():
@@ -57,7 +58,7 @@ def main():
 
     total_incidents = len(incidents.keys())
     logging.info(
-        f"{total_incidents} incidents were scraped from the UCPD Incidents' site."
+        f"{total_incidents} total incidents were scraped from the UCPD Incidents' site."
     )
     if total_incidents:
         census = CensusClient()
@@ -72,6 +73,7 @@ def main():
         void_incidents = []
         for key_list in list_of_key_lists:
             incident_objs = []
+            inter_incidents = len(key_list)
             for key in key_list:
                 i = incidents[key]
 
@@ -86,8 +88,12 @@ def main():
                 if census_resp:
                     set_validated_location(i, census_resp)
                     i["Reported"] = i["Reported"].replace(";", ":")
-                    i["ReportedDate"] = date_str_to_date_format(i["Reported"])
-                    i["Reported"] = date_str_to_iso_format(i["Reported"])
+                    i["ReportedDate"] = TIMEZONE_CHICAGO.localize(
+                        datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
+                    ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
+                    i["Reported"] = TIMEZONE_CHICAGO.localize(
+                        datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
+                    )
                     incident_objs.append(i)
                 else:
                     geocode_error_incidents.append(i)
@@ -95,29 +101,30 @@ def main():
                         "This incident failed to get a location with the Census "
                         f"Geocoder: {i}"
                     )
-            added_incidents += len(incident_objs)
+            added_incidents = len(incident_objs)
             logging.info(
-                f"{len(void_incidents)} of {total_incidents} contained voided "
+                f"{len(void_incidents)} of {inter_incidents} contained voided "
                 f"information."
             )
             logging.info(
-                f"{len(geocode_error_incidents)} of {total_incidents} could not be "
+                f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
                 f"processed by the Census Geocoder."
             )
             logging.info(
-                f"{added_incidents} of {total_incidents} incidents were successfully "
+                f"{added_incidents} of {inter_incidents} incidents were successfully "
                 f"processed."
             )
             if len(incident_objs):
                 logging.info(
-                    f"Adding {added_incidents} of {total_incidents} incidents to the "
+                    f"Adding {added_incidents} of {inter_incidents} incidents to the "
                     "GCP Datastore."
                 )
                 nbd_client.add_incidents(incident_objs)
-        logging.info(
-            f"Completed adding {added_incidents} of {total_incidents} incidents to the "
-            "GCP Datastore."
-        )
+                logging.info(
+                    f"Completed adding {added_incidents} of {inter_incidents} "
+                    "incidents to the GCP Datastore."
+                )
+
         logging.info(
             f"{total_incidents - added_incidents} of {total_incidents} incidents were "
             f"NOT added to the GCP Datastore."
