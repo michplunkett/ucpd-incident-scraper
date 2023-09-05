@@ -5,6 +5,7 @@ from datetime import date, datetime
 from google.cloud.ndb import Client, GeoPt, put_multi
 
 from incident_scraper.models.incident import Incident
+from incident_scraper.utils.constants import UCPD_MDY_KEY_DATE_FORMAT
 
 
 def get_incident(ucpd_id: str):
@@ -65,7 +66,9 @@ class GoogleNBD:
         with self.client.context():
             query = Incident.query().order(-Incident.reported_date).fetch(1)
             if query:
-                return query[0].reported_date
+                return datetime.strptime(
+                    query[0].reported_date, UCPD_MDY_KEY_DATE_FORMAT
+                ).date()
             else:
                 return datetime.now().date()
 

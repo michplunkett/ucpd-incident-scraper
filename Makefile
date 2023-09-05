@@ -6,8 +6,8 @@ lint:
 	isort ${BASEDIR}/
 	ruff ${BASEDIR}/
 
-.PHONY: seed_datastore
-seed_datastore:
+.PHONY: seed
+seed:
 	python -m incident_scraper seed
 
 .PHONY: update
