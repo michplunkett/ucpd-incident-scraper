@@ -51,7 +51,7 @@ def main():
     elif args.command == "update":
         day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
         if day_diff > 0:
-            incidents = scraper.scrape_last_days(day_diff - 1)
+            incidents = scraper.scrape_back_n_days(day_diff - 1)
         else:
             logging.info("Saved incidents are up-to-date.")
             return 0
