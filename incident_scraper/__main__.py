@@ -128,8 +128,8 @@ def main():
             total_added_incidents += added_incidents
 
         logging.info(
-            f"{total_added_incidents} of {total_incidents} incidents were "
-            f"NOT added to the GCP Datastore."
+            f"{total_incidents - total_added_incidents} of {total_incidents} incidents "
+            "were NOT added to the GCP Datastore."
         )
 
 
