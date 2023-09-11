@@ -64,6 +64,7 @@ def main():
 
 
 def update_records():
+    """Update incident records based on last scraped incident."""
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
     day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
@@ -79,7 +80,9 @@ def update_records():
     if len(incidents.keys()):
         parse_and_save_records(incidents, nbd_client)
 
+
 def parse_and_save_records(incidents, nbd_client):
+    """Take incidents and save them to the GCP Datastore."""
     census = CensusClient()
     total_incidents = len(incidents.keys())
     # Split list of incidents into groups of 30 and submit them
@@ -102,9 +105,7 @@ def parse_and_save_records(incidents, nbd_client):
                 continue
 
             i["UCPD_ID"] = key
-            census_resp = census.validate_address(
-                i["Location"].split(" (")[0]
-            )
+            census_resp = census.validate_address(i["Location"].split(" (")[0])
             if census_resp:
                 set_validated_location(i, census_resp)
                 i["Reported"] = i["Reported"].replace(";", ":")
@@ -150,6 +151,7 @@ def parse_and_save_records(incidents, nbd_client):
         f"{total_incidents - total_added_incidents} of {total_incidents} incidents "
         "were NOT added to the GCP Datastore."
     )
+
 
 if __name__ == "__main__":
     main()
