@@ -70,7 +70,6 @@ def main():
             for i in range((total_incidents + n - 1) // n)
         ]
         for key_list in list_of_key_lists:
-            added_incidents = 0
             incident_objs = []
             geocode_error_incidents = []
             void_incidents = []
