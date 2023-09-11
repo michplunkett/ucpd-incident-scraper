@@ -1,3 +1,4 @@
+"""Houses the endpoint that triggers scraping the UCPD Incident site."""
 import os
 
 from flask import Flask
@@ -11,7 +12,7 @@ app = Flask(__name__)
 def update_incidents():
     """Update incidents based on the most recent scrape date."""
     update_records()
-    return 1
+    return True
 
 
 if __name__ == "__main__":
