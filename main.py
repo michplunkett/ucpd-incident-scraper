@@ -6,6 +6,7 @@ from incident_scraper.__main__ import update_records
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def update_incidents():
     """Update incidents based on the most recent scrape date."""
