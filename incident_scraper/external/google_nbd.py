@@ -1,4 +1,5 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
+import json
 import os
 from datetime import date, datetime
 
@@ -22,9 +23,16 @@ class GoogleNBD:
 
     ENTITY_TYPE = "Incident"
     PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+    CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 
     def __init__(self):
-        self.client = Client(self.PROJECT_ID)
+        if self.CREDENTIALS.endswith(".json"):
+            self.client = Client(self.PROJECT_ID)
+        else:
+            self.client = Client(
+                credentials=json.loads(self.CREDENTIALS),
+                project=self.PROJECT_ID,
+            )
 
     @staticmethod
     def _create_incident_from_dict(incident: dict):

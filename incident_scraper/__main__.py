@@ -1,13 +1,12 @@
 """Serves as the entry point for the project module."""
 import argparse
 import logging
-import sys
 from datetime import datetime
 
-import google.cloud.logging as gcp_logging
 from click import IntRange
 
 from incident_scraper.external.census import CensusClient
+from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.models.incident import set_validated_location
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
@@ -39,9 +38,7 @@ def main():
     # General setup
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
-    logging_client = gcp_logging.Client()
-    logging_client.setup_logging(log_level=logging.INFO)
-    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+    init_logger()
 
     incidents: dict
     if args.command == "days-back":
@@ -65,6 +62,7 @@ def main():
 
 def update_records():
     """Update incident records based on last scraped incident."""
+    init_logger()
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
     day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
