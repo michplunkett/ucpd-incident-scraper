@@ -14,7 +14,6 @@ censusgeocode = "^0.5.2"
 cssselect = "^1.2.0"
 google-cloud-ndb = "^2.1.1"
 google-cloud-logging = "^3.6.0"
-gunicorn = "^21.2.0"
 apscheduler = "^3.10.4"
 
 [tool.poetry.group.dev.dependencies]
