@@ -1,7 +1,13 @@
 """Contains the headers class."""
+import gzip
 import json
 import os
 import random
+
+from incident_scraper.utils.constants import (
+    FILE_ENCODING_UTF_8,
+    FILE_OPEN_MODE_READ,
+)
 
 
 class Headers:
@@ -13,12 +19,15 @@ class Headers:
 
     def _load_headers_file(self):
         """Load the list of headers."""
-        path = (
+        file_path = (
             os.getcwd().replace("\\", "/")
-            + "/incident_scraper/data/http_headers.json"
+            + "/incident_scraper/data/http_headers.json.gz"
         )
-        with open(path, "r") as json_file:
-            self.list_of_headers = json.load(json_file)
+
+        with gzip.open(file_path, FILE_OPEN_MODE_READ) as f:
+            self.list_of_headers = json.loads(
+                f.read().decode(FILE_ENCODING_UTF_8)
+            )
 
     def get_random_header(self):
         """Use random number generator to get random header from list."""

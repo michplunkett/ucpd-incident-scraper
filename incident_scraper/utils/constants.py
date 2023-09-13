@@ -9,6 +9,7 @@ UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
 # File Constants
 FILE_OPEN_MODE_READ = "r"
+FILE_ENCODING_UTF_8 = "utf-8"
 
 # Scraping Constants
 HEADERS = {
