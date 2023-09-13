@@ -3,6 +3,7 @@ import json
 from datetime import date, datetime
 
 from google.cloud.ndb import Client, GeoPt, put_multi
+from google.oauth2 import service_account
 
 from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
@@ -30,8 +31,11 @@ class GoogleNBD:
         if ENV_CREDENTIALS.endswith(".json"):
             self.client = Client(ENV_PROJECT_ID)
         else:
+            credentials = service_account.Credentials.from_service_account_info(
+                json.loads(ENV_CREDENTIALS)
+            )
             self.client = Client(
-                credentials=json.loads(ENV_CREDENTIALS),
+                credentials=credentials,
                 project=ENV_PROJECT_ID,
             )
 
