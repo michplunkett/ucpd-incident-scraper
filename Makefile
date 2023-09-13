@@ -2,9 +2,9 @@ BASEDIR=incident_scraper
 
 .PHONY: lint
 lint:
-	black ${BASEDIR}/ ./
-	isort ${BASEDIR}/
-	ruff ${BASEDIR}/
+	black ${BASEDIR}/ ./scheduler.py
+	isort ${BASEDIR}/ ./scheduler.py
+	ruff ${BASEDIR}/ ./scheduler.py
 
 .PHONY: seed
 seed:
