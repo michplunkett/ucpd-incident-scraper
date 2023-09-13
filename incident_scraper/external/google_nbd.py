@@ -1,12 +1,15 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 import json
-import os
 from datetime import date, datetime
 
 from google.cloud.ndb import Client, GeoPt, put_multi
 
 from incident_scraper.models.incident import Incident
-from incident_scraper.utils.constants import UCPD_MDY_KEY_DATE_FORMAT
+from incident_scraper.utils.constants import (
+    ENV_CREDENTIALS,
+    ENV_PROJECT_ID,
+    UCPD_MDY_KEY_DATE_FORMAT,
+)
 
 
 def get_incident(ucpd_id: str):
@@ -22,16 +25,14 @@ class GoogleNBD:
     """Create the client and access GCP NBD functionality."""
 
     ENTITY_TYPE = "Incident"
-    PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
-    CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 
     def __init__(self):
-        if self.CREDENTIALS.endswith(".json"):
-            self.client = Client(self.PROJECT_ID)
+        if ENV_CREDENTIALS.endswith(".json"):
+            self.client = Client(ENV_PROJECT_ID)
         else:
             self.client = Client(
-                credentials=json.loads(self.CREDENTIALS),
-                project=self.PROJECT_ID,
+                credentials=json.loads(ENV_CREDENTIALS),
+                project=ENV_PROJECT_ID,
             )
 
     @staticmethod

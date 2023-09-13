@@ -1,4 +1,6 @@
 """Contains constants that are used throughout the application."""
+import os
+
 import pytz
 
 # Date/Time Constants
@@ -6,6 +8,10 @@ TIMEZONE_CHICAGO = pytz.timezone("America/Chicago")
 UCPD_DATE_FORMAT = "%m/%d/%y %I:%M %p"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
+
+# Environment Constants
+ENV_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+ENV_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
 
 # File Constants
 FILE_OPEN_MODE_READ = "r"
