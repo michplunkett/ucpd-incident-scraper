@@ -74,10 +74,12 @@ def update_records():
         logging.info("Saved incidents are up-to-date.")
         return 0
 
+    total_incidents = len(incidents.keys())
+
     logging.info(
-        f"{len(incidents.keys())} total incidents were scraped from the UCPD Incidents' site."
+        f"{total_incidents} total incidents were scraped from the UCPD Incidents' site."
     )
-    if len(incidents.keys()):
+    if total_incidents:
         parse_and_save_records(incidents, nbd_client)
 
 
