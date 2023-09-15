@@ -1,6 +1,5 @@
 # UChicago Incident Page Scraper
-This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The function is stored and ran on the Google Cloud Platform as a [Cloud Function](https://cloud.google.com/functions).
-
+This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The data is stored on [Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [Heroku's Dyno](https://devcenter.heroku.com/articles/dyno-types) functionality.
 ### Relevant Reading
 - Ethical Issues of Crime Mapping: [Link](https://storymaps.arcgis.com/stories/9b71d1fba77641a0ad35b07b23aae66b?utm_source=pocket_saves)
 
@@ -19,4 +18,3 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
 
 ## Standard Commands
 - `make lint`: Runs `Black`, `isort`, and `ruff` on the codebase
-- `make run`: Runs the `main` function in the `incident_scraper` folder
