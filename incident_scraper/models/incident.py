@@ -18,13 +18,31 @@ class Incident(Model):
     validated_location = GeoPtProperty()
 
 
-def set_validated_location(scrape_response: dict, census_response: str):
-    """Set the validated locations properties."""
-    if not census_response:
+def set_census_validated_location(scrape: dict, resp: list):
+    """Set the validated location properties from the Census response."""
+    if not resp:
         return False
 
-    scrape_response["ValidatedAddress"] = census_response[0]
-    scrape_response["ValidatedLatitude"] = census_response[1]
-    scrape_response["ValidatedLongitude"] = census_response[2]
+    scrape["ValidatedAddress"] = resp[0]
+    scrape["ValidatedLatitude"] = resp[1]
+    scrape["ValidatedLongitude"] = resp[2]
+
+    return True
+
+
+def set_google_maps_validated_location(scrape: dict, resp: list):
+    """Set the validated location properties from the Census response."""
+    if not resp:
+        return False
+
+    if resp["geocode"]:
+        location = resp["geocode"]["location"]
+        scrape["ValidatedLatitude"] = location["latitude"]
+        scrape["ValidatedLongitude"] = location["longitude"]
+
+    if resp["address"]:
+        scrape["ValidatedAddress"] = resp["address"]["formattedAddress"]
+    else:
+        return False
 
     return True
