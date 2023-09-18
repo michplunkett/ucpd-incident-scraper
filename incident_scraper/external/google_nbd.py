@@ -106,7 +106,7 @@ class GoogleNBD:
     def download_all(self):
         """Download all incidents from datastore."""
         with self.client.context():
-            query = Incident.query().order(-Incident.reported_date).fetch(10)
+            query = Incident.query().order(-Incident.reported_date).fetch()
 
         json_incidents = []
         logging.info(f"Downloaded {len(query)} incident records.")
