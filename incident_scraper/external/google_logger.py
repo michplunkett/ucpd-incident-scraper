@@ -14,7 +14,7 @@ from incident_scraper.utils.constants import (
 
 def init_logger():
     """Set logger defaults."""
-    if ENV_GCP_CREDENTIALS.endswith(".json"):
+    if ENV_GCP_CREDENTIALS.endswith(FILE_TYPE_JSON):
         logging_client = gcp_logging.Client(project=ENV_GCP_PROJECT_ID)
     else:
         credentials = service_account.Credentials.from_service_account_info(

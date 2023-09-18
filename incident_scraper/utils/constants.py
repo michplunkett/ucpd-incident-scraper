@@ -18,6 +18,9 @@ ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 FILE_OPEN_MODE_READ = "r"
 FILE_ENCODING_UTF_8 = "utf-8"
 
+# File Type Constants
+FILE_TYPE_JSON = "json"
+
 # Scraping Constants
 HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"

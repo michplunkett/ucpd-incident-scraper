@@ -9,6 +9,7 @@ from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
+    FILE_TYPE_JSON,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
@@ -28,7 +29,7 @@ class GoogleNBD:
     ENTITY_TYPE = "Incident"
 
     def __init__(self):
-        if ENV_GCP_CREDENTIALS.endswith(".json"):
+        if ENV_GCP_CREDENTIALS.endswith(FILE_TYPE_JSON):
             self.client = Client(ENV_GCP_PROJECT_ID)
         else:
             credentials = service_account.Credentials.from_service_account_info(
