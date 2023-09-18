@@ -7,10 +7,18 @@ from click import IntRange
 
 from incident_scraper.external.census import CensusClient
 from incident_scraper.external.google_logger import init_logger
+from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
-from incident_scraper.models.incident import set_validated_location
+from incident_scraper.models.incident import (
+    set_census_validated_location,
+    set_google_maps_validated_location,
+)
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
+    INCIDENT_KEY_ID,
+    INCIDENT_KEY_LOCATION,
+    INCIDENT_KEY_REPORTED,
+    INCIDENT_KEY_REPORTED_DATE,
     TIMEZONE_CHICAGO,
     UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
@@ -84,6 +92,7 @@ def update_records():
 def parse_and_save_records(incidents, nbd_client):
     """Take incidents and save them to the GCP Datastore."""
     census = CensusClient()
+    google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
     # Split list of incidents into groups of 30 and submit them
     n = 30
@@ -95,41 +104,58 @@ def parse_and_save_records(incidents, nbd_client):
     for key_list in list_of_key_lists:
         incident_objs = []
         geocode_error_incidents = []
-        void_incidents = []
+        void_malformed_incidents = []
         inter_incidents = len(key_list)
         for key in key_list:
             i = incidents[key]
 
-            if not [k for k in i.keys() if i[k] != "Void"]:
-                void_incidents.append(i)
+            if [k for k in i.keys() if i[k] == "Void"]:
+                logging.error(f"This incident contains voided information: {i}")
+                void_malformed_incidents.append(i)
                 continue
 
-            i["UCPD_ID"] = key
-            census_resp = census.validate_address(i["Location"].split(" (")[0])
-            if census_resp:
-                set_validated_location(i, census_resp)
-                i["Reported"] = i["Reported"].replace(";", ":")
-                i["ReportedDate"] = TIMEZONE_CHICAGO.localize(
-                    datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
-                ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
-                i["Reported"] = TIMEZONE_CHICAGO.localize(
-                    datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
+            i[INCIDENT_KEY_ID] = key
+            address = i[INCIDENT_KEY_LOCATION].split(" (")[0]
+            i[INCIDENT_KEY_REPORTED] = i[INCIDENT_KEY_REPORTED].replace(
+                ";", ":"
+            )
+            try:
+                formatted_reported_value = datetime.strptime(
+                    i[INCIDENT_KEY_REPORTED], UCPD_DATE_FORMAT
                 )
+            except ValueError:
+                void_malformed_incidents.append(i)
+                logging.error(f"This incident has a malformed date: {i}")
+                continue
+
+            i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
+                formatted_reported_value
+            ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
+            i[INCIDENT_KEY_REPORTED] = TIMEZONE_CHICAGO.localize(
+                formatted_reported_value
+            )
+
+            if set_census_validated_location(
+                i, census.validate_address(address)
+            ) or set_google_maps_validated_location(
+                i, google_maps.get_address(address)
+            ):
                 incident_objs.append(i)
-            else:
-                geocode_error_incidents.append(i)
-                logging.error(
-                    "This incident failed to get a location with the Census "
-                    f"Geocoder: {i}"
-                )
+                continue
+
+            geocode_error_incidents.append(i)
+            logging.error(
+                "This incident failed to get a location with the Census "
+                f"and GoogleMaps' Geocoder: {i}"
+            )
         added_incidents = len(incident_objs)
         logging.info(
-            f"{len(void_incidents)} of {inter_incidents} contained voided "
-            f"information."
+            f"{len(void_malformed_incidents)} of {inter_incidents} contained malformed "
+            "or voided information."
         )
         logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
-            f"processed by the Census Geocoder."
+            f"processed by the Census or GoogleMaps' Geocoder."
         )
         logging.info(
             f"{added_incidents} of {inter_incidents} incidents were successfully "

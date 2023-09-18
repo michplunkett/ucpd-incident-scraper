@@ -4,18 +4,36 @@ import os
 import pytz
 
 # Date/Time Constants
-TIMEZONE_CHICAGO = pytz.timezone("America/Chicago")
 UCPD_DATE_FORMAT = "%m/%d/%y %I:%M %p"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
 # Environment Constants
-ENV_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
-ENV_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+ENV_GCP_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+ENV_GCP_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
 FILE_OPEN_MODE_READ = "r"
 FILE_ENCODING_UTF_8 = "utf-8"
+
+# File Type Constants
+FILE_TYPE_JSON = "json"
+
+# Incident Key Constants
+INCIDENT_KEY_ADDRESS = "ValidatedAddress"
+INCIDENT_KEY_ID = "UCPD_ID"
+INCIDENT_KEY_LATITUDE = "ValidatedLatitude"
+INCIDENT_KEY_LOCATION = "Location"
+INCIDENT_KEY_LONGITUDE = "ValidatedLongitude"
+INCIDENT_KEY_REPORTED = "Reported"
+INCIDENT_KEY_REPORTED_DATE = f"{INCIDENT_KEY_REPORTED}Date"
+
+# Location Constants
+LOCATION_CHICAGO = "Chicago"
+LOCATION_ILLINOIS = "IL"
+LOCATION_US = "US"
+TIMEZONE_CHICAGO = pytz.timezone(f"America/{LOCATION_CHICAGO}")
 
 # Scraping Constants
 HEADERS = {
