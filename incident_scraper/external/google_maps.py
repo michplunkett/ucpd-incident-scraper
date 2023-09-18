@@ -12,7 +12,7 @@ class GoogleMaps:
 
     def get_address(self, address: str):
         """Get valid address from Google Maps."""
-        result = self.client.addressvalidation(
+        resp = self.client.addressvalidation(
             [address],
             # Enable Coding Accuracy Support System
             enableUspsCass=True,
@@ -20,7 +20,8 @@ class GoogleMaps:
             regionCode="US",
         )
 
-        if result["result"] and result["result"]["verdict"]["addressComplete"]:
-            return result["result"]
+        result = resp["result"]
+        if result and result["address"]["addressComplete"]:
+            return result
         else:
             return None
