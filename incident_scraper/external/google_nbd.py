@@ -7,8 +7,8 @@ from google.oauth2 import service_account
 
 from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
-    ENV_CREDENTIALS,
-    ENV_PROJECT_ID,
+    ENV_GCP_CREDENTIALS,
+    ENV_GCP_PROJECT_ID,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
@@ -28,15 +28,15 @@ class GoogleNBD:
     ENTITY_TYPE = "Incident"
 
     def __init__(self):
-        if ENV_CREDENTIALS.endswith(".json"):
-            self.client = Client(ENV_PROJECT_ID)
+        if ENV_GCP_CREDENTIALS.endswith(".json"):
+            self.client = Client(ENV_GCP_PROJECT_ID)
         else:
             credentials = service_account.Credentials.from_service_account_info(
-                json.loads(ENV_CREDENTIALS)
+                json.loads(ENV_GCP_CREDENTIALS)
             )
             self.client = Client(
                 credentials=credentials,
-                project=ENV_PROJECT_ID,
+                project=ENV_GCP_PROJECT_ID,
             )
 
     @staticmethod
