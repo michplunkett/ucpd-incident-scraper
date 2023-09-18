@@ -21,7 +21,7 @@ class GoogleMaps:
         )
 
         result = resp["result"]
-        if result and result["address"]["addressComplete"]:
+        if result and result["address"] and result["address"]["addressComplete"]:
             return result
         else:
             return None
