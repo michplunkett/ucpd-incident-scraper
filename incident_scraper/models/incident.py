@@ -2,6 +2,12 @@
 
 from google.cloud.ndb import GeoPtProperty, Model, StringProperty
 
+from incident_scraper.utils.constants import (
+    INCIDENT_KEY_ADDRESS,
+    INCIDENT_KEY_LATITUDE,
+    INCIDENT_KEY_LONGITUDE,
+)
+
 
 class Incident(Model):
     """Standard data structure for recovered UCPD incidents."""
@@ -23,11 +29,15 @@ def set_census_validated_location(scrape: dict, resp: list):
     if not resp:
         return False
 
-    scrape["ValidatedAddress"] = resp[0]
-    scrape["ValidatedLatitude"] = resp[1]
-    scrape["ValidatedLongitude"] = resp[2]
+    scrape[INCIDENT_KEY_ADDRESS] = resp[0]
+    scrape[INCIDENT_KEY_LATITUDE] = resp[1]
+    scrape[INCIDENT_KEY_LONGITUDE] = resp[2]
 
     return True
+
+
+KEY_ADDRESS = "address"
+KEY_GEOCODE = "geocode"
 
 
 def set_google_maps_validated_location(scrape: dict, resp: list):
@@ -35,13 +45,13 @@ def set_google_maps_validated_location(scrape: dict, resp: list):
     if not resp:
         return False
 
-    if resp["geocode"]:
-        location = resp["geocode"]["location"]
-        scrape["ValidatedLatitude"] = location["latitude"]
-        scrape["ValidatedLongitude"] = location["longitude"]
+    if resp[KEY_GEOCODE]:
+        location = resp[KEY_GEOCODE]["location"]
+        scrape[INCIDENT_KEY_LATITUDE] = location["latitude"]
+        scrape[INCIDENT_KEY_LONGITUDE] = location["longitude"]
 
-    if resp["address"]:
-        scrape["ValidatedAddress"] = resp["address"]["formattedAddress"]
+    if resp[KEY_ADDRESS]:
+        scrape[INCIDENT_KEY_ADDRESS] = resp[KEY_ADDRESS]["formattedAddress"]
     else:
         return False
 

@@ -5,6 +5,8 @@ from time import sleep
 import requests
 from censusgeocode import CensusGeocode
 
+from incident_scraper.utils.constants import LOCATION_CHICAGO, LOCATION_ILLINOIS
+
 
 class CensusClient:
     """Create the Census API client and use it to validate addresses."""
@@ -26,8 +28,8 @@ class CensusClient:
             try:
                 response = self.client.address(
                     street=address,
-                    city="Chicago",
-                    state="IL",
+                    city=LOCATION_CHICAGO,
+                    state=LOCATION_ILLINOIS,
                     returntype="locations",
                     timeout=self.TIMEOUT,
                 )

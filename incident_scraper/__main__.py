@@ -15,6 +15,10 @@ from incident_scraper.models.incident import (
 )
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
+    INCIDENT_KEY_ID,
+    INCIDENT_KEY_LOCATION,
+    INCIDENT_KEY_REPORTED,
+    INCIDENT_KEY_REPORTED_DATE,
     TIMEZONE_CHICAGO,
     UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
@@ -110,22 +114,26 @@ def parse_and_save_records(incidents, nbd_client):
                 void_malformed_incidents.append(i)
                 continue
 
-            i["UCPD_ID"] = key
-            address = i["Location"].split(" (")[0]
-            i["Reported"] = i["Reported"].replace(";", ":")
+            i[INCIDENT_KEY_ID] = key
+            address = i[INCIDENT_KEY_LOCATION].split(" (")[0]
+            i[INCIDENT_KEY_REPORTED] = i[INCIDENT_KEY_REPORTED].replace(
+                ";", ":"
+            )
             try:
                 formatted_reported_value = datetime.strptime(
-                    i["Reported"], UCPD_DATE_FORMAT
+                    i[INCIDENT_KEY_REPORTED], UCPD_DATE_FORMAT
                 )
             except ValueError:
                 void_malformed_incidents.append(i)
                 logging.error(f"This incident has a malformed date: {i}")
                 continue
 
-            i["ReportedDate"] = TIMEZONE_CHICAGO.localize(
+            i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
             ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
-            i["Reported"] = TIMEZONE_CHICAGO.localize(formatted_reported_value)
+            i[INCIDENT_KEY_REPORTED] = TIMEZONE_CHICAGO.localize(
+                formatted_reported_value
+            )
 
             if set_census_validated_location(
                 i, census.validate_address(address)

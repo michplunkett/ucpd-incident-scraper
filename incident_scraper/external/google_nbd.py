@@ -10,6 +10,13 @@ from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
     FILE_TYPE_JSON,
+    INCIDENT_KEY_ADDRESS,
+    INCIDENT_KEY_ID,
+    INCIDENT_KEY_LATITUDE,
+    INCIDENT_KEY_LOCATION,
+    INCIDENT_KEY_LONGITUDE,
+    INCIDENT_KEY_REPORTED,
+    INCIDENT_KEY_REPORTED_DATE,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
@@ -44,19 +51,19 @@ class GoogleNBD:
     def _create_incident_from_dict(incident: dict):
         """Convert an incident dict to a Incident Model."""
         return Incident(
-            id=f"{incident['UCPD_ID']}_{incident['ReportedDate']}",
-            ucpd_id=incident["UCPD_ID"],
+            id=f"{incident[INCIDENT_KEY_ID]}_{incident[INCIDENT_KEY_REPORTED_DATE]}",
+            ucpd_id=incident[INCIDENT_KEY_ID],
             incident=incident["Incident"],
-            reported=incident["Reported"].isoformat(),
-            reported_date=incident["ReportedDate"],
+            reported=incident[INCIDENT_KEY_REPORTED].isoformat(),
+            reported_date=incident[INCIDENT_KEY_REPORTED_DATE],
             occurred=incident["Occurred"],
             comments=incident["Comments / Nature of Fire"],
             disposition=incident["Disposition"],
-            location=incident["Location"],
-            validated_address=incident["ValidatedAddress"],
+            location=incident[INCIDENT_KEY_LOCATION],
+            validated_address=incident[INCIDENT_KEY_ADDRESS],
             validated_location=GeoPt(
-                incident["ValidatedLongitude"],
-                incident["ValidatedLatitude"],
+                incident[INCIDENT_KEY_LONGITUDE],
+                incident[INCIDENT_KEY_LATITUDE],
             ),
         )
 

@@ -1,7 +1,11 @@
 """Contains the GoogleMaps API functions."""
 from googlemaps import Client
 
-from incident_scraper.utils.constants import ENV_GOOGLE_MAPS_KEY
+from incident_scraper.utils.constants import (
+    ENV_GOOGLE_MAPS_KEY,
+    LOCATION_CHICAGO,
+    LOCATION_US,
+)
 
 
 class GoogleMaps:
@@ -16,16 +20,12 @@ class GoogleMaps:
             [address],
             # Enable Coding Accuracy Support System
             enableUspsCass=True,
-            locality="Chicago",
-            regionCode="US",
+            locality=LOCATION_CHICAGO,
+            regionCode=LOCATION_US,
         )
 
         result = resp["result"]
-        if (
-            result
-            and result["address"]
-            and result["address"]["formattedAddress"]
-        ):
+        if result:
             return result
         else:
             return None
