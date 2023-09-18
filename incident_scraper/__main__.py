@@ -142,8 +142,8 @@ def parse_and_save_records(incidents, nbd_client):
             )
         added_incidents = len(incident_objs)
         logging.info(
-            f"{len(void_malformed_incidents)} of {inter_incidents} contained voided "
-            f"information."
+            f"{len(void_malformed_incidents)} of {inter_incidents} contained malformed "
+            "or voided information."
         )
         logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
