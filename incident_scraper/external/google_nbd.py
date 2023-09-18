@@ -1,7 +1,10 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
+import csv
 import json
+import logging
 from datetime import date, datetime
 
+from google.cloud.datastore.helpers import GeoPoint
 from google.cloud.ndb import Client, GeoPt, put_multi
 from google.oauth2 import service_account
 
@@ -9,6 +12,7 @@ from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
+    FILE_OPEN_MODE_WRITE,
     FILE_TYPE_JSON,
     INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_ID,
@@ -98,3 +102,32 @@ class GoogleNBD:
         with self.client.context():
             incident = Incident(ucpd_id=ucpd_id)
             incident.delete()
+
+    def download_all(self):
+        """Download all incidents from datastore."""
+        with self.client.context():
+            query = Incident.query().order(-Incident.reported_date).fetch()
+
+        json_incidents = []
+        logging.info(f"Downloaded {len(query)} incident records.")
+        for i in query:
+            record = {}
+            for key, value in i.to_dict().items():
+                if isinstance(value, GeoPoint):
+                    record[key] = (
+                        str(value.latitude) + "," + str(value.longitude)
+                    )
+                    continue
+                record[key] = value
+            json_incidents.append(record)
+
+        with open("incident_dump.csv", FILE_OPEN_MODE_WRITE) as csv_file:
+            csv_writer = csv.DictWriter(
+                csv_file,
+                fieldnames=json_incidents[0].keys(),
+                delimiter=",",
+                quoting=csv.QUOTE_MINIMAL,
+            )
+            csv_writer.writeheader()
+            csv_writer.writerows(json_incidents)
+        logging.info(f"Saved {len(json_incidents)} incident records to a CSV.")

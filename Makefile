@@ -6,6 +6,10 @@ lint:
 	isort ${BASEDIR}/ ./scheduler.py
 	ruff ${BASEDIR}/ ./scheduler.py
 
+.PHONY: download
+download:
+	python -m incident_scraper download
+
 .PHONY: seed
 seed:
 	python -m incident_scraper seed

@@ -15,6 +15,7 @@ ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
 FILE_OPEN_MODE_READ = "r"
+FILE_OPEN_MODE_WRITE = "w"
 FILE_ENCODING_UTF_8 = "utf-8"
 
 # File Type Constants
