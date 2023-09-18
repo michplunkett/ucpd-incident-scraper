@@ -32,5 +32,5 @@ class Headers:
     def get_random_header(self):
         """Use random number generator to get random header from list."""
         return self.list_of_headers[
-            random.randint(0, len(self.list_of_headers))
+            random.randint(0, len(self.list_of_headers) - 1)
         ]
