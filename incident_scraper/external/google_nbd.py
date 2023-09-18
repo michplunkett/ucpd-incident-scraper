@@ -1,6 +1,7 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 import csv
 import json
+import logging
 from datetime import date, datetime
 
 from google.cloud.datastore.helpers import GeoPoint
@@ -11,6 +12,7 @@ from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
+    FILE_OPEN_MODE_WRITE,
     FILE_TYPE_JSON,
     INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_ID,
@@ -107,6 +109,7 @@ class GoogleNBD:
             query = Incident.query().order(-Incident.reported_date).fetch(10)
 
         json_incidents = []
+        logging.info(f"Downloaded {len(query)} incident records.")
         for i in query:
             record = {}
             for key, value in i.to_dict().items():
@@ -118,7 +121,7 @@ class GoogleNBD:
                 record[key] = value
             json_incidents.append(record)
 
-        with open("incident_dump.csv", "w") as csv_file:
+        with open("incident_dump.csv", FILE_OPEN_MODE_WRITE) as csv_file:
             csv_writer = csv.DictWriter(
                 csv_file,
                 fieldnames=json_incidents[0].keys(),
@@ -127,3 +130,4 @@ class GoogleNBD:
             )
             csv_writer.writeheader()
             csv_writer.writerows(json_incidents)
+        logging.info(f"Saved {len(json_incidents)} incident records to a CSV.")
