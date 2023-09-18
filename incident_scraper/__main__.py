@@ -38,6 +38,7 @@ def main():
         default=3,
     )
 
+    subparser.add_parser("download")
     subparser.add_parser("seed")
     subparser.add_parser("update")
 
@@ -60,6 +61,9 @@ def main():
         else:
             logging.info("Saved incidents are up-to-date.")
             return 0
+    elif args.command == "download":
+        nbd_client.download_all()
+        return 0
 
     logging.info(
         f"{len(incidents.keys())} total incidents were scraped from the UCPD Incidents' site."
