@@ -9,6 +9,7 @@ from google.oauth2 import service_account
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
+    FILE_TYPE_JSON,
 )
 
 
