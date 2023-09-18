@@ -146,7 +146,7 @@ def parse_and_save_records(incidents, nbd_client):
             geocode_error_incidents.append(i)
             logging.error(
                 "This incident failed to get a location with the Census "
-                f"Geocoder and Google Maps: {i}"
+                f"and GoogleMaps' Geocoder: {i}"
             )
         added_incidents = len(incident_objs)
         logging.info(
