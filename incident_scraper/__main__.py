@@ -7,8 +7,12 @@ from click import IntRange
 
 from incident_scraper.external.census import CensusClient
 from incident_scraper.external.google_logger import init_logger
+from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
-from incident_scraper.models.incident import set_validated_location
+from incident_scraper.models.incident import (
+    set_census_validated_location,
+    set_google_maps_validated_location,
+)
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
     TIMEZONE_CHICAGO,
@@ -84,6 +88,7 @@ def update_records():
 def parse_and_save_records(incidents, nbd_client):
     """Take incidents and save them to the GCP Datastore."""
     census = CensusClient()
+    google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
     # Split list of incidents into groups of 30 and submit them
     n = 30
@@ -105,23 +110,28 @@ def parse_and_save_records(incidents, nbd_client):
                 continue
 
             i["UCPD_ID"] = key
-            census_resp = census.validate_address(i["Location"].split(" (")[0])
-            if census_resp:
-                set_validated_location(i, census_resp)
-                i["Reported"] = i["Reported"].replace(";", ":")
-                i["ReportedDate"] = TIMEZONE_CHICAGO.localize(
-                    datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
-                ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
-                i["Reported"] = TIMEZONE_CHICAGO.localize(
-                    datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
-                )
+            address = i["Location"].split(" (")[0]
+            i["Reported"] = i["Reported"].replace(";", ":")
+            i["ReportedDate"] = TIMEZONE_CHICAGO.localize(
+                datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
+            ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
+            i["Reported"] = TIMEZONE_CHICAGO.localize(
+                datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
+            )
+
+            if set_census_validated_location(
+                i, census.validate_address(address)
+            ) or set_google_maps_validated_location(
+                i, google_maps.get_address(address)
+            ):
                 incident_objs.append(i)
-            else:
-                geocode_error_incidents.append(i)
-                logging.error(
-                    "This incident failed to get a location with the Census "
-                    f"Geocoder: {i}"
-                )
+                continue
+
+            geocode_error_incidents.append(i)
+            logging.error(
+                "This incident failed to get a location with the Census "
+                f"Geocoder and Google Maps: {i}"
+            )
         added_incidents = len(incident_objs)
         logging.info(
             f"{len(void_incidents)} of {inter_incidents} contained voided "
