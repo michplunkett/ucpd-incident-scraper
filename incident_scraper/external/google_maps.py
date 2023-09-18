@@ -22,7 +22,11 @@ class GoogleMaps:
 
         result = resp["result"]
         print(result)
-        if result and result["address"] and result["address"]["formattedAddress"]:
+        if (
+            result
+            and result["address"]
+            and result["address"]["formattedAddress"]
+        ):
             return result
         else:
             return None
