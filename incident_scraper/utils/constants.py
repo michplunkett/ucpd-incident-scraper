@@ -12,6 +12,7 @@ UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 # Environment Constants
 ENV_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
 ENV_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
 FILE_OPEN_MODE_READ = "r"
