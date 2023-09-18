@@ -100,24 +100,32 @@ def parse_and_save_records(incidents, nbd_client):
     for key_list in list_of_key_lists:
         incident_objs = []
         geocode_error_incidents = []
-        void_incidents = []
+        void_malformed_incidents = []
         inter_incidents = len(key_list)
         for key in key_list:
             i = incidents[key]
 
-            if not [k for k in i.keys() if i[k] != "Void"]:
-                void_incidents.append(i)
+            if [k for k in i.keys() if i[k] == "Void"]:
+                logging.error(f"This incident contains voided information: {i}")
+                void_malformed_incidents.append(i)
                 continue
 
             i["UCPD_ID"] = key
             address = i["Location"].split(" (")[0]
             i["Reported"] = i["Reported"].replace(";", ":")
+            try:
+                formatted_reported_value = datetime.strptime(
+                    i["Reported"], UCPD_DATE_FORMAT
+                )
+            except ValueError:
+                void_malformed_incidents.append(i)
+                logging.error(f"This incident has a malformed date: {i}")
+                continue
+
             i["ReportedDate"] = TIMEZONE_CHICAGO.localize(
-                datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
+                formatted_reported_value
             ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
-            i["Reported"] = TIMEZONE_CHICAGO.localize(
-                datetime.strptime(i["Reported"], UCPD_DATE_FORMAT)
-            )
+            i["Reported"] = TIMEZONE_CHICAGO.localize(formatted_reported_value)
 
             if set_census_validated_location(
                 i, census.validate_address(address)
@@ -134,12 +142,12 @@ def parse_and_save_records(incidents, nbd_client):
             )
         added_incidents = len(incident_objs)
         logging.info(
-            f"{len(void_incidents)} of {inter_incidents} contained voided "
+            f"{len(void_malformed_incidents)} of {inter_incidents} contained voided "
             f"information."
         )
         logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
-            f"processed by the Census Geocoder."
+            f"processed by the Census or GoogleMaps' Geocoder."
         )
         logging.info(
             f"{added_incidents} of {inter_incidents} incidents were successfully "
