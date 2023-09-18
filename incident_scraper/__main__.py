@@ -24,13 +24,18 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
+COMMAND_DAYS_BACK = "days-back"
+COMMAND_DOWNLOAD = "download"
+COMMAND_SEED = "seed"
+COMMAND_UPDATE = "update"
+
 
 def main():
     """Run the UCPD Incident Scraper."""
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers(dest="command")
 
-    days_back = subparser.add_parser("days-back")
+    days_back = subparser.add_parser(COMMAND_DAYS_BACK)
     days_back.add_argument(
         "days",
         # The range is locked between 3 and 10.
@@ -38,9 +43,9 @@ def main():
         default=3,
     )
 
-    subparser.add_parser("download")
-    subparser.add_parser("seed")
-    subparser.add_parser("update")
+    subparser.add_parser(COMMAND_DOWNLOAD)
+    subparser.add_parser(COMMAND_SEED)
+    subparser.add_parser(COMMAND_UPDATE)
 
     args = parser.parse_args()
 
@@ -50,18 +55,18 @@ def main():
     init_logger()
 
     incidents: dict
-    if args.command == "days-back":
+    if args.command == COMMAND_DAYS_BACK:
         incidents = scraper.scrape_last_days(args.days)
-    elif args.command == "seed":
+    elif args.command == COMMAND_SEED:
         incidents = scraper.scrape_from_beginning_2023()
-    elif args.command == "update":
+    elif args.command == COMMAND_UPDATE:
         day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
         if day_diff > 0:
             incidents = scraper.scrape_last_days(day_diff - 1)
         else:
             logging.info("Saved incidents are up-to-date.")
             return 0
-    elif args.command == "download":
+    elif args.command == COMMAND_DOWNLOAD:
         nbd_client.download_all()
         return 0
 
