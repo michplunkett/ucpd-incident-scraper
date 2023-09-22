@@ -13,7 +13,8 @@ from incident_scraper.utils.constants import (
 class Headers:
     """Class that contains all headers in external header file."""
 
-    def __init__(self):
+    def __init__(self, seed=None):
+        random.seed(seed)
         self.list_of_headers = []
         self._load_headers_file()
 
