@@ -21,7 +21,7 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
 
-    def __init__(self, request_delay=0.2):
+    def __init__(self, request_delay=0.3):
         self.request_delay = request_delay
         self.today = datetime.now(TIMEZONE_CHICAGO).date()
         self.today_str = self.today.strftime(UCPD_MDY_DATE_FORMAT)
