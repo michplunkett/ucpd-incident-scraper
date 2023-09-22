@@ -39,3 +39,11 @@ ten_days:
 .PHONY: twenty_days
 twenty_days:
 	python -m incident_scraper days-back 20
+
+.PHONY: test
+test:
+	pytest -vs test/
+
+.PHONY: test-and-fail
+test-and-fail:
+	pytest -vsx test/
