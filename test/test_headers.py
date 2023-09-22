@@ -5,8 +5,6 @@ from incident_scraper.scraper.headers import Headers
 def test_header_randomization():
     """Test functionality of Header class randomization."""
     header = Headers(seed=999)
-    #rand_header = header.get_random_header()
-    #rand_header_2 = header.get_random_header()
 
     assert (
         header.get_random_header()
