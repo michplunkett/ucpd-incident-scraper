@@ -14,7 +14,7 @@ class Headers:
     """Class that contains all headers in external header file."""
 
     def __init__(self, seed=None):
-        self.seed = seed
+        random.seed(seed)
         self.list_of_headers = []
         self._load_headers_file()
 
@@ -32,7 +32,6 @@ class Headers:
 
     def get_random_header(self):
         """Use random number generator to get random header from list."""
-        random.seed(self.seed)
         return self.list_of_headers[
             random.randint(0, len(self.list_of_headers) - 1)
         ]

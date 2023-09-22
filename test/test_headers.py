@@ -1,6 +1,4 @@
 """Test functionality of Header class."""
-import random
-
 from incident_scraper.scraper.headers import Headers
 
 
