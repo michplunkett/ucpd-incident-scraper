@@ -103,8 +103,8 @@ def parse_and_save_records(incidents, nbd_client):
     census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
-    # Split list of incidents into groups of 30 and submit them
-    n = 30
+    # Split list of incidents into groups of 60 and submit them
+    n = 60
     total_added_incidents = 0
     list_of_key_lists = [
         list(incidents.keys())[i * n : (i + 1) * n]
@@ -184,7 +184,7 @@ def parse_and_save_records(incidents, nbd_client):
 
     logging.info(
         f"{total_incidents - total_added_incidents} of {total_incidents} incidents "
-        "were NOT added to the GCP Datastore."
+        "could NOT be added to the GCP Datastore."
     )
 
 
