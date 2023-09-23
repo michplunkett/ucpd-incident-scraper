@@ -8,7 +8,6 @@ from lxml import etree, html
 
 from incident_scraper.scraper.headers import Headers
 from incident_scraper.utils.constants import (
-    HEADERS,
     TIMEZONE_CHICAGO,
     UCPD_MDY_DATE_FORMAT,
 )
@@ -25,7 +24,16 @@ class UCPDScraper:
         self.request_delay = request_delay
         self.today = datetime.now(TIMEZONE_CHICAGO).date()
         self.today_str = self.today.strftime(UCPD_MDY_DATE_FORMAT)
-        self.headers = HEADERS.copy()
+        self.headers = {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+            "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Cache-Control": "max-age=0",
+            "Connection": "keep-alive",
+            "Host": "incidentreports.uchicago.edu",
+            "Upgrade-Insecure-Requests": "1",
+        }
         self.user_agent_rotator = Headers()
 
     def scrape_from_beginning_2023(self):
