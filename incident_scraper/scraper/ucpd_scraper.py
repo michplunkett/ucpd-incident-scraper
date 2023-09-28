@@ -22,8 +22,6 @@ class UCPDScraper:
 
     def __init__(self, request_delay=0.3):
         self.request_delay = request_delay
-        self.today = datetime.now(TIMEZONE_CHICAGO).date()
-        self.today_str = self.today.strftime(UCPD_MDY_DATE_FORMAT)
         self.headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
             "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
@@ -53,16 +51,19 @@ class UCPDScraper:
         Constructs the URL to scrape from by getting the epochs of the present day and
         the first day of the current year.
         """
+        today = datetime.now(TIMEZONE_CHICAGO).date()
+        today_str = today.strftime(UCPD_MDY_DATE_FORMAT)
+
         previous_datetime = (
             datetime(2023, 1, 1).date()
             if year_beginning
-            else self.today - timedelta(days=num_days)
+            else today - timedelta(days=num_days)
         )
         previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
 
         return (
             f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
-            f"{self.today_str}&offset="
+            f"{today_str}&offset="
         )
 
     def _get_table(self, url: str):
@@ -94,7 +95,10 @@ class UCPDScraper:
                 continue
 
             incident_id = incident[INCIDENT_INDEX].text
-            if incident_id == "None" or "No Incident Reports" in incident.text:
+            if (
+                incident_id in ["None", ":"]
+                or "No Incident Reports" in incident.text
+            ):
                 logging.error(
                     f"This incident had an ID of 'None': {etree.tostring(incident)}"
                 )

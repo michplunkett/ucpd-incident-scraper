@@ -19,6 +19,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LOCATION,
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
+    INCIDENT_KEY_TYPE,
     TIMEZONE_CHICAGO,
     UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
@@ -54,7 +55,7 @@ def main():
     scraper = UCPDScraper()
     init_logger()
 
-    incidents: dict
+    incidents = {}
     if args.command == COMMAND_DAYS_BACK:
         incidents = scraper.scrape_last_days(args.days)
     elif args.command == COMMAND_SEED:
@@ -136,6 +137,19 @@ def parse_and_save_records(incidents, nbd_client):
                 void_malformed_incidents.append(i)
                 logging.error(f"This incident has a malformed date: {i}")
                 continue
+
+            i[INCIDENT_KEY_TYPE] = (
+                i[INCIDENT_KEY_TYPE]
+                .replace("Information / |/ Information ", "")
+                .replace("  ", " ")
+                .replace(" \(", " / ")
+                .replace("\(", "")
+                .replace("^ ", "")
+                .replace("\)", "")
+                .replace("Inforation", "Information")
+                .replace("Infformation", "Information")
+                .replace("Hit & Run", "Hit and Run")
+            )
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
