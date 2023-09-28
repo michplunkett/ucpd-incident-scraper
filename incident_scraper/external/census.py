@@ -16,6 +16,7 @@ class CensusClient:
 
     def __init__(self):
         self.client = CensusGeocode()
+        self.address_cache = {}
 
     def validate_address(self, address: str):
         """Validate address parameter and return Census result.
@@ -23,6 +24,9 @@ class CensusClient:
         For more information on the Census Geocode API, visit this link:
         https://github.com/fitnr/censusgeocode#census-geocode
         """
+        if address in self.address_cache:
+            return self.address_cache[address]
+
         response = None
         for _ in range(self.NUM_RETRIES):
             try:
@@ -44,10 +48,12 @@ class CensusClient:
 
         if response:
             coordinates = response[0]["coordinates"]
-            return (
+            self.address_cache[address] = (
                 response[0]["matchedAddress"],
                 coordinates["x"],
                 coordinates["y"],
             )
         else:
-            return None
+            self.address_cache[address] = None
+
+        return self.address_cache[address]

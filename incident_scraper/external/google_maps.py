@@ -13,9 +13,13 @@ class GoogleMaps:
 
     def __init__(self):
         self.client = Client(ENV_GOOGLE_MAPS_KEY)
+        self.address_cache = {}
 
     def get_address(self, address: str):
         """Get valid address from Google Maps."""
+        if address in self.address_cache:
+            return self.address_cache[address]
+
         resp = self.client.addressvalidation(
             [address],
             # Enable Coding Accuracy Support System
@@ -26,6 +30,8 @@ class GoogleMaps:
 
         result = resp["result"]
         if result:
-            return result
+            self.address_cache[address] = result
         else:
-            return None
+            self.address_cache[address] = None
+
+        return self.address_cache[address]
