@@ -20,31 +20,6 @@ googlemaps = "^4.10.0"
 pytest = "^7.4.2"
 pre-commit = "^3.4.0"
 
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.0.281"
-isort = "^5.12.0"
-black = "^23.7.0"
-
-[tool.black]
-line-length = 80
-
-[tool.isort]
-profile= "black"
-line_length = 80
-skip = [".gitignore", "project/data/"]
-
-[tool.ruff]
-fix=true
-line-length = 80
-target-version = "py311"
-select = ["D"]
-
-[tool.ruff.pydocstyle]
-convention = "numpy"
-
-[tool.ruff.extend-per-file-ignores]
-"__init__.py" = ["D104"]
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
