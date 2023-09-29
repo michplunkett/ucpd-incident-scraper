@@ -25,6 +25,7 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
+
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -72,7 +73,8 @@ def main():
         return 0
 
     logging.info(
-        f"{len(incidents.keys())} total incidents were scraped from the UCPD Incidents' site."
+        f"{len(incidents.keys())} total incidents were scraped from the UCPD "
+        "Incidents' site."
     )
     if len(incidents.keys()):
         parse_and_save_records(incidents, nbd_client)
@@ -93,7 +95,8 @@ def update_records():
     total_incidents = len(incidents.keys())
 
     logging.info(
-        f"{total_incidents} total incidents were scraped from the UCPD Incidents' site."
+        f"{total_incidents} total incidents were scraped from the UCPD "
+        "Incidents' site."
     )
     if total_incidents:
         parse_and_save_records(incidents, nbd_client)
@@ -142,10 +145,10 @@ def parse_and_save_records(incidents, nbd_client):
                 i[INCIDENT_KEY_TYPE]
                 .replace("Information / |/ Information ", "")
                 .replace("  ", " ")
-                .replace(" \(", " / ")
-                .replace("\(", "")
+                .replace(r" \(", " / ")
+                .replace(r"\(", "")
                 .replace("^ ", "")
-                .replace("\)", "")
+                .replace(r"\)", "")
                 .replace("Inforation", "Information")
                 .replace("Infformation", "Information")
                 .replace("Hit & Run", "Hit and Run")
@@ -173,21 +176,21 @@ def parse_and_save_records(incidents, nbd_client):
             )
         added_incidents = len(incident_objs)
         logging.info(
-            f"{len(void_malformed_incidents)} of {inter_incidents} contained malformed "
-            "or voided information."
+            f"{len(void_malformed_incidents)} of {inter_incidents} contained "
+            "malformed or voided information."
         )
         logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
             f"processed by the Census or GoogleMaps' Geocoder."
         )
         logging.info(
-            f"{added_incidents} of {inter_incidents} incidents were successfully "
-            f"processed."
+            f"{added_incidents} of {inter_incidents} incidents were "
+            "successfully processed."
         )
         if len(incident_objs):
             logging.info(
-                f"Adding {added_incidents} of {inter_incidents} incidents to the "
-                "GCP Datastore."
+                f"Adding {added_incidents} of {inter_incidents} incidents to "
+                "the GCP Datastore."
             )
             nbd_client.add_incidents(incident_objs)
             logging.info(
@@ -197,8 +200,8 @@ def parse_and_save_records(incidents, nbd_client):
         total_added_incidents += added_incidents
 
     logging.info(
-        f"{total_incidents - total_added_incidents} of {total_incidents} incidents "
-        "could NOT be added to the GCP Datastore."
+        f"{total_incidents - total_added_incidents} of {total_incidents} "
+        "incidents could NOT be added to the GCP Datastore."
     )
 
 

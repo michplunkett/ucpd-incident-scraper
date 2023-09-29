@@ -14,7 +14,9 @@ from incident_scraper.utils.constants import (
 
 
 class UCPDScraper:
-    """Scrape UCPD incident reports from present day to first day of the year."""
+    """
+    Scrape UCPD incident reports from present day to first day of the year.
+    """
 
     BASE_UCPD_URL = (
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
@@ -23,8 +25,10 @@ class UCPDScraper:
     def __init__(self, request_delay=0.3):
         self.request_delay = request_delay
         self.headers = {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
-            "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,"
+            "image/avif,"
+            "image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;"
+            "q=0.7",
             "Accept-Encoding": "gzip, deflate, br",
             "Accept-Language": "en-US,en;q=0.9",
             "Cache-Control": "max-age=0",
@@ -48,8 +52,8 @@ class UCPDScraper:
         """
         Construct the scraping URL.
 
-        Constructs the URL to scrape from by getting the epochs of the present day and
-        the first day of the current year.
+        Constructs the URL to scrape from by getting the epochs of the present
+        day and the first day of the current year.
         """
         today = datetime.now(TIMEZONE_CHICAGO).date()
         today_str = today.strftime(UCPD_MDY_DATE_FORMAT)
@@ -70,12 +74,12 @@ class UCPDScraper:
         """
         Get the table information from that UCPD incident page.
 
-        Scrapes the table from the given url and returns a dictionary and a boolean
-        stating if it scraped the last page.
+        Scrapes the table from the given url and returns a dictionary and a
+        boolean stating if it scraped the last page.
         """
         FIRST_INDEX = 0
         INCIDENT_INDEX = 6
-        incident_dict = dict()
+        incident_dict = {}
 
         logging.debug(f"Fetching {url}")
         time.sleep(self.request_delay)
@@ -90,7 +94,8 @@ class UCPDScraper:
         for incident in incident_rows:
             if len(incident) == 1:
                 logging.error(
-                    f"This incident had a length of 1: {etree.tostring(incident)}"
+                    "This incident had a length of 1: "
+                    f"{etree.tostring(incident)}"
                 )
                 continue
 
@@ -100,11 +105,12 @@ class UCPDScraper:
                 or "No Incident Reports" in incident.text
             ):
                 logging.error(
-                    f"This incident had an ID of 'None': {etree.tostring(incident)}"
+                    "This incident had an ID of 'None': "
+                    f"{etree.tostring(incident)}"
                 )
                 continue
 
-            incident_dict[incident_id] = dict()
+            incident_dict[incident_id] = {}
             for index in range(len(categories) - 1):
                 incident_dict[incident_id][
                     str(categories[index].text).strip()
@@ -120,7 +126,7 @@ class UCPDScraper:
     def _get_incidents(self, new_url: str):
         """Get all incidents for a given URL."""
         at_last_page = False
-        incidents = dict()
+        incidents = {}
         offset = 0
 
         # Loop until function arrives at last page
