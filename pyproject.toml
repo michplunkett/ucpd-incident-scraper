@@ -18,6 +18,7 @@ apscheduler = "^3.10.4"
 click = "^8.1.7"
 googlemaps = "^4.10.0"
 pytest = "^7.4.2"
+pre-commit = "^3.4.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.281"
