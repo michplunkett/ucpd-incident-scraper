@@ -4,9 +4,7 @@ default: create-requirements lint
 
 .PHONY: lint
 lint:
-	black ${BASEDIR}/ ./scheduler.py ./test
-	isort ${BASEDIR}/ ./scheduler.py ./test
-	ruff ${BASEDIR}/ ./scheduler.py ./test
+	pre-commit run --all-files
 
 .PHONY: create-requirements
 create-requirements:
