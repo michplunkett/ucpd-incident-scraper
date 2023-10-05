@@ -1,7 +1,6 @@
 """Serves as the entry point for the project module."""
 import argparse
 import logging
-import re
 from datetime import datetime
 
 from click import IntRange
@@ -108,8 +107,8 @@ def parse_and_save_records(incidents, nbd_client):
     census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
-    # Split list of incidents into groups of 80 and submit them
-    n = 80
+    # Split list of incidents into groups of 100 and submit them
+    n = 100
     total_added_incidents = 0
     list_of_key_lists = [
         list(incidents.keys())[i * n : (i + 1) * n]
@@ -145,18 +144,23 @@ def parse_and_save_records(incidents, nbd_client):
             i[INCIDENT_KEY_TYPE] = (
                 i[INCIDENT_KEY_TYPE]
                 .replace("Information / |/ Information ", "")
+                .replace(r"\\", "/")
                 .replace("  ", " ")
                 .replace(r" \(", " / ")
                 .replace(r"\(", "")
                 .replace("^ ", "")
                 .replace(r"\)", "")
+                .replace("&", "and")
                 .replace("Inforation", "Information")
                 .replace("Infformation", "Information")
                 .replace("Hit & Run", "Hit and Run")
-            )
-
-            i[INCIDENT_KEY_TYPE] = re.sub(r"\w(/)", " /", i[INCIDENT_KEY_TYPE])
-            i[INCIDENT_KEY_TYPE] = re.sub(r"(/)\w", "/ ", i[INCIDENT_KEY_TYPE])
+                .replace("Att.", "Attempted")
+                .replace("Agg.", "Aggravated")
+                .replace("(", "/ ")
+                .replace(")", "")
+                .replace(r"\n", " ")
+                .replace("Dui", "DUI")
+            ).title()
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value

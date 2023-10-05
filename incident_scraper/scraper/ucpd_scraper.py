@@ -22,7 +22,7 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
 
-    def __init__(self, request_delay=0.3):
+    def __init__(self, request_delay=0.2):
         self.request_delay = request_delay
         self.headers = {
             "Accept": (
