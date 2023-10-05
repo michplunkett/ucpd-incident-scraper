@@ -1,7 +1,6 @@
 """Serves as the entry point for the project module."""
 import argparse
 import logging
-import re
 from datetime import datetime
 
 from click import IntRange
@@ -162,9 +161,6 @@ def parse_and_save_records(incidents, nbd_client):
                 .replace(r"\n", " ")
                 .replace("Dui", "DUI")
             ).title()
-
-            i[INCIDENT_KEY_TYPE] = re.sub(r"\w(/)", " /", i[INCIDENT_KEY_TYPE])
-            i[INCIDENT_KEY_TYPE] = re.sub(r"(/)\w", "/ ", i[INCIDENT_KEY_TYPE])
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
