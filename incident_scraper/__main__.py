@@ -25,6 +25,7 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
+
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
