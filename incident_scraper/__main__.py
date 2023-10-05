@@ -25,7 +25,6 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
-
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -107,8 +106,8 @@ def parse_and_save_records(incidents, nbd_client):
     census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
-    # Split list of incidents into groups of 80 and submit them
-    n = 80
+    # Split list of incidents into groups of 100 and submit them
+    n = 100
     total_added_incidents = 0
     list_of_key_lists = [
         list(incidents.keys())[i * n : (i + 1) * n]
