@@ -153,6 +153,8 @@ def parse_and_save_records(incidents, nbd_client):
                 .replace("Inforation", "Information")
                 .replace("Infformation", "Information")
                 .replace("Hit & Run", "Hit and Run")
+                .replace("Att.", "Attempted")
+                .replace("Agg.", "Aggravated")
             )
 
             i[INCIDENT_KEY_TYPE] = re.sub(r"\w(/)", " /", i[INCIDENT_KEY_TYPE])
