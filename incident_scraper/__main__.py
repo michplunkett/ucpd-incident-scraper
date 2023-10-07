@@ -15,6 +15,7 @@ from incident_scraper.models.incident import (
 )
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
+    INCIDENT_KEY_COMMENTS,
     INCIDENT_KEY_ID,
     INCIDENT_KEY_LOCATION,
     INCIDENT_KEY_REPORTED,
@@ -145,7 +146,6 @@ def parse_and_save_records(incidents, nbd_client):
                 i[INCIDENT_KEY_TYPE]
                 .replace("Information / |/ Information ", "")
                 .replace(r"\\", "/")
-                .replace("  ", " ")
                 .replace(r" \(", " / ")
                 .replace(r"\(", "")
                 .replace("^ ", "")
@@ -166,6 +166,14 @@ def parse_and_save_records(incidents, nbd_client):
                 .replace("Dui", "DUI")
                 .replace("Uc", "UC")
                 .replace("Uuw", "Unlawful Use of a Weapon")
+                .replace(r"/", " / ")
+                .replace(r"\s{2,}", " ")
+            )
+
+            i[INCIDENT_KEY_COMMENTS] = (
+                i[INCIDENT_KEY_COMMENTS]
+                .replace(r"\s", " ")
+                .replace(r"\s{2,}", " ")
             )
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
