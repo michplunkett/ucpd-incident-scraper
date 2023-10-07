@@ -159,7 +159,6 @@ def parse_and_save_records(incidents, nbd_client):
                 .replace("(", "/ ")
                 .replace(")", "")
                 .replace(r"\n", " ")
-                .replace("Dui", "DUI")
             ).title()
 
             i[INCIDENT_KEY_TYPE] = (
