@@ -162,6 +162,13 @@ def parse_and_save_records(incidents, nbd_client):
                 .replace("Dui", "DUI")
             ).title()
 
+            i[INCIDENT_KEY_TYPE] = (
+                i[INCIDENT_KEY_TYPE]
+                .replace("Dui", "DUI")
+                .replace("Uc", "UC")
+                .replace("Uuw", "Unlawful Use of a Weapon")
+            )
+
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
             ).strftime(UCPD_MDY_KEY_DATE_FORMAT)
