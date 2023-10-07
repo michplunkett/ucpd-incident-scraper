@@ -24,6 +24,7 @@ FILE_TYPE_JSON = "json"
 
 # Incident Key Constants
 INCIDENT_KEY_ADDRESS = "ValidatedAddress"
+INCIDENT_KEY_COMMENTS = "Comments / Nature of Fire"
 INCIDENT_KEY_ID = "UCPD_ID"
 INCIDENT_KEY_LATITUDE = "ValidatedLatitude"
 INCIDENT_KEY_LOCATION = "Location"

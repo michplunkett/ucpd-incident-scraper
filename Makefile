@@ -14,6 +14,10 @@ create-requirements:
 download:
 	python -m incident_scraper download
 
+.PHONY: download-and-move
+download-and-move: download
+	mv ./incident_dump.csv ../one-offs/notebooks/data/
+
 .PHONY: seed
 seed:
 	python -m incident_scraper seed
