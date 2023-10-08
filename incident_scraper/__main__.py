@@ -174,6 +174,7 @@ def parse_and_save_records(incidents, nbd_client):
                 i[INCIDENT_KEY_COMMENTS]
                 .replace(r"\s", " ")
                 .replace(r"\s{2,}", " ")
+                .replace("\n", " ")
             )
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
