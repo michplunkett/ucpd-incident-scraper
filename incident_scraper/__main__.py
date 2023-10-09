@@ -160,6 +160,7 @@ def parse_and_save_records(incidents, nbd_client):
                     .replace("(", "/ ")
                     .replace(")", "")
                     .replace("\n", " ")
+                    .replace(" - ", " / ")
                 )
                 .strip()
                 .title()
