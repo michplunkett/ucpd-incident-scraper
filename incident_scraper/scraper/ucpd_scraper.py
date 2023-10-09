@@ -82,7 +82,6 @@ class UCPDScraper:
         INCIDENT_INDEX = 6
         incident_dict = {}
 
-        logging.debug(f"Fetching {url}")
         time.sleep(self.request_delay)
         # Change user_agent randomly
         self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
