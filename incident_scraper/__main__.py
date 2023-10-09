@@ -1,6 +1,7 @@
 """Serves as the entry point for the project module."""
 import argparse
 import logging
+import re
 from datetime import datetime
 
 from click import IntRange
@@ -143,23 +144,26 @@ def parse_and_save_records(incidents, nbd_client):
                 continue
 
             i[INCIDENT_KEY_TYPE] = (
-                i[INCIDENT_KEY_TYPE]
-                .replace("Information / |/ Information ", "")
-                .replace("\\", "/")
-                .replace(" (", " / ")
-                .replace("(", "")
-                .replace("^ ", "")
-                .replace(")", "")
-                .replace("&", "and")
-                .replace("Inforation", "Information")
-                .replace("Infformation", "Information")
-                .replace("Hit & Run", "Hit and Run")
-                .replace("Att.", "Attempted")
-                .replace("Agg.", "Aggravated")
-                .replace("(", "/ ")
-                .replace(")", "")
-                .replace("\n", " ")
-            ).title()
+                (
+                    i[INCIDENT_KEY_TYPE]
+                    .replace("Information / |/ Information ", "")
+                    .replace("\\", "/")
+                    .replace(" (", " / ")
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("&", "and")
+                    .replace("Inforation", "Information")
+                    .replace("Infformation", "Information")
+                    .replace("Hit & Run", "Hit and Run")
+                    .replace("Att.", "Attempted")
+                    .replace("Agg.", "Aggravated")
+                    .replace("(", "/ ")
+                    .replace(")", "")
+                    .replace("\n", " ")
+                )
+                .strip()
+                .title()
+            )
 
             i[INCIDENT_KEY_TYPE] = (
                 i[INCIDENT_KEY_TYPE]
@@ -167,14 +171,16 @@ def parse_and_save_records(incidents, nbd_client):
                 .replace("Uc", "UC")
                 .replace("Uuw", "Unlawful Use of a Weapon")
                 .replace("/", " / ")
-                .replace(r"\s{2,}", " ")
             )
 
+            i[INCIDENT_KEY_TYPE] = re.sub(r"\s{2,}", " ", i[INCIDENT_KEY_TYPE])
+
             i[INCIDENT_KEY_COMMENTS] = (
-                i[INCIDENT_KEY_COMMENTS]
-                .replace(r"\s", " ")
-                .replace(r"\s{2,}", " ")
-                .replace("\n", " ")
+                i[INCIDENT_KEY_COMMENTS].replace("\n", " ")
+            ).strip()
+
+            i[INCIDENT_KEY_COMMENTS] = re.sub(
+                r"\s{2,}", " ", i[INCIDENT_KEY_COMMENTS]
             )
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
