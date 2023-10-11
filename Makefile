@@ -16,7 +16,9 @@ download:
 
 .PHONY: download-and-move
 download-and-move: download
-	mv ./incident_dump.csv ../one-offs/notebooks/data/
+	cp ./incident_dump.csv ../one-offs/notebooks/data/
+	gzip ./incident_dump.csv
+	mv ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/
 
 .PHONY: seed
 seed:
