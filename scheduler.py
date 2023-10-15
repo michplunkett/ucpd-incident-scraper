@@ -8,7 +8,9 @@ scheduler = BlockingScheduler()
 
 
 # The time below is in UTC
-@scheduler.scheduled_job("cron", day_of_week="mon,wed,sat", hour=9)
+@scheduler.scheduled_job(
+    trigger="cron", day_of_week="mon,tue,wed,thu,fri,sat", hour=9
+)
 def run_scraper():
     """Run the scraper at the above interval."""
     update_records()
