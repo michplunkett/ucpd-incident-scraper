@@ -18,7 +18,7 @@ download:
 download-and-move: download
 	cp ./incident_dump.csv ../one-offs/notebooks/data/
 	gzip ./incident_dump.csv
-	mv ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/data/
+	cp ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/data/
 
 .PHONY: seed
 seed:
