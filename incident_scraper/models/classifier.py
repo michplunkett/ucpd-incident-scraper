@@ -134,7 +134,8 @@ class Classifier:
         val_pred_3 = pd.DataFrame(val_pred_3)
         test_pred_3 = pd.DataFrame(test_pred_3)
 
-        # concatenating validation dataset along with all the predicted validation data (meta features)
+        # concatenating validation dataset along with all the predicted
+        # validation data (meta features)
         df_val = pd.concat([x_val, val_pred_1, val_pred_2, val_pred_3], axis=1)
         df_test = pd.concat(
             [x_test, test_pred_1, test_pred_2, test_pred_3], axis=1
