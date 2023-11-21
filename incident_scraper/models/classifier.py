@@ -14,6 +14,7 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
+
 INCIDENT_FILE = "incident_dump.csv"
 KEY_INCIDENT = "incident"
 KEY_VALIDATED_LOCATION = "validated_location"
@@ -32,7 +33,9 @@ class Classifier:
             .str.split(",")
             .cast(pl.List(pl.Float64)),
         )
-        self._vectorizer = CountVectorizer(analyzer="word", max_features=5000, min_df=0.85)
+        self._vectorizer = CountVectorizer(
+            analyzer="word", max_features=5000, min_df=0.85
+        )
         self._incidents = self._create_parsed_list()
         self._incidents.sort()
 
@@ -69,7 +72,6 @@ class Classifier:
                 ],
             ).drop("")
 
-
         X = self._df.select("comments").to_pandas(
             use_pyarrow_extension_array=True
         )
@@ -88,11 +90,15 @@ class Classifier:
 
         # performing train test split
         x_train, x_test, y_train, y_test = train_test_split(
-            X, y, test_size=1 - train_ratio)
+            X, y, test_size=1 - train_ratio
+        )
 
         # performing test validation split
         x_val, x_test, y_val, y_test = train_test_split(
-            x_test, y_test, test_size=test_ratio/(test_ratio + validation_ratio))
+            x_test,
+            y_test,
+            test_size=test_ratio / (test_ratio + validation_ratio),
+        )
 
         # initializing all the base model objects with default parameters
         model_1 = LinearRegression()
@@ -130,7 +136,9 @@ class Classifier:
 
         # concatenating validation dataset along with all the predicted validation data (meta features)
         df_val = pd.concat([x_val, val_pred_1, val_pred_2, val_pred_3], axis=1)
-        df_test = pd.concat([x_test, test_pred_1, test_pred_2, test_pred_3], axis=1)
+        df_test = pd.concat(
+            [x_test, test_pred_1, test_pred_2, test_pred_3], axis=1
+        )
 
         # making the final model using the meta features
         final_model = LinearRegression()
@@ -139,5 +147,5 @@ class Classifier:
         # getting the final output
         pred_final = final_model.predict(df_test)
 
-        #printing the mean squared error between real value and predicted value
+        # printing the mean squared error between real value and predicted value
         print(mean_squared_error(y_test, pred_final))
