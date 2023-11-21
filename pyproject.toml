@@ -22,6 +22,8 @@ pre-commit = "^3.4.0"
 scikit-learn = "^1.3.1"
 urllib3 = "1.26.18"
 numpy = "^1.26.2"
+scikit-multilearn = "^0.2.0"
+polars = "^0.19.15"
 
 [build-system]
 requires = ["poetry-core"]

@@ -10,6 +10,7 @@ from incident_scraper.external.census import CensusClient
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
+from incident_scraper.models.classifier import Classifier
 from incident_scraper.models.incident import (
     set_census_validated_location,
     set_google_maps_validated_location,
@@ -236,4 +237,4 @@ def parse_and_save_records(incidents, nbd_client):
 
 
 if __name__ == "__main__":
-    main()
+    Classifier()

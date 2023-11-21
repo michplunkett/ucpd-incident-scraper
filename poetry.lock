@@ -792,6 +792,42 @@ dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
+name = "polars"
+version = "0.19.15"
+description = "Blazingly fast DataFrame library"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "polars-0.19.15-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:7fc12b2028fd77300710de9dd576804fc629ee734e5cbee01e436f7cc7c87360"},
+    {file = "polars-0.19.15-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:f88e4357af404d057c492c2855eb25e9860c31bedab912f55cb9c4dfe6891949"},
+    {file = "polars-0.19.15-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bf420b34b8f48ff6766bc14c0d4618439f9832561fbdfb29fef2933f7d8eb376"},
+    {file = "polars-0.19.15-cp38-abi3-manylinux_2_24_aarch64.whl", hash = "sha256:e0034a3908eb2c9f7304c134c2bab3eadcc343cacd9fc5ef7b3c7776e7d8d086"},
+    {file = "polars-0.19.15-cp38-abi3-win_amd64.whl", hash = "sha256:4418b17fb9da707645d57628ee4018f351b777154621300e2bbdd732d2394e3e"},
+    {file = "polars-0.19.15.tar.gz", hash = "sha256:9f137bff1734aa5004da9322e828083f6745a926cdcb9ef795d71184411a86dc"},
+]
+
+[package.extras]
+adbc = ["adbc_driver_sqlite"]
+all = ["polars[adbc,cloudpickle,connectorx,deltalake,fsspec,gevent,matplotlib,numpy,pandas,pyarrow,pydantic,pyiceberg,sqlalchemy,timezone,xlsx2csv,xlsxwriter]"]
+cloudpickle = ["cloudpickle"]
+connectorx = ["connectorx (>=0.3.2)"]
+deltalake = ["deltalake (>=0.13.0)"]
+fsspec = ["fsspec"]
+gevent = ["gevent"]
+matplotlib = ["matplotlib"]
+numpy = ["numpy (>=1.16.0)"]
+openpyxl = ["openpyxl (>=3.0.0)"]
+pandas = ["pandas", "pyarrow (>=7.0.0)"]
+pyarrow = ["pyarrow (>=7.0.0)"]
+pydantic = ["pydantic"]
+pyiceberg = ["pyiceberg (>=0.5.0)"]
+pyxlsb = ["pyxlsb (>=1.0)"]
+sqlalchemy = ["pandas", "sqlalchemy"]
+timezone = ["backports.zoneinfo", "tzdata"]
+xlsx2csv = ["xlsx2csv (>=0.8.0)"]
+xlsxwriter = ["xlsxwriter"]
+
+[[package]]
 name = "pre-commit"
 version = "3.5.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
@@ -1087,6 +1123,18 @@ examples = ["matplotlib (>=3.1.3)", "pandas (>=1.0.5)", "plotly (>=5.14.0)", "po
 tests = ["black (>=23.3.0)", "matplotlib (>=3.1.3)", "mypy (>=1.3)", "numpydoc (>=1.2.0)", "pandas (>=1.0.5)", "pooch (>=1.6.0)", "pyamg (>=4.0.0)", "pytest (>=7.1.2)", "pytest-cov (>=2.9.0)", "ruff (>=0.0.272)", "scikit-image (>=0.16.2)"]
 
 [[package]]
+name = "scikit-multilearn"
+version = "0.2.0"
+description = "Scikit-multilearn is a BSD-licensed library for multi-label classification that is built on top of the well-known scikit-learn ecosystem."
+optional = false
+python-versions = "*"
+files = [
+    {file = "scikit-multilearn-0.2.0.linux-x86_64.tar.gz", hash = "sha256:3179fed29b1492f6a69600696c23045b9f494d2b89d1796a8bdc43ccbb33712b"},
+    {file = "scikit_multilearn-0.2.0-py2-none-any.whl", hash = "sha256:0a389600a6797db6567f2f6ca1d0dca30bebfaaa73f75de62d7ae40f8f03d4fb"},
+    {file = "scikit_multilearn-0.2.0-py3-none-any.whl", hash = "sha256:068c652f22704a084ca252d05d21a655e7c9b248d0a4543847b74de5fca2b3f0"},
+]
+
+[[package]]
 name = "scipy"
 version = "1.11.4"
 description = "Fundamental algorithms for scientific computing in Python"
@@ -1233,4 +1281,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "a92de8558b9f25e456e0f6b13fb0c5a1e7eb8a8214441d1fd23392036cd18e5d"
+content-hash = "8e2ded89720226d407a04a35d18714a63bdc77d4b202ce59c91817fb834867f0"
