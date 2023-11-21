@@ -237,4 +237,5 @@ def parse_and_save_records(incidents, nbd_client):
 
 
 if __name__ == "__main__":
-    Classifier()
+    c = Classifier()
+    c.train()
