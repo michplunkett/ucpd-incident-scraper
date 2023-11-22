@@ -692,6 +692,17 @@ htmlsoup = ["BeautifulSoup4"]
 source = ["Cython (>=0.29.35)"]
 
 [[package]]
+name = "neattext"
+version = "0.1.3"
+description = "Neattext - a simple NLP package for cleaning text"
+optional = false
+python-versions = ">=3.3,<4.0"
+files = [
+    {file = "neattext-0.1.3-py3-none-any.whl", hash = "sha256:8eb0716f4e69a307d8f88c01f887e9690b9f4c84cc278a48fa4cbed6be798f2a"},
+    {file = "neattext-0.1.3.tar.gz", hash = "sha256:23a44ea946024bbde20487ba05a82a8c963cee4cefba40c138dc8076fc18792e"},
+]
+
+[[package]]
 name = "nodeenv"
 version = "1.8.0"
 description = "Node.js virtual environment builder"
@@ -1452,4 +1463,4 @@ scikit-learn = ["scikit-learn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "1a8c1e568d701fdd6bee06c6f2f9e85abed6d23ae4c93beab1a77a20a68f7501"
+content-hash = "34f144103e214cd39ddae22c84ee3d8e88222a005ea1c962ab98f984a0196b92"

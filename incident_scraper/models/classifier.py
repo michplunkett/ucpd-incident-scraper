@@ -3,6 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import polars as pl
+from neattext.functions import remove_non_ascii, remove_puncts, remove_stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
@@ -49,6 +50,10 @@ class Classifier:
         self._df = self._df.filter(
             pl.col(KEY_INCIDENT_TYPE) != INCIDENT_TYPE_INFO
         )
+        self._df = self._df.select(pl.col(KEY_COMMENTS).apply(remove_stopwords))
+        self._df = self._df.select(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
+        self._df = self._df.select(pl.col(KEY_COMMENTS).apply(remove_puncts))
+
         self._df.write_csv("./dat_new_new.csv", separator=",")
 
         self._df = self._df.to_pandas(use_pyarrow_extension_array=True)
@@ -106,7 +111,7 @@ class Classifier:
         X = self._df[KEY_COMMENTS].tolist()
         y = np.asarray(self._df[self._df.columns[2:]], dtype=int)
         self._vectorizer.fit(X)
-        print(np.sum(y))
+        print(y)
 
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.30, random_state=42
