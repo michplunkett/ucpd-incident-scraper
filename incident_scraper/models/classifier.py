@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import polars as pl
-from neattext.functions import remove_non_ascii, remove_puncts, remove_stopwords
+from neattext import remove_non_ascii, remove_puncts, remove_stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
@@ -33,8 +33,8 @@ class Classifier:
 
         # Mark which KEY_INCIDENT contains a given incident
         for i in self._unique_types:
-            self._df = self._df.with_columns(
-                [
+            self._df = (
+                self._df.with_columns(
                     pl.col(KEY_INCIDENT_TYPE)
                     .str.split(" / ")
                     .list.eval(
@@ -44,16 +44,16 @@ class Classifier:
                     )
                     .list.any()
                     .cast(pl.Int8)
-                    .alias(i)
-                ],
+                    .alias(i),
+                )
+                .with_columns(pl.col(KEY_COMMENTS).apply(remove_stopwords))
+                .with_columns(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
+                .with_columns(pl.col(KEY_COMMENTS).apply(remove_puncts))
             )
+
         self._df = self._df.filter(
             pl.col(KEY_INCIDENT_TYPE) != INCIDENT_TYPE_INFO
         )
-        self._df = self._df.select(pl.col(KEY_COMMENTS).apply(remove_stopwords))
-        self._df = self._df.select(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
-        self._df = self._df.select(pl.col(KEY_COMMENTS).apply(remove_puncts))
-
         self._df.write_csv("./dat_new_new.csv", separator=",")
 
         self._df = self._df.to_pandas(use_pyarrow_extension_array=True)
