@@ -9,6 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 
+
 INCIDENT_FILE = "incident_dump.csv"
 KEY_COMMENTS = "comments"
 KEY_INCIDENT_TYPE = "incident"
@@ -45,7 +46,9 @@ class Classifier:
                     .alias(i)
                 ],
             )
-        self._df = self._df.filter(pl.col(KEY_INCIDENT_TYPE) != INCIDENT_TYPE_INFO)
+        self._df = self._df.filter(
+            pl.col(KEY_INCIDENT_TYPE) != INCIDENT_TYPE_INFO
+        )
         self._df.write_csv("./dat_new_new.csv", separator=",")
 
         self._df = self._df.to_pandas(use_pyarrow_extension_array=True)
