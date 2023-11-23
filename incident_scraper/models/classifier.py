@@ -4,7 +4,7 @@ import numpy as np
 import polars as pl
 from neattext import remove_non_ascii, remove_puncts, remove_stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.neighbors import KNeighborsClassifier
@@ -106,3 +106,15 @@ class Classifier:
 
         prediction = clf.predict(X_test_tfidf)
         print("Accuracy Score: ", accuracy_score(y_test, prediction))
+        print(
+            "Precision Score: ",
+            precision_score(
+                y_test, prediction, average="micro", zero_division=0.0
+            ),
+        )
+        print(
+            "Recall Score: ",
+            recall_score(
+                y_test, prediction, average="micro", zero_division=0.0
+            ),
+        )
