@@ -94,7 +94,7 @@ class Classifier:
         self._vectorizer.fit(X)
 
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=0.30, random_state=330
+            X, y, test_size=0.35, random_state=450
         )
 
         X_train_tfidf = self._vectorizer.transform(X_train)
