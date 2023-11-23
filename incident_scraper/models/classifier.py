@@ -85,8 +85,6 @@ class Classifier:
             KEY_COMMENTS, KEY_INCIDENT_TYPE, *min_type_cnt_list
         )
 
-        self._df.write_csv("./dat_new_new.csv", separator=",")
-
         self._df = self._df.to_pandas(use_pyarrow_extension_array=True)
 
     def train(self):
