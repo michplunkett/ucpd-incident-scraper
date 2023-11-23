@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
+
 INCIDENT_FILE = "incident_dump.csv"
 INCIDENT_TYPE_INFO = "Information"
 KEY_COMMENTS = "comments"
