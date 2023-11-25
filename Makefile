@@ -20,6 +20,10 @@ download-and-move: download
 	gzip ./incident_dump.csv
 	cp ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/data/
 
+.PHONY: build_model
+build_model:
+	python -m incident_scraper build-model
+
 .PHONY: seed
 seed:
 	python -m incident_scraper seed
