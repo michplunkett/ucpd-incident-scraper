@@ -65,7 +65,7 @@ def main():
     if args.command == COMMAND_DAYS_BACK:
         incidents = scraper.scrape_last_days(args.days)
     elif args.command == COMMAND_SEED:
-        incidents = scraper.scrape_from_beginning_2023()
+        incidents = scraper.scrape_from_beginning_2015()
     elif args.command == COMMAND_UPDATE:
         day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
         if day_diff > 0:
