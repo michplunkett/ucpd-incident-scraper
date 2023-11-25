@@ -1,6 +1,7 @@
 import logging
 import os
 import pickle
+from functools import reduce
 
 import numpy as np
 import polars as pl
@@ -10,7 +11,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
-
 
 INCIDENT_FILE = "incident_dump.csv"
 INCIDENT_TYPE_INFO = "Information"
@@ -22,6 +22,12 @@ SAVED_MODEL_LOCATION = (
     os.getcwd().replace("\\", "/")
     + "/incident_scraper/data/xgb_prediction_model.pkl"
 )
+TEXT_NORMALIZING_FUNCTIONS = [
+    remove_stopwords,
+    remove_non_ascii,
+    remove_puncts,
+    str.lower,
+]
 
 
 class Classifier:
@@ -142,6 +148,8 @@ class Classifier:
         self._save_model()
 
     def get_predicted_incident_type(self, comment: str):
+        comment = reduce(lambda t, f: f(t), TEXT_NORMALIZING_FUNCTIONS, comment)
+        self._vectorizer.fit([comment])
         vectorized_comment = self._vectorizer.transform([comment])
         prediction = self._model.predict(vectorized_comment)
         print(prediction)
