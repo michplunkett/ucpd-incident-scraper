@@ -77,7 +77,7 @@ def main():
         nbd_client.download_all()
         return 0
     elif args.command == COMMAND_BUILD_MODEL:
-        Classifier().train_and_save()
+        Classifier(build_model=True).train_and_save()
         return 0
 
     logging.info(
@@ -115,6 +115,7 @@ def parse_and_save_records(incidents, nbd_client):
     census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
+    prediction_model = Classifier()
     # Split list of incidents into groups of 100 and submit them
     n = 100
     total_added_incidents = 0
@@ -190,6 +191,11 @@ def parse_and_save_records(incidents, nbd_client):
             i[INCIDENT_KEY_COMMENTS] = re.sub(
                 r"\s{2,}", " ", i[INCIDENT_KEY_COMMENTS]
             )
+
+            if i[INCIDENT_KEY_TYPE] == "Information":
+                prediction_model.get_predicted_incident_type(
+                    i[INCIDENT_KEY_COMMENTS]
+                )
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
