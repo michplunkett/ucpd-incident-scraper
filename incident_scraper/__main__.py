@@ -29,6 +29,7 @@ from incident_scraper.utils.constants import (
 )
 
 
+COMMAND_BUILD_MODEL = "build-model"
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -48,6 +49,7 @@ def main():
         default=3,
     )
 
+    subparser.add_parser(COMMAND_BUILD_MODEL)
     subparser.add_parser(COMMAND_DOWNLOAD)
     subparser.add_parser(COMMAND_SEED)
     subparser.add_parser(COMMAND_UPDATE)
@@ -73,6 +75,9 @@ def main():
             return 0
     elif args.command == COMMAND_DOWNLOAD:
         nbd_client.download_all()
+        return 0
+    elif args.command == COMMAND_BUILD_MODEL:
+        Classifier().train_and_save()
         return 0
 
     logging.info(
@@ -237,5 +242,4 @@ def parse_and_save_records(incidents, nbd_client):
 
 
 if __name__ == "__main__":
-    c = Classifier()
-    c.train()
+    main()
