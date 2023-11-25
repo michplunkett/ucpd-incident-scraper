@@ -7,7 +7,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.neighbors import KNeighborsClassifier
+from xgboost import XGBClassifier
 
 
 INCIDENT_FILE = "incident_dump.csv"
@@ -100,9 +100,11 @@ class Classifier:
         X_train_tfidf = self._vectorizer.transform(X_train)
         X_test_tfidf = self._vectorizer.transform(X_test)
 
-        clf = MultiOutputClassifier(KNeighborsClassifier()).fit(
-            X_train_tfidf, y_train
-        )
+        clf = MultiOutputClassifier(
+            XGBClassifier(
+                eta=0.2, max_depth=10, n_estimators=100, booster="gbtree"
+            )
+        ).fit(X_train_tfidf, y_train)
 
         prediction = clf.predict(X_test_tfidf)
         print("Accuracy Score: ", accuracy_score(y_test, prediction))
