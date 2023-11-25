@@ -1,4 +1,6 @@
-import re
+import logging
+import os
+import pickle
 
 import numpy as np
 import polars as pl
@@ -16,7 +18,10 @@ KEY_COMMENTS = "comments"
 KEY_INCIDENT_TYPE = "incident"
 KEY_VALIDATED_LOCATION = "validated_location"
 MINIMUM_TYPE_FREQUENCY = 20
-NUM_REGEX = re.compile(r"\d+")
+SAVED_MODEL_LOCATION = (
+    os.getcwd().replace("\\", "/")
+    + "/incident_scraper/data/xgb_prediction_model.pkl"
+)
 
 
 class Classifier:
@@ -34,6 +39,7 @@ class Classifier:
         self._vectorizer = TfidfVectorizer(
             lowercase=True, max_features=1000, stop_words="english", max_df=0.85
         )
+        self._model = None
         self._unique_types = self._create_unique_type_list()
         self._clean_data()
 
@@ -88,7 +94,7 @@ class Classifier:
 
         self._df = self._df.to_pandas(use_pyarrow_extension_array=True)
 
-    def train(self):
+    def _train(self):
         X = self._df[KEY_COMMENTS].tolist()
         y = np.asarray(self._df[self._df.columns[2:]], dtype=int)
         self._vectorizer.fit(X)
@@ -100,23 +106,35 @@ class Classifier:
         X_train_tfidf = self._vectorizer.transform(X_train)
         X_test_tfidf = self._vectorizer.transform(X_test)
 
-        clf = MultiOutputClassifier(
+        self._model = MultiOutputClassifier(
             XGBClassifier(
                 eta=0.2, max_depth=10, n_estimators=100, booster="gbtree"
             )
         ).fit(X_train_tfidf, y_train)
 
-        prediction = clf.predict(X_test_tfidf)
-        print("Accuracy Score: ", accuracy_score(y_test, prediction))
-        print(
-            "Precision Score: ",
-            precision_score(
-                y_test, prediction, average="micro", zero_division=0.0
-            ),
+        prediction = self._model.predict(X_test_tfidf)
+        accuracy = accuracy_score(y_test, prediction)
+        precision = precision_score(
+            y_test, prediction, average="micro", zero_division=0.0
         )
-        print(
-            "Recall Score: ",
-            recall_score(
-                y_test, prediction, average="micro", zero_division=0.0
-            ),
+        recall = recall_score(
+            y_test, prediction, average="micro", zero_division=0.0
         )
+        logging.info(f"Accuracy Score: {accuracy}")
+        logging.info(f"Precision Score: {precision}")
+        logging.info(f"Recall Score: {recall}")
+
+    def _save_model(self):
+        pickle.dump(self._model, open(SAVED_MODEL_LOCATION, "wb"))
+
+    def train_and_save(self):
+        self._train()
+        self._save_model()
+
+    @staticmethod
+    def load_model():
+        model = None
+        if os.path.isfile(SAVED_MODEL_LOCATION):
+            model = pickle.load(open(SAVED_MODEL_LOCATION, "rb"))
+
+        return model
