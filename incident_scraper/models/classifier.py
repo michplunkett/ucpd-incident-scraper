@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
 
+
 INCIDENT_FILE = "incident_dump.csv"
 INCIDENT_TYPE_INFO = "Information"
 KEY_COMMENTS = "comments"
