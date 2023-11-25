@@ -26,6 +26,13 @@ SAVED_MODEL_LOCATION = (
 
 class Classifier:
     def __init__(self, build_model: bool = False):
+        self._vectorizer = TfidfVectorizer(
+            lowercase=True,
+            max_features=1000,
+            stop_words="english",
+            max_df=0.85,
+        )
+
         if build_model:
             self._df = (
                 pl.read_csv(
@@ -35,13 +42,6 @@ class Classifier:
                 .with_columns(pl.col(KEY_COMMENTS).apply(remove_stopwords))
                 .with_columns(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
                 .with_columns(pl.col(KEY_COMMENTS).apply(remove_puncts))
-            )
-
-            self._vectorizer = TfidfVectorizer(
-                lowercase=True,
-                max_features=1000,
-                stop_words="english",
-                max_df=0.85,
             )
             self._unique_types = self._create_unique_type_list()
             self._clean_data()
@@ -140,3 +140,8 @@ class Classifier:
     def train_and_save(self):
         self._train()
         self._save_model()
+
+    def get_predicted_incident_type(self, comment: str):
+        vectorized_comment = self._vectorizer.transform([comment])
+        prediction = self._model.predict(vectorized_comment)
+        print(prediction)
