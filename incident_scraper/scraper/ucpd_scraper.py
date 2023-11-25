@@ -39,7 +39,7 @@ class UCPDScraper:
         }
         self.user_agent_rotator = Headers()
 
-    def scrape_from_beginning_2023(self):
+    def scrape_from_beginning_2015(self):
         """Scrape and parse all tables from January 1, 2023, to today."""
         new_url = self._construct_url(year_beginning=True)
         return self._get_incidents(new_url)
@@ -60,7 +60,7 @@ class UCPDScraper:
         today_str = today.strftime(UCPD_MDY_DATE_FORMAT)
 
         previous_datetime = (
-            datetime(2023, 1, 1).date()
+            datetime(2015, 1, 1).date()
             if year_beginning
             else today - timedelta(days=num_days)
         )
