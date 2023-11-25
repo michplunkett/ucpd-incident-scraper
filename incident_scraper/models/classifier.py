@@ -25,23 +25,29 @@ SAVED_MODEL_LOCATION = (
 
 
 class Classifier:
-    def __init__(self):
-        self._df = (
-            pl.read_csv(
-                f"./{INCIDENT_FILE}",
+    def __init__(self, build_model: bool = False):
+        if build_model:
+            self._df = (
+                pl.read_csv(
+                    f"./{INCIDENT_FILE}",
+                )
+                .select(KEY_COMMENTS, KEY_INCIDENT_TYPE)
+                .with_columns(pl.col(KEY_COMMENTS).apply(remove_stopwords))
+                .with_columns(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
+                .with_columns(pl.col(KEY_COMMENTS).apply(remove_puncts))
             )
-            .select(KEY_COMMENTS, KEY_INCIDENT_TYPE)
-            .with_columns(pl.col(KEY_COMMENTS).apply(remove_stopwords))
-            .with_columns(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
-            .with_columns(pl.col(KEY_COMMENTS).apply(remove_puncts))
-        )
 
-        self._vectorizer = TfidfVectorizer(
-            lowercase=True, max_features=1000, stop_words="english", max_df=0.85
-        )
-        self._model = None
-        self._unique_types = self._create_unique_type_list()
-        self._clean_data()
+            self._vectorizer = TfidfVectorizer(
+                lowercase=True,
+                max_features=1000,
+                stop_words="english",
+                max_df=0.85,
+            )
+            self._unique_types = self._create_unique_type_list()
+            self._clean_data()
+            self._model = None
+        else:
+            self._load_model()
 
     def _create_unique_type_list(self) -> [str]:
         incidents = self._df[KEY_INCIDENT_TYPE].to_list()
@@ -131,10 +137,6 @@ class Classifier:
         self._train()
         self._save_model()
 
-    @staticmethod
-    def load_model():
-        model = None
+    def _load_model(self):
         if os.path.isfile(SAVED_MODEL_LOCATION):
-            model = pickle.load(open(SAVED_MODEL_LOCATION, "rb"))
-
-        return model
+            self._model = pickle.load(open(SAVED_MODEL_LOCATION, "rb"))
