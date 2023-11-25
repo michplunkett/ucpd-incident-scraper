@@ -133,10 +133,10 @@ class Classifier:
     def _save_model(self):
         pickle.dump(self._model, open(SAVED_MODEL_LOCATION, "wb"))
 
-    def train_and_save(self):
-        self._train()
-        self._save_model()
-
     def _load_model(self):
         if os.path.isfile(SAVED_MODEL_LOCATION):
             self._model = pickle.load(open(SAVED_MODEL_LOCATION, "rb"))
+
+    def train_and_save(self):
+        self._train()
+        self._save_model()
