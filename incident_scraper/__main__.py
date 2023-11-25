@@ -159,6 +159,7 @@ def parse_and_save_records(incidents, nbd_client):
                     .replace(")", "")
                     .replace("&", "and")
                     .replace("Inforation", "Information")
+                    .replace("Well Being", "Well-Being")
                     .replace("Infformation", "Information")
                     .replace("Hit & Run", "Hit and Run")
                     .replace("Att.", "Attempted")
