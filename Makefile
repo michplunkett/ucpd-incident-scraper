@@ -14,11 +14,11 @@ create-requirements:
 download:
 	python -m incident_scraper download
 
-.PHONY: download-and-move
-download-and-move: download
+.PHONY: download_and_move
+download_and_move: download
 	cp ./incident_dump.csv ../one-offs/notebooks/data/
-	gzip ./incident_dump.csv
-	cp ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/data/
+	gzip --k ./incident_dump.csv
+	mv ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/data/
 
 .PHONY: build_model
 build_model:
