@@ -23,6 +23,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
     INCIDENT_KEY_TYPE,
+    INCIDENT_PREDICTED_TYPE,
     TIMEZONE_CHICAGO,
     UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
@@ -193,9 +194,14 @@ def parse_and_save_records(incidents, nbd_client):
             )
 
             if i[INCIDENT_KEY_TYPE] == "Information":
-                prediction_model.get_predicted_incident_type(
+                pred_type = prediction_model.get_predicted_incident_type(
                     i[INCIDENT_KEY_COMMENTS]
                 )
+                if pred_type is not None:
+                    i[INCIDENT_PREDICTED_TYPE] = pred_type
+
+            if not i[INCIDENT_PREDICTED_TYPE]:
+                i[INCIDENT_PREDICTED_TYPE] = ""
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value

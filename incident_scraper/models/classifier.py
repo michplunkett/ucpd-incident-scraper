@@ -26,6 +26,9 @@ SAVED_MODEL_LOCATION = (
 SAVED_VECTORIZER_LOCATION = (
     os.getcwd().replace("\\", "/") + "/incident_scraper/data/xgb_vectorizer.pkl"
 )
+SAVED_TYPES_LOCATION = (
+    os.getcwd().replace("\\", "/") + "/incident_scraper/data/xgb_types.pkl"
+)
 TEXT_NORMALIZING_FUNCTIONS = [
     remove_stopwords,
     remove_non_ascii,
@@ -145,6 +148,7 @@ class Classifier:
         pickle.dump(
             self._vectorizer, open(SAVED_VECTORIZER_LOCATION, mode="wb")
         )
+        pickle.dump(self._unique_types, open(SAVED_TYPES_LOCATION, mode="wb"))
 
     def _load_model(self):
         if os.path.isfile(SAVED_MODEL_LOCATION) and os.path.isfile(
@@ -154,6 +158,9 @@ class Classifier:
             self._vectorizer = pickle.load(
                 open(SAVED_VECTORIZER_LOCATION, mode="rb")
             )
+            self._unique_types = pickle.load(
+                open(SAVED_TYPES_LOCATION, mode="rb")
+            )
 
     def train_and_save(self):
         self._train()
@@ -162,5 +169,12 @@ class Classifier:
     def get_predicted_incident_type(self, comment: str):
         comment = reduce(lambda t, f: f(t), TEXT_NORMALIZING_FUNCTIONS, comment)
         vectorized_comment = self._vectorizer.transform([comment])
-        prediction = self._model.predict(vectorized_comment)
-        print(prediction)
+        prediction = self._model.predict(vectorized_comment).tolist()[0]
+        label_indexes = [
+            i for i in range(len(prediction)) if prediction[i] == 1
+        ]
+        if label_indexes:
+            labels = [self._unique_types[i] for i in label_indexes]
+            return " / ".join(labels)
+
+        return None

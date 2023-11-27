@@ -22,6 +22,8 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LONGITUDE,
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
+    INCIDENT_KEY_TYPE,
+    INCIDENT_PREDICTED_TYPE,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
@@ -58,7 +60,8 @@ class GoogleNBD:
         return Incident(
             id=f"{incident[INCIDENT_KEY_ID]}_{incident[INCIDENT_KEY_REPORTED_DATE]}",
             ucpd_id=incident[INCIDENT_KEY_ID],
-            incident=incident["Incident"],
+            incident=incident[INCIDENT_KEY_TYPE],
+            predicted_incident=incident[INCIDENT_PREDICTED_TYPE],
             reported=incident[INCIDENT_KEY_REPORTED].isoformat(),
             reported_date=incident[INCIDENT_KEY_REPORTED_DATE],
             occurred=incident["Occurred"],
