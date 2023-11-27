@@ -12,6 +12,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
 
+
 INCIDENT_FILE = "incident_dump.csv"
 INCIDENT_TYPE_INFO = "Information"
 KEY_COMMENTS = "comments"
@@ -141,7 +142,9 @@ class Classifier:
 
     def _save_model(self):
         pickle.dump(self._model, open(SAVED_MODEL_LOCATION, mode="wb"))
-        pickle.dump(self._vectorizer, open(SAVED_VECTORIZER_LOCATION, mode="wb"))
+        pickle.dump(
+            self._vectorizer, open(SAVED_VECTORIZER_LOCATION, mode="wb")
+        )
 
     def _load_model(self):
         if os.path.isfile(SAVED_MODEL_LOCATION) and os.path.isfile(
