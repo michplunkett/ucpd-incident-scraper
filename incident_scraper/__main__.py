@@ -200,7 +200,7 @@ def parse_and_save_records(incidents, nbd_client):
                 if pred_type is not None:
                     i[INCIDENT_PREDICTED_TYPE] = pred_type
 
-            if not i[INCIDENT_PREDICTED_TYPE]:
+            if INCIDENT_PREDICTED_TYPE not in i:
                 i[INCIDENT_PREDICTED_TYPE] = ""
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
