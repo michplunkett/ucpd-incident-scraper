@@ -12,7 +12,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
 
-
 INCIDENT_FILE = "incident_dump.csv"
 INCIDENT_TYPE_INFO = "Information"
 KEY_COMMENTS = "comments"
@@ -22,6 +21,9 @@ MINIMUM_TYPE_FREQUENCY = 20
 SAVED_MODEL_LOCATION = (
     os.getcwd().replace("\\", "/")
     + "/incident_scraper/data/xgb_prediction_model.pkl"
+)
+SAVED_VECTORIZER_LOCATION = (
+    os.getcwd().replace("\\", "/") + "/incident_scraper/data/xgb_vectorizer.pkl"
 )
 TEXT_NORMALIZING_FUNCTIONS = [
     remove_stopwords,
@@ -138,11 +140,17 @@ class Classifier:
         logging.info(f"Recall Score: {recall}")
 
     def _save_model(self):
-        pickle.dump(self._model, open(SAVED_MODEL_LOCATION, "wb"))
+        pickle.dump(self._model, open(SAVED_MODEL_LOCATION, mode="wb"))
+        pickle.dump(self._vectorizer, open(SAVED_VECTORIZER_LOCATION, mode="wb"))
 
     def _load_model(self):
-        if os.path.isfile(SAVED_MODEL_LOCATION):
-            self._model = pickle.load(open(SAVED_MODEL_LOCATION, "rb"))
+        if os.path.isfile(SAVED_MODEL_LOCATION) and os.path.isfile(
+            SAVED_VECTORIZER_LOCATION
+        ):
+            self._model = pickle.load(open(SAVED_MODEL_LOCATION, mode="rb"))
+            self._vectorizer = pickle.load(
+                open(SAVED_VECTORIZER_LOCATION, mode="rb")
+            )
 
     def train_and_save(self):
         self._train()
@@ -150,7 +158,6 @@ class Classifier:
 
     def get_predicted_incident_type(self, comment: str):
         comment = reduce(lambda t, f: f(t), TEXT_NORMALIZING_FUNCTIONS, comment)
-        self._vectorizer.fit([comment])
         vectorized_comment = self._vectorizer.transform([comment])
         prediction = self._model.predict(vectorized_comment)
         print(prediction)

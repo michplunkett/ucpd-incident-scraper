@@ -4,10 +4,7 @@ import json
 import os
 import random
 
-from incident_scraper.utils.constants import (
-    FILE_ENCODING_UTF_8,
-    FILE_OPEN_MODE_READ,
-)
+from incident_scraper.utils.constants import FILE_ENCODING_UTF_8, FILE_OPEN_READ
 
 
 class Headers:
@@ -25,7 +22,7 @@ class Headers:
             + "/incident_scraper/data/http_headers.json.gz"
         )
 
-        with gzip.open(file_path, FILE_OPEN_MODE_READ) as f:
+        with gzip.open(file_path, FILE_OPEN_READ) as f:
             self.list_of_headers = json.loads(
                 f.read().decode(FILE_ENCODING_UTF_8)
             )

@@ -3,7 +3,6 @@ import os
 
 import pytz
 
-
 # Date/Time Constants
 UCPD_DATE_FORMAT = "%m/%d/%y %I:%M %p"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
@@ -15,9 +14,9 @@ ENV_GCP_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
 ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
-FILE_OPEN_MODE_READ = "r"
-FILE_OPEN_MODE_WRITE = "w"
 FILE_ENCODING_UTF_8 = "utf-8"
+FILE_OPEN_READ = "r"
+FILE_OPEN_WRITE = "w"
 
 # File Type Constants
 FILE_TYPE_JSON = "json"
