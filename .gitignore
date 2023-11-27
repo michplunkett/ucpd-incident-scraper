@@ -1,6 +1,6 @@
 # Misc.
 **.ipynb
-incident_dump*
+*.csv
 
 # IDE files and misc.
 .idea

@@ -12,7 +12,7 @@ from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
-    FILE_OPEN_MODE_WRITE,
+    FILE_OPEN_WRITE,
     FILE_TYPE_JSON,
     INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_COMMENTS,
@@ -22,6 +22,8 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LONGITUDE,
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
+    INCIDENT_KEY_TYPE,
+    INCIDENT_PREDICTED_TYPE,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
@@ -58,7 +60,8 @@ class GoogleNBD:
         return Incident(
             id=f"{incident[INCIDENT_KEY_ID]}_{incident[INCIDENT_KEY_REPORTED_DATE]}",
             ucpd_id=incident[INCIDENT_KEY_ID],
-            incident=incident["Incident"],
+            incident=incident[INCIDENT_KEY_TYPE],
+            predicted_incident=incident[INCIDENT_PREDICTED_TYPE],
             reported=incident[INCIDENT_KEY_REPORTED].isoformat(),
             reported_date=incident[INCIDENT_KEY_REPORTED_DATE],
             occurred=incident["Occurred"],
@@ -122,7 +125,7 @@ class GoogleNBD:
                 record[key] = value
             json_incidents.append(record)
 
-        with open("incident_dump.csv", FILE_OPEN_MODE_WRITE) as csv_file:
+        with open("incident_dump.csv", FILE_OPEN_WRITE) as csv_file:
             csv_writer = csv.DictWriter(
                 csv_file,
                 fieldnames=json_incidents[0].keys(),

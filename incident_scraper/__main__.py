@@ -10,6 +10,7 @@ from incident_scraper.external.census import CensusClient
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
+from incident_scraper.models.classifier import Classifier
 from incident_scraper.models.incident import (
     set_census_validated_location,
     set_google_maps_validated_location,
@@ -22,12 +23,14 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
     INCIDENT_KEY_TYPE,
+    INCIDENT_PREDICTED_TYPE,
     TIMEZONE_CHICAGO,
     UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
 
 
+COMMAND_BUILD_MODEL = "build-model"
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -47,6 +50,7 @@ def main():
         default=3,
     )
 
+    subparser.add_parser(COMMAND_BUILD_MODEL)
     subparser.add_parser(COMMAND_DOWNLOAD)
     subparser.add_parser(COMMAND_SEED)
     subparser.add_parser(COMMAND_UPDATE)
@@ -62,7 +66,7 @@ def main():
     if args.command == COMMAND_DAYS_BACK:
         incidents = scraper.scrape_last_days(args.days)
     elif args.command == COMMAND_SEED:
-        incidents = scraper.scrape_from_beginning_2023()
+        incidents = scraper.scrape_from_beginning_2015()
     elif args.command == COMMAND_UPDATE:
         day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
         if day_diff > 0:
@@ -72,6 +76,9 @@ def main():
             return 0
     elif args.command == COMMAND_DOWNLOAD:
         nbd_client.download_all()
+        return 0
+    elif args.command == COMMAND_BUILD_MODEL:
+        Classifier(build_model=True).train_and_save()
         return 0
 
     logging.info(
@@ -109,6 +116,7 @@ def parse_and_save_records(incidents, nbd_client):
     census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
+    prediction_model = Classifier()
     # Split list of incidents into groups of 100 and submit them
     n = 100
     total_added_incidents = 0
@@ -153,6 +161,7 @@ def parse_and_save_records(incidents, nbd_client):
                     .replace(")", "")
                     .replace("&", "and")
                     .replace("Inforation", "Information")
+                    .replace("Well Being", "Well-Being")
                     .replace("Infformation", "Information")
                     .replace("Hit & Run", "Hit and Run")
                     .replace("Att.", "Attempted")
@@ -183,6 +192,16 @@ def parse_and_save_records(incidents, nbd_client):
             i[INCIDENT_KEY_COMMENTS] = re.sub(
                 r"\s{2,}", " ", i[INCIDENT_KEY_COMMENTS]
             )
+
+            if i[INCIDENT_KEY_TYPE] == "Information":
+                pred_type = prediction_model.get_predicted_incident_type(
+                    i[INCIDENT_KEY_COMMENTS]
+                )
+                if pred_type is not None:
+                    i[INCIDENT_PREDICTED_TYPE] = pred_type
+
+            if INCIDENT_PREDICTED_TYPE not in i:
+                i[INCIDENT_PREDICTED_TYPE] = ""
 
             i[INCIDENT_KEY_REPORTED_DATE] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
