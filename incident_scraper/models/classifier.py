@@ -62,6 +62,21 @@ class Classifier:
         else:
             self._load_model()
 
+    @staticmethod
+    def _reset_category_casing(category: str):
+        category = category.title()
+        replacements: [tuple] = [
+            ("Dui", "DUI"),
+            ("Cpd", "CPD"),
+            ("Uc", "UC"),
+            ("Ucpd", "UCPD"),
+        ]
+        for rep in replacements:
+            old, new = rep
+            category = category.replace(old, new)
+
+        return category
+
     def _create_unique_type_list(self) -> [str]:
         incidents = self._df[KEY_INCIDENT_TYPE].to_list()
         incident_set = set()
@@ -175,6 +190,6 @@ class Classifier:
         ]
         if label_indexes:
             labels = [self._unique_types[i] for i in label_indexes]
-            return " / ".join(labels)
+            return self._reset_category_casing(" / ".join(labels))
 
         return None
