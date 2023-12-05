@@ -34,6 +34,9 @@ INCIDENT_KEY_REPORTED_DATE = f"{INCIDENT_KEY_REPORTED}Date"
 INCIDENT_KEY_TYPE = "Incident"
 INCIDENT_PREDICTED_TYPE = "Predicted Incident"
 
+# Incident Type Constants
+INCIDENT_TYPE_INFO = "Information"
+
 # Location Constants
 LOCATION_CHICAGO = "Chicago"
 LOCATION_ILLINOIS = "IL"

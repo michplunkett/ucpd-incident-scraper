@@ -12,9 +12,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
 
+from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
+
 
 INCIDENT_FILE = "incident_dump.csv"
-INCIDENT_TYPE_INFO = "Information"
 KEY_COMMENTS = "comments"
 KEY_INCIDENT_TYPE = "incident"
 KEY_VALIDATED_LOCATION = "validated_location"

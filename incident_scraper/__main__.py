@@ -24,6 +24,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_REPORTED_DATE,
     INCIDENT_KEY_TYPE,
     INCIDENT_PREDICTED_TYPE,
+    INCIDENT_TYPE_INFO,
     TIMEZONE_CHICAGO,
     UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
@@ -113,10 +114,12 @@ def update_records():
 
 def parse_and_save_records(incidents, nbd_client):
     """Take incidents and save them to the GCP Datastore."""
+    # Instantiate clients
     census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
     prediction_model = Classifier()
+
     # Split list of incidents into groups of 100 and submit them
     n = 100
     total_added_incidents = 0
@@ -124,6 +127,11 @@ def parse_and_save_records(incidents, nbd_client):
         list(incidents.keys())[i * n : (i + 1) * n]
         for i in range((total_incidents + n - 1) // n)
     ]
+
+    # Incident Key Tracking
+    num_information_incidents = 0
+    information_incidents_predicted = 0
+
     for key_list in list_of_key_lists:
         incident_objs = []
         geocode_error_incidents = []
@@ -160,9 +168,9 @@ def parse_and_save_records(incidents, nbd_client):
                     .replace("(", "")
                     .replace(")", "")
                     .replace("&", "and")
-                    .replace("Inforation", "Information")
+                    .replace("Inforation", INCIDENT_TYPE_INFO)
                     .replace("Well Being", "Well-Being")
-                    .replace("Infformation", "Information")
+                    .replace("Infformation", INCIDENT_TYPE_INFO)
                     .replace("Hit & Run", "Hit and Run")
                     .replace("Att.", "Attempted")
                     .replace("Agg.", "Aggravated")
@@ -193,11 +201,13 @@ def parse_and_save_records(incidents, nbd_client):
                 r"\s{2,}", " ", i[INCIDENT_KEY_COMMENTS]
             )
 
-            if i[INCIDENT_KEY_TYPE] == "Information":
+            if i[INCIDENT_KEY_TYPE] == INCIDENT_TYPE_INFO:
+                num_information_incidents += 1
                 pred_type = prediction_model.get_predicted_incident_type(
                     i[INCIDENT_KEY_COMMENTS]
                 )
                 if pred_type is not None:
+                    information_incidents_predicted += 1
                     i[INCIDENT_PREDICTED_TYPE] = pred_type
 
             if INCIDENT_PREDICTED_TYPE not in i:
@@ -248,6 +258,10 @@ def parse_and_save_records(incidents, nbd_client):
             )
         total_added_incidents += added_incidents
 
+    logging.info(
+        f"{information_incidents_predicted} of {num_information_incidents} "
+        "'Information' incidents predicted into other categories."
+    )
     logging.info(
         f"{total_incidents - total_added_incidents} of {total_incidents} "
         "incidents could NOT be added to the GCP Datastore."
