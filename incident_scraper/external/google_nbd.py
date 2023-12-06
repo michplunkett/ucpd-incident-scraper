@@ -128,7 +128,6 @@ class GoogleNBD:
                 .filter(Incident.incident == INCIDENT_TYPE_INFO)
                 .fetch()
             )
-            print(query)
             return query
 
     def get_latest_date(self) -> date:
