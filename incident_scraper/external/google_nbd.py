@@ -91,35 +91,6 @@ class GoogleNBD:
                 incident_keys.append(nbd_incident)
             put_multi(incident_keys)
 
-    def get_latest_date(self) -> date:
-        """Get latest incident date."""
-        with self.client.context():
-            query = Incident.query().order(-Incident.reported_date).fetch(1)
-            if query:
-                return datetime.strptime(
-                    query[0].reported_date, UCPD_MDY_KEY_DATE_FORMAT
-                ).date()
-            else:
-                return datetime.now().date()
-
-    def remove_incident(self, ucpd_id: str) -> None:
-        """Remove incident from datastore."""
-        with self.client.context():
-            incident = Incident(ucpd_id=ucpd_id)
-            incident.key.delete()
-
-    def get_all_information_incidents(self) -> [Incident]:
-        """Get all 'Information' categorized incidents."""
-        with self.client.context():
-            query = Incident.query(incident=INCIDENT_TYPE_INFO).fetch()
-
-        return query
-
-    @staticmethod
-    def update_list_of_incidents(incidents: [Incident]) -> None:
-        """Update all incident entries in datastore."""
-        put_multi(incidents)
-
     def download_all(self) -> None:
         """Download all incidents from datastore."""
         with self.client.context():
@@ -148,3 +119,36 @@ class GoogleNBD:
             csv_writer.writeheader()
             csv_writer.writerows(json_incidents)
         logging.info(f"Saved {len(json_incidents)} incident records to a CSV.")
+
+    def get_all_information_incidents(self) -> [Incident]:
+        """Get all 'Information' categorized incidents."""
+        with self.client.context():
+            query = (
+                Incident.query()
+                .filter(Incident.incident == INCIDENT_TYPE_INFO)
+                .fetch()
+            )
+            print(query)
+            return query
+
+    def get_latest_date(self) -> date:
+        """Get latest incident date."""
+        with self.client.context():
+            query = Incident.query().order(-Incident.reported_date).fetch(1)
+            if query:
+                return datetime.strptime(
+                    query[0].reported_date, UCPD_MDY_KEY_DATE_FORMAT
+                ).date()
+            else:
+                return datetime.now().date()
+
+    def remove_incident(self, ucpd_id: str) -> None:
+        """Remove incident from datastore."""
+        with self.client.context():
+            incident = Incident(ucpd_id=ucpd_id)
+            incident.key.delete()
+
+    def update_list_of_incidents(self, incidents: [Incident]) -> None:
+        """Update all incident entries in datastore."""
+        with self.client.context():
+            put_multi(incidents)
