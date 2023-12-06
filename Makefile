@@ -24,6 +24,10 @@ download_and_move: download
 build_model: download
 	python -m incident_scraper build-model
 
+.PHONY: categorize
+categorize:
+	python -m incident_scraper categorize
+
 .PHONY: seed
 seed:
 	python -m incident_scraper seed
