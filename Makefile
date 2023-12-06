@@ -26,7 +26,7 @@ build_model: download
 
 .PHONY: categorize
 categorize:
-	python -m categorize
+	python -m incident_scraper categorize
 
 .PHONY: seed
 seed:
