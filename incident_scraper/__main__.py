@@ -3,6 +3,7 @@ import argparse
 import logging
 import re
 from datetime import datetime
+from typing import Any
 
 from click import IntRange
 
@@ -32,6 +33,7 @@ from incident_scraper.utils.constants import (
 
 
 COMMAND_BUILD_MODEL = "build-model"
+COMMAND_CATEGORIZE = "categorize"
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -52,6 +54,7 @@ def main():
     )
 
     subparser.add_parser(COMMAND_BUILD_MODEL)
+    subparser.add_parser(COMMAND_CATEGORIZE)
     subparser.add_parser(COMMAND_DOWNLOAD)
     subparser.add_parser(COMMAND_SEED)
     subparser.add_parser(COMMAND_UPDATE)
@@ -81,6 +84,9 @@ def main():
     elif args.command == COMMAND_BUILD_MODEL:
         Classifier(build_model=True).train_and_save()
         return 0
+    elif args.command == COMMAND_CATEGORIZE:
+        categorize_information(nbd_client)
+        return 0
 
     logging.info(
         f"{len(incidents.keys())} total incidents were scraped from the UCPD "
@@ -90,29 +96,27 @@ def main():
         parse_and_save_records(incidents, nbd_client)
 
 
-def update_records():
-    """Update incident records based on last scraped incident."""
-    init_logger()
-    nbd_client = GoogleNBD()
-    scraper = UCPDScraper()
-    day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
-    if day_diff > 0:
-        incidents = scraper.scrape_last_days(day_diff - 1)
-    else:
-        logging.info("Saved incidents are up-to-date.")
-        return 0
+def categorize_information(nbd_client: GoogleNBD):
+    prediction_model = Classifier()
+    incidents = nbd_client.get_all_information_incidents()
 
-    total_incidents = len(incidents.keys())
+    # Incident counters
+    predicted_labels = 0
+    for i in incidents:
+        pred_type = prediction_model.get_predicted_incident_type(i.comments)
+        if pred_type is not None:
+            predicted_labels += 1
+            i.predicted_incident = pred_type
 
     logging.info(
-        f"{total_incidents} total incidents were scraped from the UCPD "
-        "Incidents' site."
+        f"{predicted_labels} of {len(incidents)} 'Information' incidents "
+        "were categorized."
     )
-    if total_incidents:
-        parse_and_save_records(incidents, nbd_client)
+
+    nbd_client.update_list_of_incidents(incidents)
 
 
-def parse_and_save_records(incidents, nbd_client):
+def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
     """Take incidents and save them to the GCP Datastore."""
     # Instantiate clients
     census = CensusClient()
@@ -266,6 +270,28 @@ def parse_and_save_records(incidents, nbd_client):
         f"{total_incidents - total_added_incidents} of {total_incidents} "
         "incidents could NOT be added to the GCP Datastore."
     )
+
+
+def update_records():
+    """Update incident records based on last scraped incident."""
+    init_logger()
+    nbd_client = GoogleNBD()
+    scraper = UCPDScraper()
+    day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
+    if day_diff > 0:
+        incidents = scraper.scrape_last_days(day_diff - 1)
+    else:
+        logging.info("Saved incidents are up-to-date.")
+        return 0
+
+    total_incidents = len(incidents.keys())
+
+    logging.info(
+        f"{total_incidents} total incidents were scraped from the UCPD "
+        "Incidents' site."
+    )
+    if total_incidents:
+        parse_and_save_records(incidents, nbd_client)
 
 
 if __name__ == "__main__":
