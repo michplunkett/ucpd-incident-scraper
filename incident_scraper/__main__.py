@@ -20,7 +20,9 @@ from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
     INCIDENT_KEY_COMMENTS,
     INCIDENT_KEY_ID,
+    INCIDENT_KEY_LATITUDE,
     INCIDENT_KEY_LOCATION,
+    INCIDENT_KEY_LONGITUDE,
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
     INCIDENT_KEY_TYPE,
@@ -144,13 +146,12 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
         for key in key_list:
             i = incidents[key]
 
-            if [k for k in i.keys() if i[k] == "Void"]:
-                logging.error(f"This incident contains voided information: {i}")
-                void_malformed_incidents.append(i)
-                continue
-
             i[INCIDENT_KEY_ID] = key
-            address = i[INCIDENT_KEY_LOCATION].split(" (")[0]
+            address = (
+                i[INCIDENT_KEY_LOCATION].split(" (")[0]
+                if "(" in i[INCIDENT_KEY_LOCATION]
+                else i[INCIDENT_KEY_LOCATION]
+            )
             i[INCIDENT_KEY_REPORTED] = i[INCIDENT_KEY_REPORTED].replace(
                 ";", ":"
             )
@@ -224,13 +225,25 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
                 formatted_reported_value
             )
 
-            if set_census_validated_location(
+            census_res = set_census_validated_location(
                 i, census.validate_address(address)
-            ) or set_google_maps_validated_location(
+            )
+            google_maps_res = set_google_maps_validated_location(
                 i, google_maps.get_address(address)
+            )
+            if (
+                (census_res or google_maps_res)
+                and -90.0 <= i[INCIDENT_KEY_LATITUDE] <= 90
+                and -90 <= i[INCIDENT_KEY_LONGITUDE] <= 90
             ):
                 incident_objs.append(i)
                 continue
+            else:
+                geocode_error_incidents.append(i)
+                logging.error(
+                    "This incident failed to get a valid location with the "
+                    f"Census and GoogleMaps' Geocoder: {i}"
+                )
 
             geocode_error_incidents.append(i)
             logging.error(

@@ -60,7 +60,7 @@ class UCPDScraper:
         today_str = today.strftime(UCPD_MDY_DATE_FORMAT)
 
         previous_datetime = (
-            datetime(2015, 1, 1).date()
+            datetime(2011, 1, 1).date()
             if year_beginning
             else today - timedelta(days=num_days)
         )
@@ -111,10 +111,20 @@ class UCPDScraper:
                 continue
 
             incident_dict[incident_id] = {}
+            i_dict = {}
             for index in range(len(categories) - 1):
-                incident_dict[incident_id][
-                    str(categories[index].text).strip()
-                ] = str(incident[index].text).strip()
+                i_dict[str(categories[index].text).strip()] = str(
+                    incident[index].text
+                ).strip()
+
+            if [v for v in i_dict.values() if v == "Void"]:
+                logging.error(
+                    "This incident contains voided "
+                    f"information: {etree.tostring(incident)}"
+                )
+                continue
+
+            incident_dict[incident_id] = i_dict
 
         # Track page number, as offset will take you back to zero
         pages = response.cssselect("span.page-link")

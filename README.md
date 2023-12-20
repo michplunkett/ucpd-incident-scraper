@@ -24,7 +24,7 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
 
 ## Standard Commands
 - `make lint`: Runs `Black`, `isort`, and `ruff` on the codebase.
-- `make seed`: Saves incidents starting from January 1st of 2015 and continuing until today.
+- `make seed`: Saves incidents starting from January 1st of 2011 and continuing until today.
 - `make update`: Saves incidents starting from the most recently saved incident until today.
 - `make build_model`: Builds a predictive XGBoost model based off of locally saved incident data and saves it in the `data` folder.
 - `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
