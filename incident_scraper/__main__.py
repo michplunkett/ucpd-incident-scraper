@@ -7,15 +7,11 @@ from typing import Any
 
 from click import IntRange
 
-from incident_scraper.external.census import CensusClient
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.models.classifier import Classifier
-from incident_scraper.models.incident import (
-    set_census_validated_location,
-    set_google_maps_validated_location,
-)
+from incident_scraper.models.incident import set_google_maps_validated_location
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
     INCIDENT_KEY_COMMENTS,
@@ -121,7 +117,6 @@ def categorize_information(nbd_client: GoogleNBD):
 def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
     """Take incidents and save them to the GCP Datastore."""
     # Instantiate clients
-    census = CensusClient()
     google_maps = GoogleMaps()
     total_incidents = len(incidents.keys())
     prediction_model = Classifier()
@@ -225,14 +220,10 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
                 formatted_reported_value
             )
 
-            census_res = set_census_validated_location(
-                i, census.validate_address(address)
-            )
-            google_maps_res = set_google_maps_validated_location(
-                i, google_maps.get_address(address)
-            )
             if (
-                (census_res or google_maps_res)
+                set_google_maps_validated_location(
+                    i, google_maps.get_address(address)
+                )
                 and -90.0 <= i[INCIDENT_KEY_LATITUDE] <= 90
                 and -90 <= i[INCIDENT_KEY_LONGITUDE] <= 90
             ):
