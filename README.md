@@ -1,5 +1,6 @@
 # UChicago Incident Page Scraper
-This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The data is stored on [Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [Heroku's Dyno](https://devcenter.heroku.com/articles/dyno-types) functionality.
+This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The data is stored on
+[Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [Heroku's Dyno](https://devcenter.heroku.com/articles/dyno-types) functionality.
 ## Relevant Reading
 - Ethical Issues of Crime Mapping: [Link](https://storymaps.arcgis.com/stories/9b71d1fba77641a0ad35b07b23aae66b?utm_source=pocket_saves)
 
@@ -8,8 +9,8 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
 - [Poetry](https://python-poetry.org/)
 
 ### Required Credentials
-- [Census API Key](https://api.census.gov/data/key_signup.html) stored in the environment variable: `CENSUS_API_KEY`
-- Google Cloud Platform [service account](https://cloud.google.com/iam/docs/service-account-overview) with location of the `service_account.json` file stored in the environment variable: `GOOGLE_APPLICATION_CREDENTIALS`
+- Google Cloud Platform [service account](https://cloud.google.com/iam/docs/service-account-overview) with location of the `service_account.json` file stored in the environment
+variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - Google Cloud Platform project ID stored in the environment variable: `GOOGLE_CLOUD_PROJECT`
 - [Google Maps API](https://developers.google.com/maps/documentation/geocoding/get-api-key) key stored in the environment variable: `GOOGLE_MAPS_API_KEY`
 
@@ -23,7 +24,7 @@ This repository houses a scraping engine for the [UCPD's Incident Report webpage
   - Example: `poetry add black`
 
 ## Standard Commands
-- `make lint`: Runs `Black`, `isort`, and `ruff` on the codebase.
+- `make lint`: Runs `pre-commit` on the codebase.
 - `make seed`: Saves incidents starting from January 1st of 2011 and continuing until today.
 - `make update`: Saves incidents starting from the most recently saved incident until today.
 - `make build_model`: Builds a predictive XGBoost model based off of locally saved incident data and saves it in the `data` folder.
