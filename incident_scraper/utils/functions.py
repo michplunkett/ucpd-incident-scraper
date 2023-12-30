@@ -15,5 +15,7 @@ def parse_scraped_incident_timestamp(i: dict) -> Optional[str]:
             result = datetime.strptime(i[INCIDENT_KEY_REPORTED], time_format)
         except ValueError:
             continue
+        # If a date is successfully parsed, break from the loop.
+        break
 
     return result
