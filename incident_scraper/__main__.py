@@ -25,9 +25,9 @@ from incident_scraper.utils.constants import (
     INCIDENT_PREDICTED_TYPE,
     INCIDENT_TYPE_INFO,
     TIMEZONE_CHICAGO,
-    UCPD_DATE_FORMAT,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
+from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
 
 COMMAND_BUILD_MODEL = "build-model"
@@ -68,7 +68,7 @@ def main():
     if args.command == COMMAND_DAYS_BACK:
         incidents = scraper.scrape_last_days(args.days)
     elif args.command == COMMAND_SEED:
-        incidents = scraper.scrape_from_beginning_2015()
+        incidents = scraper.scrape_from_beginning_2011()
     elif args.command == COMMAND_UPDATE:
         day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
         if day_diff > 0:
@@ -141,6 +141,13 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
         for key in key_list:
             i = incidents[key]
 
+            if len(i.keys()) != 6:
+                void_malformed_incidents.append(i)
+                logging.error(
+                    f"This incident has an insufficient number of keys: {i}"
+                )
+                continue
+
             i[INCIDENT_KEY_ID] = key
             address = (
                 i[INCIDENT_KEY_LOCATION].split(" (")[0]
@@ -150,11 +157,10 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
             i[INCIDENT_KEY_REPORTED] = i[INCIDENT_KEY_REPORTED].replace(
                 ";", ":"
             )
-            try:
-                formatted_reported_value = datetime.strptime(
-                    i[INCIDENT_KEY_REPORTED], UCPD_DATE_FORMAT
-                )
-            except ValueError:
+
+            formatted_reported_value = parse_scraped_incident_timestamp(i)
+
+            if not formatted_reported_value:
                 void_malformed_incidents.append(i)
                 logging.error(f"This incident has a malformed date: {i}")
                 continue

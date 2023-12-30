@@ -39,8 +39,8 @@ class UCPDScraper:
         }
         self.user_agent_rotator = Headers()
 
-    def scrape_from_beginning_2015(self):
-        """Scrape and parse all tables from January 1, 2023, to today."""
+    def scrape_from_beginning_2011(self):
+        """Scrape and parse all tables from January 1, 2011, to today."""
         new_url = self._construct_url(year_beginning=True)
         return self._get_incidents(new_url)
 
@@ -49,7 +49,9 @@ class UCPDScraper:
         new_url = self._construct_url(num_days=num_days)
         return self._get_incidents(new_url)
 
-    def _construct_url(self, num_days: int = 0, year_beginning: bool = False):
+    def _construct_url(
+        self, num_days: int = 0, year_beginning: bool = False
+    ) -> str:
         """
         Construct the scraping URL.
 
@@ -94,7 +96,7 @@ class UCPDScraper:
         for incident in incident_rows:
             if len(incident) == 1:
                 logging.error(
-                    "This incident had a length of 1: "
+                    "This incident has a length of 1: "
                     f"{etree.tostring(incident)}"
                 )
                 continue
@@ -105,7 +107,7 @@ class UCPDScraper:
                 or "No Incident Reports" in incident.text
             ):
                 logging.error(
-                    "This incident had an ID of 'None': "
+                    "This incident has an ID of 'None': "
                     f"{etree.tostring(incident)}"
                 )
                 continue
@@ -133,7 +135,7 @@ class UCPDScraper:
         ]
         return incident_dict, page_numbers[0] == page_numbers[1]
 
-    def _get_incidents(self, new_url: str):
+    def _get_incidents(self, new_url: str) -> dict:
         """Get all incidents for a given URL."""
         at_last_page = False
         incidents = {}
