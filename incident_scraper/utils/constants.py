@@ -5,7 +5,14 @@ import pytz
 
 
 # Date/Time Constants
-UCPD_DATE_FORMATS = ["%m/%d/%y %I:%M %p", "%-m/%-d/%y %-I:%M %p"]
+UCPD_DATE_FORMATS = [
+    "%m/%d/%y %I:%M %p",
+    "%-m/%-d/%y %-I:%M %p",
+    "%m/%d/%y %-H:%M",
+    "%m/%d/%Y %-H:%M",
+    "%-m/%-d/%y %-I:%M%p",
+    "%-m/%-d/%Y %-H:%M",
+]
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 

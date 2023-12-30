@@ -95,7 +95,7 @@ class UCPDScraper:
         incident_rows = incidents[FIRST_INDEX].cssselect("tr")
         for incident in incident_rows:
             if len(incident) == 1:
-                logging.error(
+                logging.debug(
                     "This incident has a length of 1: "
                     f"{etree.tostring(incident)}"
                 )
@@ -106,7 +106,7 @@ class UCPDScraper:
                 incident_id in ["None", ":"]
                 or "No Incident Reports" in incident.text
             ):
-                logging.error(
+                logging.debug(
                     "This incident has an ID of 'None': "
                     f"{etree.tostring(incident)}"
                 )
@@ -120,7 +120,7 @@ class UCPDScraper:
                 ).strip()
 
             if [v for v in i_dict.values() if v == "Void"]:
-                logging.error(
+                logging.debug(
                     "This incident contains voided "
                     f"information: {etree.tostring(incident)}"
                 )

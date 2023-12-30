@@ -38,6 +38,7 @@ COMMAND_SEED = "seed"
 COMMAND_UPDATE = "update"
 
 
+# TODO: Chop this up into a service or some other organized structure
 def main():
     """Run the UCPD Incident Scraper."""
     parser = argparse.ArgumentParser()
