@@ -1,8 +1,13 @@
 # UChicago Incident Page Scraper
 This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The data is stored on
 [Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [Heroku's Dyno](https://devcenter.heroku.com/articles/dyno-types) functionality.
+
 ## Relevant Reading
 - Ethical Issues of Crime Mapping: [Link](https://storymaps.arcgis.com/stories/9b71d1fba77641a0ad35b07b23aae66b?utm_source=pocket_saves)
+
+## Acknowledgements
+I'd like to thank @kdumais111 and @FedericoDM for their incredible help in getting the scraping architecture in place.
+As well as @ehabich for adding a bit of testing validation to the project. Thanks, y'all! <3
 
 ## Project Requirements
 - Python version: `^3.11`
