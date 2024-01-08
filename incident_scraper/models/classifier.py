@@ -2,6 +2,7 @@ import logging
 import os
 import pickle
 from functools import reduce
+from typing import Optional
 
 import numpy as np
 import polars as pl
@@ -64,7 +65,7 @@ class Classifier:
             self._load_model()
 
     @staticmethod
-    def _reset_category_casing(category: str):
+    def _reset_category_casing(category: str) -> str:
         category = category.title()
         replacements: [tuple] = [
             ("Dui", "DUI"),
@@ -95,7 +96,7 @@ class Classifier:
         incident_list.sort()
         return incident_list
 
-    def _clean_data(self):
+    def _clean_data(self) -> None:
         for i in self._unique_types:
             self._df = self._df.with_columns(
                 pl.col(KEY_INCIDENT_TYPE)
@@ -129,7 +130,7 @@ class Classifier:
 
         self._df = self._df.to_pandas(use_pyarrow_extension_array=True)
 
-    def _train(self):
+    def _train(self) -> None:
         X = self._df[KEY_COMMENTS].tolist()
         y = np.asarray(self._df[self._df.columns[2:]], dtype=int)
         self._vectorizer.fit(X)
@@ -159,14 +160,14 @@ class Classifier:
         logging.info(f"Precision Score: {precision}")
         logging.info(f"Recall Score: {recall}")
 
-    def _save_model(self):
+    def _save_model(self) -> None:
         pickle.dump(self._model, open(SAVED_MODEL_LOCATION, mode="wb"))
         pickle.dump(
             self._vectorizer, open(SAVED_VECTORIZER_LOCATION, mode="wb")
         )
         pickle.dump(self._unique_types, open(SAVED_TYPES_LOCATION, mode="wb"))
 
-    def _load_model(self):
+    def _load_model(self) -> None:
         if os.path.isfile(SAVED_MODEL_LOCATION) and os.path.isfile(
             SAVED_VECTORIZER_LOCATION
         ):
@@ -178,11 +179,11 @@ class Classifier:
                 open(SAVED_TYPES_LOCATION, mode="rb")
             )
 
-    def train_and_save(self):
+    def train_and_save(self) -> None:
         self._train()
         self._save_model()
 
-    def get_predicted_incident_type(self, comment: str):
+    def get_predicted_incident_type(self, comment: str) -> Optional[str]:
         comment = reduce(lambda t, f: f(t), TEXT_NORMALIZING_FUNCTIONS, comment)
         vectorized_comment = self._vectorizer.transform([comment])
         prediction = self._model.predict(vectorized_comment).tolist()[0]
