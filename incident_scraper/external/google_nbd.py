@@ -140,8 +140,12 @@ class GoogleNBD:
 
             query = (
                 Incident.query()
-                .filter(Incident.validated_location.latitude < invalid_geopt.latitude,
-                        Incident.validated_location.longitude > invalid_geopt.longitude)
+                .filter(
+                    Incident.validated_location.latitude
+                    < invalid_geopt.latitude,
+                    Incident.validated_location.longitude
+                    > invalid_geopt.longitude,
+                )
                 .fetch()
             )
             return query
