@@ -120,32 +120,17 @@ class GoogleNBD:
             csv_writer.writerows(json_incidents)
         logging.info(f"Saved {len(json_incidents)} incident records to a CSV.")
 
+    def get_all_incidents(self) -> [Incident]:
+        """Get ALL incidents."""
+        with self.client.context():
+            return Incident.query().order(-Incident.reported_date).fetch()
+
     def get_all_information_incidents(self) -> [Incident]:
         """Get all 'Information' categorized incidents."""
         with self.client.context():
             query = (
                 Incident.query()
                 .filter(Incident.incident == INCIDENT_TYPE_INFO)
-                .fetch()
-            )
-            return query
-
-    def get_swapped_longitude_and_latitude_incidents(self) -> [Incident]:
-        """
-        Get all incidents where the latitudes and longitudes are swapped
-        due to an error in the GoogleMaps handling.
-        """
-        with self.client.context():
-            invalid_geopt = GeoPt(0.0, 0.0)
-
-            query = (
-                Incident.query()
-                .filter(
-                    Incident.validated_location.latitude
-                    < invalid_geopt.latitude,
-                    Incident.validated_location.longitude
-                    > invalid_geopt.longitude,
-                )
                 .fetch()
             )
             return query
