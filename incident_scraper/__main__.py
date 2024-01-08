@@ -240,13 +240,13 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
                 geocode_error_incidents.append(i)
                 logging.error(
                     "This incident failed to get a valid location with the "
-                    f"Census and GoogleMaps' Geocoder: {i}"
+                    f"GoogleMaps' Geocoder: {i}"
                 )
 
             geocode_error_incidents.append(i)
             logging.error(
-                "This incident failed to get a location with the Census "
-                f"and GoogleMaps' Geocoder: {i}"
+                "This incident failed to get a location with the GoogleMaps' "
+                f"Geocoder: {i}"
             )
         added_incidents = len(incident_objs)
         logging.info(
@@ -255,7 +255,7 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
         )
         logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
-            f"processed by the Census or GoogleMaps' Geocoder."
+            f"processed by the GoogleMaps' Geocoder."
         )
         logging.info(
             f"{added_incidents} of {inter_incidents} incidents were "
