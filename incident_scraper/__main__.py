@@ -47,8 +47,8 @@ def main():
     days_back = subparser.add_parser(COMMAND_DAYS_BACK)
     days_back.add_argument(
         "days",
-        # The range is locked between 3 and 10.
-        type=IntRange(3, 20),
+        # The range is locked between 3 and 30.
+        type=IntRange(3, 30),
         default=3,
     )
 
@@ -231,8 +231,8 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
                 set_google_maps_validated_location(
                     i, google_maps.get_address(address)
                 )
-                and -90.0 <= i[INCIDENT_KEY_LATITUDE] <= 90
-                and -90 <= i[INCIDENT_KEY_LONGITUDE] <= 90
+                and -90.0 <= i[INCIDENT_KEY_LATITUDE] <= 90.0
+                and -90.0 <= i[INCIDENT_KEY_LONGITUDE] <= 90.0
             ):
                 incident_objs.append(i)
                 continue

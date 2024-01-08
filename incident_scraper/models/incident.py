@@ -25,18 +25,6 @@ class Incident(Model):
     validated_location = GeoPtProperty()
 
 
-def set_census_validated_location(scrape: dict, resp: list):
-    """Set the validated location properties from the Census response."""
-    if not resp:
-        return False
-
-    scrape[INCIDENT_KEY_ADDRESS] = resp[0]
-    scrape[INCIDENT_KEY_LATITUDE] = resp[1]
-    scrape[INCIDENT_KEY_LONGITUDE] = resp[2]
-
-    return True
-
-
 KEY_ADDRESS = "address"
 KEY_GEOCODE = "geocode"
 

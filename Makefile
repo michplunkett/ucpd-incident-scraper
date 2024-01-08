@@ -52,6 +52,10 @@ ten_days:
 twenty_days:
 	python -m incident_scraper days-back 20
 
+.PHONY: thirty_days
+thirty_days:
+	python -m incident_scraper days-back 30
+
 .PHONY: test
 test:
 	pytest -vs test/

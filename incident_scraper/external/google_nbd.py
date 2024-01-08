@@ -71,8 +71,8 @@ class GoogleNBD:
             location=incident[INCIDENT_KEY_LOCATION],
             validated_address=incident[INCIDENT_KEY_ADDRESS],
             validated_location=GeoPt(
-                incident[INCIDENT_KEY_LONGITUDE],
                 incident[INCIDENT_KEY_LATITUDE],
+                incident[INCIDENT_KEY_LONGITUDE],
             ),
         )
 
