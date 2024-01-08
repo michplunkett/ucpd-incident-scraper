@@ -29,9 +29,9 @@ from incident_scraper.utils.constants import (
 )
 from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
-
 COMMAND_BUILD_MODEL = "build-model"
 COMMAND_CATEGORIZE = "categorize"
+COMMAND_CORRECT_GEOPT = "correct-geopt"
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -54,6 +54,7 @@ def main():
 
     subparser.add_parser(COMMAND_BUILD_MODEL)
     subparser.add_parser(COMMAND_CATEGORIZE)
+    subparser.add_parser(COMMAND_CORRECT_GEOPT)
     subparser.add_parser(COMMAND_DOWNLOAD)
     subparser.add_parser(COMMAND_SEED)
     subparser.add_parser(COMMAND_UPDATE)
@@ -85,6 +86,10 @@ def main():
         return 0
     elif args.command == COMMAND_CATEGORIZE:
         categorize_information(nbd_client)
+        return 0
+    elif args.command == COMMAND_CORRECT_GEOPT:
+        i = nbd_client.get_swapped_longitude_and_latitude_incidents()
+        logging.info(i)
         return 0
 
     logging.info(
