@@ -28,6 +28,10 @@ build_model: download
 categorize:
 	python -m incident_scraper categorize
 
+.PHONY: correct-geopt
+correct-geopt:
+	python -m incident_scraper correct-geopt
+
 .PHONY: seed
 seed:
 	python -m incident_scraper seed
