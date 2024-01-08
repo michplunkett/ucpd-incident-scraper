@@ -29,6 +29,7 @@ from incident_scraper.utils.constants import (
 )
 from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
+
 COMMAND_BUILD_MODEL = "build-model"
 COMMAND_CATEGORIZE = "categorize"
 COMMAND_CORRECT_GEOPT = "correct-geopt"
