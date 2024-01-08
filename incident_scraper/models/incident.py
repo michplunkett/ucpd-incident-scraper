@@ -29,7 +29,7 @@ KEY_ADDRESS = "address"
 KEY_GEOCODE = "geocode"
 
 
-def set_google_maps_validated_location(scrape: dict, resp: list):
+def set_google_maps_validated_location(scrape: dict, resp: list) -> bool:
     """Set the validated location properties from the Census response."""
     if not resp:
         return False
