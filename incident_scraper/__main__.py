@@ -6,6 +6,7 @@ from datetime import datetime
 from typing import Any
 
 from click import IntRange
+from google.cloud.ndb import GeoPt
 
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_maps import GoogleMaps
@@ -32,6 +33,7 @@ from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
 COMMAND_BUILD_MODEL = "build-model"
 COMMAND_CATEGORIZE = "categorize"
+COMMAND_CORRECT_GEOPT = "correct-geopt"
 COMMAND_DAYS_BACK = "days-back"
 COMMAND_DOWNLOAD = "download"
 COMMAND_SEED = "seed"
@@ -54,6 +56,7 @@ def main():
 
     subparser.add_parser(COMMAND_BUILD_MODEL)
     subparser.add_parser(COMMAND_CATEGORIZE)
+    subparser.add_parser(COMMAND_CORRECT_GEOPT)
     subparser.add_parser(COMMAND_DOWNLOAD)
     subparser.add_parser(COMMAND_SEED)
     subparser.add_parser(COMMAND_UPDATE)
@@ -86,6 +89,9 @@ def main():
     elif args.command == COMMAND_CATEGORIZE:
         categorize_information(nbd_client)
         return 0
+    elif args.command == COMMAND_CORRECT_GEOPT:
+        correct_location_information(nbd_client)
+        return 0
 
     logging.info(
         f"{len(incidents.keys())} total incidents were scraped from the UCPD "
@@ -95,13 +101,15 @@ def main():
         parse_and_save_records(incidents, nbd_client)
 
 
-def categorize_information(nbd_client: GoogleNBD):
+def categorize_information(nbd_client: GoogleNBD) -> None:
     prediction_model = Classifier()
     incidents = nbd_client.get_all_information_incidents()
 
     # Incident counters
     predicted_labels = 0
     for i in incidents:
+        logging.info(i.validated_location.latitude)
+        logging.info(i.validated_location.longitude)
         pred_type = prediction_model.get_predicted_incident_type(i.comments)
         if pred_type is not None:
             predicted_labels += 1
@@ -115,7 +123,31 @@ def categorize_information(nbd_client: GoogleNBD):
     nbd_client.update_list_of_incidents(incidents)
 
 
-def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
+def correct_location_information(nbd_client: GoogleNBD) -> None:
+    incidents = nbd_client.get_all_incidents()
+    logging.info(f"{len(incidents)} incidents fetched.")
+    incidents = [i for i in incidents if i.validated_location.latitude < 0.0]
+
+    logging.info(f"{len(incidents)} incidents had incorrect geocoding.")
+
+    for i in incidents:
+        # The location SHOULD be latitude, longitude, but they wer enot mapped
+        # correctly upon creation.
+        incorrect_latitude = i.validated_location.latitude
+        incorrect_longitude = i.validated_location.longitude
+        if incorrect_latitude < 0:
+            i.validated_location = GeoPt(
+                incorrect_longitude, incorrect_latitude
+            )
+
+    logging.info(f"{len(incidents)} incorrect incident GeoPts were updated.")
+
+    nbd_client.update_list_of_incidents(incidents)
+
+
+def parse_and_save_records(
+    incidents: {str: Any}, nbd_client: GoogleNBD
+) -> None:
     """Take incidents and save them to the GCP Datastore."""
     # Instantiate clients
     google_maps = GoogleMaps()
@@ -283,7 +315,7 @@ def parse_and_save_records(incidents: {str: Any}, nbd_client: GoogleNBD):
     )
 
 
-def update_records():
+def update_records() -> None:
     """Update incident records based on last scraped incident."""
     init_logger()
     nbd_client = GoogleNBD()

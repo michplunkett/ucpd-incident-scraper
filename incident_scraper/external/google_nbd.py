@@ -120,6 +120,11 @@ class GoogleNBD:
             csv_writer.writerows(json_incidents)
         logging.info(f"Saved {len(json_incidents)} incident records to a CSV.")
 
+    def get_all_incidents(self) -> [Incident]:
+        """Get ALL incidents."""
+        with self.client.context():
+            return Incident.query().order(-Incident.reported_date).fetch()
+
     def get_all_information_incidents(self) -> [Incident]:
         """Get all 'Information' categorized incidents."""
         with self.client.context():
