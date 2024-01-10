@@ -28,7 +28,6 @@ def parse_scraped_incident_timestamp(i: dict) -> Optional[str]:
         .replace(":AM", " AM")
         .replace(": PM", " PM")
         .replace(": AM", " AM")
-        .replace(": ", ":")
     )
 
     for time_format in UCPD_DATE_FORMATS:
