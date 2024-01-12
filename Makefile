@@ -32,6 +32,10 @@ categorize:
 correct-geopt:
 	python -m incident_scraper correct-geopt
 
+.PHONY: lemmatize-categories
+lemmatize-categories:
+	python -m incident_scraper lemmatize-categories
+
 .PHONY: seed
 seed:
 	python -m incident_scraper seed
