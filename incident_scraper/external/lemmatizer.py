@@ -70,6 +70,6 @@ class Lemmatizer:
             logging.info(
                 f"Incident type changed from {incident} to {lemma_incident}."
             )
-
+            return lemma_incident
         else:
             return incident
