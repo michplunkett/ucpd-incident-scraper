@@ -1,3 +1,5 @@
+import logging
+
 import nltk
 from nltk import WordNetLemmatizer
 
@@ -28,4 +30,11 @@ class Lemmatizer:
             else:
                 i_types.append(i_type)
 
-        return " / ".join(i_types) if updated else incident
+        if updated:
+            lemma_incident = " / ".join(i_types)
+            logging.info(
+                f"Incident type changed from {incident} to {lemma_incident}."
+            )
+
+        else:
+            return incident
