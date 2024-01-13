@@ -1,6 +1,7 @@
 # Misc.
 **.ipynb
 *.csv
+/data/corpora/words/*
 
 # IDE files and misc.
 .idea
