@@ -50,3 +50,15 @@ LOCATION_ILLINOIS = "IL"
 LOCATION_US = "US"
 TIMEZONE_KEY_CHICAGO = f"America/{LOCATION_CHICAGO}"
 TIMEZONE_CHICAGO = pytz.timezone(TIMEZONE_KEY_CHICAGO)
+
+
+# System Constants
+class SystemFlags:
+    BUILD_MODEL = "build-model"
+    CATEGORIZE = "categorize"
+    CORRECT_GEOPT = "correct-geopt"
+    DAYS_BACK = "days-back"
+    DOWNLOAD = "download"
+    LEMMATIZE_CATEGORIES = "lemmatize-categories"
+    SEED = "seed"
+    UPDATE = "update"

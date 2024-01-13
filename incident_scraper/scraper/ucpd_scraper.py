@@ -22,7 +22,7 @@ class UCPDScraper:
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
 
-    def __init__(self, request_delay=0.2):
+    def __init__(self, request_delay=0.15):
         self.request_delay = request_delay
         self.headers = {
             "Accept": (
@@ -146,6 +146,10 @@ class UCPDScraper:
         while not at_last_page:
             rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
+            logging.debug(
+                f"Scraped {len(incidents)} incidents from the UCPD "
+                "Incident page."
+            )
             offset += 5
         logging.info("Finished with the UCPD Incident scraping process.")
         return incidents
