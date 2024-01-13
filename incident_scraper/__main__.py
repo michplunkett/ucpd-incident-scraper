@@ -11,7 +11,7 @@ from google.cloud.ndb import GeoPt
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
-from incident_scraper.external.Lemmatizer import Lemmatizer
+from incident_scraper.external.lemmatizer import Lemmatizer
 from incident_scraper.models.classifier import Classifier
 from incident_scraper.models.incident import (
     Incident,
@@ -46,7 +46,7 @@ def main():
     days_back.add_argument(
         "days",
         # The range is locked between 3 and 30.
-        type=IntRange(3, 30),
+        type=IntRange(3, 90),
         default=3,
     )
 
