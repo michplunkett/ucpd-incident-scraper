@@ -128,12 +128,11 @@ class GoogleNBD:
     def get_all_information_incidents(self) -> [Incident]:
         """Get all 'Information' categorized incidents."""
         with self.client.context():
-            query = (
+            return (
                 Incident.query()
                 .filter(Incident.incident == INCIDENT_TYPE_INFO)
                 .fetch()
             )
-            return query
 
     def get_latest_date(self) -> date:
         """Get latest incident date."""
