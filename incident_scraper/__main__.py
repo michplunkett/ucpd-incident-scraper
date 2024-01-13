@@ -168,8 +168,9 @@ def parse_and_save_records(
 
     # Instantiate clients
     google_maps = GoogleMaps()
-    total_incidents = len(incidents.keys())
+    lemmatizer = Lemmatizer()
     prediction_model = Classifier()
+    total_incidents = len(incidents.keys())
 
     # Split list of incidents into groups of 100 and submit them
     n = 100
@@ -215,39 +216,7 @@ def parse_and_save_records(
                 logging.error(f"This incident has a malformed date: {i}")
                 continue
 
-            i[INCIDENT_KEY_TYPE] = (
-                (
-                    i[INCIDENT_KEY_TYPE]
-                    .replace("Information / |/ Information ", "")
-                    .replace("\\", "/")
-                    .replace(" (", " / ")
-                    .replace("(", "")
-                    .replace(")", "")
-                    .replace("&", "and")
-                    .replace("Inforation", INCIDENT_TYPE_INFO)
-                    .replace("Well Being", "Well-Being")
-                    .replace("Infformation", INCIDENT_TYPE_INFO)
-                    .replace("Hit & Run", "Hit and Run")
-                    .replace("Att.", "Attempted")
-                    .replace("Agg.", "Aggravated")
-                    .replace("(", "/ ")
-                    .replace(")", "")
-                    .replace("\n", " ")
-                    .replace(" - ", " / ")
-                )
-                .strip()
-                .title()
-            )
-
-            i[INCIDENT_KEY_TYPE] = (
-                i[INCIDENT_KEY_TYPE]
-                .replace("Dui", "DUI")
-                .replace("Uc", "UC")
-                .replace("Uuw", "Unlawful Use of a Weapon")
-                .replace("/", " / ")
-            )
-
-            i[INCIDENT_KEY_TYPE] = re.sub(r"\s{2,}", " ", i[INCIDENT_KEY_TYPE])
+            i[INCIDENT_KEY_TYPE] = lemmatizer.process(i[INCIDENT_KEY_TYPE])
 
             i[INCIDENT_KEY_COMMENTS] = (
                 i[INCIDENT_KEY_COMMENTS].replace("\n", " ")
