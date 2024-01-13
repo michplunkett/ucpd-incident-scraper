@@ -8,7 +8,7 @@ from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 
 
 class Lemmatizer:
-    nltk.download("wordnet", download_dir="./data")
+    nltk.download("wordnet")
 
     def __init__(self):
         self.client = WordNetLemmatizer()
