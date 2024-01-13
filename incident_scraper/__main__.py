@@ -154,7 +154,7 @@ def lemmatize_categories(nbd_client: GoogleNBD) -> None:
         "were incidents lemmatized."
     )
 
-    # nbd_client.update_list_of_incidents(lemmatized_incidents)
+    nbd_client.update_list_of_incidents(lemmatized_incidents)
 
     logging.info(f"{len(lemmatized_incidents)} types were updated.")
 
