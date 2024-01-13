@@ -77,6 +77,8 @@ def main():
             incidents = scraper.scrape_last_days(args.days)
         case SystemFlags.DOWNLOAD:
             nbd_client.download_all()
+        case SystemFlags.LEMMATIZE_CATEGORIES:
+            lemmatize_categories(nbd_client)
         case SystemFlags.SEED:
             incidents = scraper.scrape_from_beginning_2011()
         case SystemFlags.UPDATE:

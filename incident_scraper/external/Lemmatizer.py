@@ -1,5 +1,5 @@
 import logging
-from typing import re
+import re
 
 import nltk
 from nltk import WordNetLemmatizer
