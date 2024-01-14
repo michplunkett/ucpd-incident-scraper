@@ -56,6 +56,7 @@ class Lemmatizer:
                 lemma.replace("Uc", "UC")
                 .replace("UCpd", "UCPD")
                 .replace("Duo", "DUI")
+                .replace("Dui", "DUI")
                 .replace("Mean", "Means")
             )
 
