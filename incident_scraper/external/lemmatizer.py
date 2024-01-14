@@ -1,19 +1,14 @@
 import logging
 import re
 
-import nltk
-from nltk import WordNetLemmatizer
+from textblob import Word
 
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 
 
 class Lemmatizer:
-    nltk.download("words", download_dir="./data")
-
-    def __init__(self):
-        self.client = WordNetLemmatizer()
-
-    def process(self, incident: str) -> str:
+    @staticmethod
+    def process(incident: str) -> str:
         incident = (
             (
                 incident.replace("Information / |/ Information ", "")
@@ -50,7 +45,7 @@ class Lemmatizer:
         updated = False
         for i_type in incident.split(" / "):
             lemma = " ".join(
-                [self.client.lemmatize(w.lower()) for w in i_type.split(" ")]
+                [Word(w.lower()).lemmatize() for w in i_type.split(" ")]
             ).title()
             lemma = (
                 lemma.replace("Uc", "UC")
