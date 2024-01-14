@@ -26,8 +26,8 @@ pandas = "^2.1.3"
 pyarrow = "^14.0.1"
 xgboost = "^2.0.2"
 neattext = "^0.1.3"
-nltk = "^3.8.1"
 click = "^8.1.7"
+textblob = "^0.17.1"
 
 [build-system]
 requires = ["poetry-core"]

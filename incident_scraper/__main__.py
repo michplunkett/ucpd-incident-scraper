@@ -138,13 +138,12 @@ def correct_location_information(nbd_client: GoogleNBD) -> None:
 
 def lemmatize_categories(nbd_client: GoogleNBD) -> None:
     incidents = nbd_client.get_all_incidents()
-    lemmatizer = Lemmatizer()
     logging.info(f"{len(incidents)} incidents fetched.")
 
     lemmatized_incidents: [Incident] = []
 
     for i in incidents:
-        lemma_i_type = lemmatizer.process(i.incident)
+        lemma_i_type = Lemmatizer.process(i.incident)
         if i.incident != lemma_i_type:
             i.incident = lemma_i_type
             lemmatized_incidents.append(i)
@@ -170,7 +169,6 @@ def parse_and_save_records(
 
     # Instantiate clients
     google_maps = GoogleMaps()
-    lemmatizer = Lemmatizer()
     prediction_model = Classifier()
     total_incidents = len(incidents.keys())
 
@@ -218,7 +216,7 @@ def parse_and_save_records(
                 logging.error(f"This incident has a malformed date: {i}")
                 continue
 
-            i[INCIDENT_KEY_TYPE] = lemmatizer.process(i[INCIDENT_KEY_TYPE])
+            i[INCIDENT_KEY_TYPE] = Lemmatizer.process(i[INCIDENT_KEY_TYPE])
 
             i[INCIDENT_KEY_COMMENTS] = (
                 i[INCIDENT_KEY_COMMENTS].replace("\n", " ")
