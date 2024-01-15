@@ -8,6 +8,64 @@ from incident_scraper.utils.constants import (
 )
 
 
+# Source: https://www.geeksforgeeks.org/convert-string-to-title-case-in-python/
+def custom_title_case(input_string: str) -> str:
+    # List of articles.
+    articles = ["a", "an", "the"]
+
+    # List of coordinating conjunctions.
+    conjunctions = ["and", "but", "for", "nor", "or", "so", "yet"]
+
+    # List of some short articles.
+    prepositions = [
+        "in",
+        "to",
+        "for",
+        "with",
+        "on",
+        "at",
+        "from",
+        "by",
+        "about",
+        "as",
+        "into",
+        "like",
+        "through",
+        "after",
+        "over",
+        "between",
+        "out",
+        "against",
+        "during",
+        "without",
+        "before",
+        "under",
+        "around",
+        "among",
+        "of",
+    ]
+
+    lower_case = articles + conjunctions + prepositions
+    output_list = []
+
+    # separating each word in the string
+    input_list = input_string.split(" ")
+
+    # checking each word
+    for word in input_list:
+        # if the word exists in the list
+        # then no need to capitalize it
+        if word in lower_case:
+            output_list.append(word)
+
+        # if the word does not exist in
+        # the list, then capitalize it
+        else:
+            output_list.append(word.title())
+
+    return " ".join(output_list)
+
+
 def parse_scraped_incident_timestamp(i: dict) -> Optional[str]:
     result = None
 

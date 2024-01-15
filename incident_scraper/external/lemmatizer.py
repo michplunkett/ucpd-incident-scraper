@@ -4,39 +4,42 @@ import re
 from textblob import Word
 
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
+from incident_scraper.utils.functions import custom_title_case
 
 
 class Lemmatizer:
     @staticmethod
     def process(incident: str) -> str:
         incident = (
-            (
-                incident.replace("Information / |/ Information ", "")
-                .replace("\\", "/")
-                .replace(" (", " / ")
-                .replace("(", "")
-                .replace(")", "")
-                .replace("&", "and")
-                .replace("Inforation", INCIDENT_TYPE_INFO)
-                .replace("Well Being", "Well-Being")
-                .replace("Infformation", INCIDENT_TYPE_INFO)
-                .replace("Hit & Run", "Hit and Run")
-                .replace("Att.", "Attempted")
-                .replace("Agg.", "Aggravated")
-                .replace("(", "/ ")
-                .replace(")", "")
-                .replace("\n", " ")
-                .replace(" - ", " / ")
-            )
-            .strip()
-            .title()
-        )
+            incident.replace("Information / |/ Information ", "")
+            .replace("\\", "/")
+            .replace(" (", " / ")
+            .replace("(", "")
+            .replace(")", "")
+            .replace("&", "and")
+            .replace("Inforation", INCIDENT_TYPE_INFO)
+            .replace("Well Being", "Well-Being")
+            .replace("Infformation", INCIDENT_TYPE_INFO)
+            .replace("Hit & Run", "Hit and Run")
+            .replace("Att.", "Attempted")
+            .replace("Agg.", "Aggravated")
+            .replace("(", "/ ")
+            .replace(")", "")
+            .replace("\n", " ")
+            .replace(" - ", " / ")
+            .replace("/", " / ")
+        ).strip()
+        incident = custom_title_case(incident)
+
+        # TODO: 'Non-Criminal / Damage To Property' ->
+        #  'Non-Criminal Damage to Property'
 
         incident = (
             incident.replace("Dui", "DUI")
             .replace("Uc", "UC")
             .replace("Uuw", "Unlawful Use of a Weapon")
-            .replace("/", " / ")
+            .replace("Non Criminal", "Non-Criminal")
+            .replace("Non-Criminal / Damage", "Non-Criminal Damage")
         )
 
         incident = re.sub(r"\s{2,}", " ", incident)
@@ -44,9 +47,11 @@ class Lemmatizer:
         i_types = []
         updated = False
         for i_type in incident.split(" / "):
-            lemma = " ".join(
-                [Word(w.lower()).lemmatize() for w in i_type.split(" ")]
-            ).title()
+            lemma = custom_title_case(
+                " ".join(
+                    [Word(w.lower()).lemmatize() for w in i_type.split(" ")]
+                )
+            )
             lemma = (
                 lemma.replace("Uc", "UC")
                 .replace("UCpd", "UCPD")

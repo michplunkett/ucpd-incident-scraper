@@ -14,6 +14,7 @@ from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
 
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
+from incident_scraper.utils.functions import custom_title_case
 
 
 INCIDENT_FILE = "incident_dump.csv"
@@ -66,7 +67,7 @@ class Classifier:
 
     @staticmethod
     def _reset_category_casing(category: str) -> str:
-        category = category.title()
+        category = custom_title_case(category)
         replacements: [tuple] = [
             ("Dui", "DUI"),
             ("Cpd", "CPD"),
