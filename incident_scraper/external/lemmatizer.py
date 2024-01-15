@@ -53,6 +53,7 @@ class Lemmatizer:
                 .replace("Duo", "DUI")
                 .replace("Dui", "DUI")
                 .replace("Mean", "Means")
+                .replace("Attempt ", "Attempted ")
             )
 
             if i_type != lemma:
