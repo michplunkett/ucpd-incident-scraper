@@ -17,7 +17,9 @@ from incident_scraper.utils.constants import (
 
 
 class Geocoder:
-    """A class that houses code for both the Census and Google Maps geocoders."""
+    """
+    A class that houses code for both the Census and Google Maps geocoders.
+    """
 
     KEY_ADDRESS = "address"
     KEY_GEOCODE = "geocode"
@@ -83,7 +85,7 @@ class Geocoder:
         """Get address from Google Maps geocoder.
 
         For more information on the Google Maps API, visit this link:
-        https://github.com/googlemaps/google-maps-services-python?tab=readme-ov-file#usage
+        https://github.com/googlemaps/google-maps-services-python#usage
         """
         if address in self.address_cache:
             return self.address_cache[address]
