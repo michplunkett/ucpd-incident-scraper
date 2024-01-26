@@ -111,7 +111,7 @@ class Geocoder:
             self.address_cache[address] = {
                 INCIDENT_KEY_ADDRESS: result["address"][
                     "formattedAddress"
-                ].replace("Usa", "USA"),
+                ].replace(", USA", ""),
                 INCIDENT_KEY_LATITUDE: result["geocode"]["location"][
                     "latitude"
                 ],
