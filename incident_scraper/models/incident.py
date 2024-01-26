@@ -2,12 +2,6 @@
 
 from google.cloud.ndb import GeoPtProperty, Model, StringProperty
 
-from incident_scraper.utils.constants import (
-    INCIDENT_KEY_ADDRESS,
-    INCIDENT_KEY_LATITUDE,
-    INCIDENT_KEY_LONGITUDE,
-)
-
 
 class Incident(Model):
     """Standard data structure for recovered UCPD incidents."""
@@ -23,25 +17,3 @@ class Incident(Model):
     location = StringProperty()
     validated_address = StringProperty()
     validated_location = GeoPtProperty()
-
-
-KEY_ADDRESS = "address"
-KEY_GEOCODE = "geocode"
-
-
-def set_google_maps_validated_location(scrape: dict, resp: list) -> bool:
-    """Set the validated location properties from the Census response."""
-    if not resp:
-        return False
-
-    if resp[KEY_GEOCODE]:
-        location = resp[KEY_GEOCODE]["location"]
-        scrape[INCIDENT_KEY_LATITUDE] = location["latitude"]
-        scrape[INCIDENT_KEY_LONGITUDE] = location["longitude"]
-
-    if resp[KEY_ADDRESS]:
-        scrape[INCIDENT_KEY_ADDRESS] = resp[KEY_ADDRESS]["formattedAddress"]
-    else:
-        return False
-
-    return True

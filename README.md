@@ -14,6 +14,7 @@ As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing va
 - [Poetry](https://python-poetry.org/)
 
 ### Required Credentials
+- [Census API Key](https://api.census.gov/data/key_signup.html) stored in the environment variable: `CENSUS_API_KEY`
 - Google Cloud Platform [service account](https://cloud.google.com/iam/docs/service-account-overview) with location of the `service_account.json` file stored in the environment
 variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - Google Cloud Platform project ID stored in the environment variable: `GOOGLE_CLOUD_PROJECT`

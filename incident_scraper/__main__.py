@@ -8,17 +8,15 @@ from typing import Any
 from click import IntRange
 from google.cloud.ndb import GeoPt
 
+from incident_scraper.external.geocoder import Geocoder
 from incident_scraper.external.google_logger import init_logger
-from incident_scraper.external.google_maps import GoogleMaps
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.external.lemmatizer import Lemmatizer
 from incident_scraper.models.classifier import Classifier
-from incident_scraper.models.incident import (
-    Incident,
-    set_google_maps_validated_location,
-)
+from incident_scraper.models.incident import Incident
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
+    INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_COMMENTS,
     INCIDENT_KEY_ID,
     INCIDENT_KEY_LATITUDE,
@@ -168,7 +166,7 @@ def parse_and_save_records(
     )
 
     # Instantiate clients
-    google_maps = GoogleMaps()
+    geocoder = Geocoder()
     prediction_model = Classifier()
     total_incidents = len(incidents.keys())
 
@@ -204,7 +202,8 @@ def parse_and_save_records(
                 i[INCIDENT_KEY_LOCATION].split(" (")[0]
                 if "(" in i[INCIDENT_KEY_LOCATION]
                 else i[INCIDENT_KEY_LOCATION]
-            )
+            ).replace("&", "and")
+
             i[INCIDENT_KEY_REPORTED] = i[INCIDENT_KEY_REPORTED].replace(
                 ";", ":"
             )
@@ -246,9 +245,8 @@ def parse_and_save_records(
             )
 
             if (
-                set_google_maps_validated_location(
-                    i, google_maps.get_address(address)
-                )
+                geocoder.get_address_information(address, i)
+                and INCIDENT_KEY_ADDRESS in i
                 and -90.0 <= i[INCIDENT_KEY_LATITUDE] <= 90.0
                 and -90.0 <= i[INCIDENT_KEY_LONGITUDE] <= 90.0
             ):
@@ -258,7 +256,7 @@ def parse_and_save_records(
                 geocode_error_incidents.append(i)
                 logging.error(
                     "This incident failed to get a valid location with the "
-                    f"GoogleMaps' Geocoder: {i}"
+                    f"Geocoder: {i}"
                 )
 
             geocode_error_incidents.append(i)

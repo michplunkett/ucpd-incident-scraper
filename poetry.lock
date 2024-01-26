@@ -51,6 +51,24 @@ files = [
 ]
 
 [[package]]
+name = "censusgeocode"
+version = "0.5.2"
+description = "Thin Python wrapper for the US Census Geocoder"
+optional = false
+python-versions = "<4,>=3.6"
+files = [
+    {file = "censusgeocode-0.5.2-py3-none-any.whl", hash = "sha256:fa2a9e0d44a7216fb5c3d031fc09d6c2008de28cec45495aaad5d309ef06b98b"},
+    {file = "censusgeocode-0.5.2.tar.gz", hash = "sha256:ee590d1b7806c630b4a6e60adfa572abf502c95fb2d9489ac045bdda46edde38"},
+]
+
+[package.dependencies]
+requests = {version = ">=2.27.0,<3", extras = ["security"]}
+requests-toolbelt = ">=0.9.0,<1"
+
+[package.extras]
+tests = ["vcrpy (>=4.1.1,<5)"]
+
+[[package]]
 name = "certifi"
 version = "2023.11.17"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -1297,6 +1315,20 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "requests-toolbelt"
+version = "0.10.1"
+description = "A utility belt for advanced users of python-requests"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+files = [
+    {file = "requests-toolbelt-0.10.1.tar.gz", hash = "sha256:62e09f7ff5ccbda92772a29f394a49c3ad6cb181d568b1337626b2abb628a63d"},
+    {file = "requests_toolbelt-0.10.1-py2.py3-none-any.whl", hash = "sha256:18565aa58116d9951ac39baa288d3adb5b3ff975c4f25eee78555d89e8f247f7"},
+]
+
+[package.dependencies]
+requests = ">=2.0.1,<3.0.0"
+
+[[package]]
 name = "rsa"
 version = "4.9"
 description = "Pure-Python RSA implementation"
@@ -1577,4 +1609,4 @@ scikit-learn = ["scikit-learn"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0247d44826ab1c285556a3a8b50982cfc8e4e37748c0cf7719b660b6edfaaea8"
+content-hash = "913300a0d5de4b7822fac896ca0ad317ba25faaf407536b1733080bab8c99e71"
