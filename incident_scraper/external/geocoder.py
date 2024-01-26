@@ -1,5 +1,6 @@
 import logging
 from time import sleep
+from typing import Optional
 
 import requests
 from censusgeocode import CensusGeocode
@@ -21,8 +22,6 @@ class Geocoder:
     A class that houses code for both the Census and Google Maps geocoders.
     """
 
-    KEY_ADDRESS = "address"
-    KEY_GEOCODE = "geocode"
     NUM_RETRIES = 10
     TIMEOUT = 5
 
@@ -32,11 +31,22 @@ class Geocoder:
         self.google_client = Client(ENV_GOOGLE_MAPS_KEY)
 
     def get_address_information(self, address: str, i_dict: dict) -> bool:
-        if "between" not in address and " and " not in address:
-            self._get_address_from_census(address)
+        if address in self.address_cache:
+            self._get_address_from_cache(i_dict, self.address_cache[address])
+
+        if (
+            INCIDENT_KEY_ADDRESS not in i_dict
+            and "between" not in address
+            and " and " not in address
+        ):
+            self._get_address_from_cache(
+                i_dict, self._get_address_from_census(address)
+            )
 
         if INCIDENT_KEY_ADDRESS not in i_dict:
-            self._get_address_from_google(address)
+            self._get_address_from_cache(
+                i_dict, self._get_address_from_google(address)
+            )
 
         # Return if an address was found.
         return INCIDENT_KEY_ADDRESS in i_dict
@@ -47,9 +57,6 @@ class Geocoder:
         For more information on the Census Geocode API, visit this link:
         https://github.com/fitnr/censusgeocode#census-geocode
         """
-        if address in self.address_cache:
-            return self.address_cache[address]
-
         response = None
         for _ in range(self.NUM_RETRIES):
             try:
@@ -70,12 +77,13 @@ class Geocoder:
                 pass
 
         if response:
+            logging.debug(f"Using the Census geocoder for: {address}")
             coordinates = response[0]["coordinates"]
-            self.address_cache[address] = (
-                response[0]["matchedAddress"],
-                coordinates["x"],
-                coordinates["y"],
-            )
+            self.address_cache[address] = {
+                INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"],
+                INCIDENT_KEY_LATITUDE: coordinates[self.KEY_Y],
+                INCIDENT_KEY_LONGITUDE: coordinates[self.KEY_X],
+            }
         else:
             self.address_cache[address] = None
 
@@ -87,9 +95,6 @@ class Geocoder:
         For more information on the Google Maps API, visit this link:
         https://github.com/googlemaps/google-maps-services-python#usage
         """
-        if address in self.address_cache:
-            return self.address_cache[address]
-
         resp = self.google_client.addressvalidation(
             [address],
             # Enable Coding Accuracy Support System
@@ -100,24 +105,21 @@ class Geocoder:
 
         result = resp["result"]
         if result:
-            self.address_cache[address] = result
+            logging.debug(f"Using the Google Maps geocoder for: {address}")
+            location = resp["geocode"]["location"]
+            self.address_cache[address] = {
+                INCIDENT_KEY_ADDRESS: resp["address"]["formattedAddress"],
+                INCIDENT_KEY_LATITUDE: location["latitude"],
+                INCIDENT_KEY_LONGITUDE: location["longitude"],
+            }
         else:
             self.address_cache[address] = None
 
         return self.address_cache[address]
 
     @staticmethod
-    def set_census_validated_location(scrape: dict, resp: list) -> None:
-        """Set the validated location properties from the Census response."""
-        scrape[INCIDENT_KEY_ADDRESS] = resp[0]
-        scrape[INCIDENT_KEY_LATITUDE] = resp[1]
-        scrape[INCIDENT_KEY_LONGITUDE] = resp[2]
-
-    @staticmethod
-    def set_google_maps_validated_location(scrape: dict, resp: list) -> None:
-        """Set the validated location properties from the Census response."""
-        if "geocode" in resp and "address" in resp:
-            location = resp["geocode"]["location"]
-            scrape[INCIDENT_KEY_LATITUDE] = location["latitude"]
-            scrape[INCIDENT_KEY_LONGITUDE] = location["longitude"]
-            scrape[INCIDENT_KEY_ADDRESS] = resp["address"]["formattedAddress"]
+    def _get_address_from_cache(i_dict: dict, result: Optional[dict]):
+        if i_dict and result:
+            i_dict[INCIDENT_KEY_ADDRESS] = result[INCIDENT_KEY_ADDRESS]
+            i_dict[INCIDENT_KEY_LATITUDE] = result[INCIDENT_KEY_LATITUDE]
+            i_dict[INCIDENT_KEY_LONGITUDE] = result[INCIDENT_KEY_LONGITUDE]
