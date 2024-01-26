@@ -80,9 +80,11 @@ class Geocoder:
             logging.debug(f"Using the Census geocoder for: {address}")
             coordinates = response[0]["coordinates"]
             self.address_cache[address] = {
-                INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"],
-                INCIDENT_KEY_LATITUDE: coordinates[self.KEY_Y],
-                INCIDENT_KEY_LONGITUDE: coordinates[self.KEY_X],
+                INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"].replace(
+                    "Usa", "USA"
+                ),
+                INCIDENT_KEY_LATITUDE: coordinates["y"],
+                INCIDENT_KEY_LONGITUDE: coordinates["x"],
             }
         else:
             self.address_cache[address] = None
@@ -106,11 +108,16 @@ class Geocoder:
         result = resp["result"]
         if result:
             logging.debug(f"Using the Google Maps geocoder for: {address}")
-            location = resp["geocode"]["location"]
             self.address_cache[address] = {
-                INCIDENT_KEY_ADDRESS: resp["address"]["formattedAddress"],
-                INCIDENT_KEY_LATITUDE: location["latitude"],
-                INCIDENT_KEY_LONGITUDE: location["longitude"],
+                INCIDENT_KEY_ADDRESS: result["address"][
+                    "formattedAddress"
+                ].replace("Usa", "USA"),
+                INCIDENT_KEY_LATITUDE: result["geocode"]["location"][
+                    "latitude"
+                ],
+                INCIDENT_KEY_LONGITUDE: result["geocode"]["location"][
+                    "longitude"
+                ],
             }
         else:
             self.address_cache[address] = None
