@@ -5,24 +5,29 @@ import requests
 from censusgeocode import CensusGeocode
 from googlemaps import Client
 
-from incident_scraper.utils.constants import ENV_GOOGLE_MAPS_KEY, \
-    LOCATION_CHICAGO, LOCATION_US, LOCATION_ILLINOIS, INCIDENT_KEY_ADDRESS, \
-    INCIDENT_KEY_LATITUDE, INCIDENT_KEY_LONGITUDE
+from incident_scraper.utils.constants import (
+    ENV_GOOGLE_MAPS_KEY,
+    INCIDENT_KEY_ADDRESS,
+    INCIDENT_KEY_LATITUDE,
+    INCIDENT_KEY_LONGITUDE,
+    LOCATION_CHICAGO,
+    LOCATION_ILLINOIS,
+    LOCATION_US,
+)
 
 
 class Geocoder:
     """A class that houses code for both the Census and Google Maps geocoders."""
+
     KEY_ADDRESS = "address"
     KEY_GEOCODE = "geocode"
     NUM_RETRIES = 10
     TIMEOUT = 5
 
-
     def __init__(self):
         self.address_cache = {}
         self.census_client = CensusGeocode()
         self.google_client = Client(ENV_GOOGLE_MAPS_KEY)
-
 
     def get_address_information(self, address: str, i_dict: dict) -> bool:
         if "between" not in address and " and " not in address:
@@ -114,4 +119,3 @@ class Geocoder:
             scrape[INCIDENT_KEY_LATITUDE] = location["latitude"]
             scrape[INCIDENT_KEY_LONGITUDE] = location["longitude"]
             scrape[INCIDENT_KEY_ADDRESS] = resp["address"]["formattedAddress"]
-
