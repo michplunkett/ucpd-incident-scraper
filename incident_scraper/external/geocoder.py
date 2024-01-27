@@ -80,9 +80,7 @@ class Geocoder:
             logging.debug(f"Using the Census geocoder for: {address}")
             coordinates = response[0]["coordinates"]
             self.address_cache[address] = {
-                INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"].replace(
-                    "Usa", "USA"
-                ),
+                INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"],
                 INCIDENT_KEY_LATITUDE: coordinates["y"],
                 INCIDENT_KEY_LONGITUDE: coordinates["x"],
             }
