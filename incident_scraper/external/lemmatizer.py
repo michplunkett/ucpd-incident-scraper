@@ -31,9 +31,6 @@ class Lemmatizer:
         ).strip()
         incident = custom_title_case(incident)
 
-        # TODO: 'Non-Criminal / Damage To Property' ->
-        #  'Non-Criminal Damage to Property'
-
         incident = (
             incident.replace("Dui", "DUI")
             .replace("Uc", "UC")
