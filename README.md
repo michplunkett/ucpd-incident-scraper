@@ -10,7 +10,7 @@ I'd like to thank [@kdumais111](https://github.com/kdumais111) and [@FedericoDM]
 As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing validation to the project. Thanks, y'all! <3
 
 ## Project Requirements
-- Python version: `^3.11`
+- Python version: `^3.11.7`
 - [Poetry](https://python-poetry.org/)
 
 ### Required Credentials
