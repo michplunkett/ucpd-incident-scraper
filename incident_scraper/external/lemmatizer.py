@@ -1,10 +1,14 @@
 import logging
 import re
 
+import nltk
 from textblob import Word
 
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
+
+
+nltk.download("wordnet")
 
 
 class Lemmatizer:
@@ -30,9 +34,6 @@ class Lemmatizer:
             .replace("/", " / ")
         ).strip()
         incident = custom_title_case(incident)
-
-        # TODO: 'Non-Criminal / Damage To Property' ->
-        #  'Non-Criminal Damage to Property'
 
         incident = (
             incident.replace("Dui", "DUI")
