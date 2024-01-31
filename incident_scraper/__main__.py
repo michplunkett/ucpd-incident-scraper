@@ -315,6 +315,11 @@ def update_records() -> None:
 
     if total_incidents:
         parse_and_save_records(incidents, nbd_client)
+    else:
+        logging.info(
+            "No incidents were scraped for "
+            f"{datetime.now().strftime(UCPD_MDY_KEY_DATE_FORMAT)}."
+        )
 
 
 if __name__ == "__main__":
