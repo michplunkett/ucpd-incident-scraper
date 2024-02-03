@@ -43,6 +43,14 @@ repos:
           - --profile=black
           - --line-length=80
 
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        args:
+          - --target-version=py311
+          - --line-length=80
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.0.286
     hooks:
@@ -61,11 +69,3 @@ repos:
         args:
           - --ignore=E203,E402,E501,E800,W503,W391,E261
           - --select=B,C,E,F,W,T4,B9
-
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
-    hooks:
-      - id: black
-        args:
-          - --target-version=py311
-          - --line-length=80
