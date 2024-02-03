@@ -1,13 +1,13 @@
 BASEDIR=incident_scraper
 
-default: create-requirements lint
+default: create_requirements lint
 
 .PHONY: lint
 lint:
 	pre-commit run --all-files
 
-.PHONY: create-requirements
-create-requirements:
+.PHONY: create_requirements
+create_requirements:
 	poetry export --without-hashes --format=requirements.txt > requirements.txt
 
 .PHONY: download
@@ -28,12 +28,16 @@ build_model: download
 categorize:
 	python -m incident_scraper categorize
 
-.PHONY: correct-geopt
-correct-geopt:
+.PHONY: correct_geopt
+correct_geopt:
 	python -m incident_scraper correct-geopt
 
-.PHONY: lemmatize-categories
-lemmatize-categories:
+.PHONY: correct_location
+correct_location:
+	python -m incident_scraper correct-location
+
+.PHONY: lemmatize_categories
+lemmatize_categories:
 	python -m incident_scraper lemmatize-categories
 
 .PHONY: seed
@@ -67,7 +71,3 @@ thirty_days:
 .PHONY: test
 test:
 	pytest -vs test/
-
-.PHONY: test-and-fail
-test-and-fail:
-	pytest -vsx test/
