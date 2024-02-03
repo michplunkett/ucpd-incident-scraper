@@ -46,6 +46,7 @@ INCIDENT_TYPE_INFO = "Information"
 
 # Location Constants
 LOCATION_CHICAGO = "Chicago"
+LOCATION_HYDE_PARK = "Hyde Park, Chicago"
 LOCATION_ILLINOIS = "IL"
 LOCATION_US = "US"
 TIMEZONE_KEY_CHICAGO = f"America/{LOCATION_CHICAGO}"

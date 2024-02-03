@@ -12,6 +12,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LATITUDE,
     INCIDENT_KEY_LONGITUDE,
     LOCATION_CHICAGO,
+    LOCATION_HYDE_PARK,
     LOCATION_ILLINOIS,
     LOCATION_US,
 )
@@ -102,7 +103,7 @@ class Geocoder:
             [address],
             # Enable Coding Accuracy Support System
             enableUspsCass=True,
-            locality=LOCATION_CHICAGO,
+            locality=LOCATION_HYDE_PARK,
             regionCode=LOCATION_US,
         )
 

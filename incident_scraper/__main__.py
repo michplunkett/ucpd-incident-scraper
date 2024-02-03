@@ -198,11 +198,14 @@ def parse_and_save_records(
                 continue
 
             i[INCIDENT_KEY_ID] = key
+            i[INCIDENT_KEY_LOCATION] = i[INCIDENT_KEY_LOCATION].replace(
+                "&", "and"
+            )
             address = (
                 i[INCIDENT_KEY_LOCATION].split(" (")[0]
                 if "(" in i[INCIDENT_KEY_LOCATION]
                 else i[INCIDENT_KEY_LOCATION]
-            ).replace("&", "and")
+            )
 
             i[INCIDENT_KEY_REPORTED] = i[INCIDENT_KEY_REPORTED].replace(
                 ";", ":"
