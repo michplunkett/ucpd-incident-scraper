@@ -22,6 +22,9 @@ class Geocoder:
     A class that houses code for both the Census and Google Maps geocoders.
     """
 
+    # Approximate bounding box of UCPD patrol area:
+    # https://d3qi0qp55mx5f5.cloudfront.net/safety-security/uploads/files/Extended_Patrol_Map.pdf
+    BOUNDING_BOX = [-87.608703, 41.776408, -87.568594, 41.826281]
     NUM_RETRIES = 10
     TIMEOUT = 5
 
