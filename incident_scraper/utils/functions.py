@@ -138,7 +138,7 @@ def custom_title_case(input_string: str) -> str:
 
 
 # Source: https://stackoverflow.com/a/50992575
-def make_ordinal(n: int):
+def make_ordinal(n: int) -> str:
     """
     Convert an integer into its ordinal representation::
 
