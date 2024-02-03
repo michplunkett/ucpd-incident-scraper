@@ -58,6 +58,7 @@ class SystemFlags:
     BUILD_MODEL = "build-model"
     CATEGORIZE = "categorize"
     CORRECT_GEOPT = "correct-geopt"
+    CORRECT_LOCATION = "correct-location"
     DAYS_BACK = "days-back"
     DOWNLOAD = "download"
     LEMMATIZE_CATEGORIES = "lemmatize-categories"
