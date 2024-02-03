@@ -31,7 +31,10 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
     SystemFlags,
 )
-from incident_scraper.utils.functions import parse_scraped_incident_timestamp
+from incident_scraper.utils.functions import (
+    address_correction,
+    parse_scraped_incident_timestamp,
+)
 
 
 # TODO: Chop this up into a service or some other organized structure
@@ -51,6 +54,7 @@ def main():
     subparser.add_parser(SystemFlags.BUILD_MODEL)
     subparser.add_parser(SystemFlags.CATEGORIZE)
     subparser.add_parser(SystemFlags.CORRECT_GEOPT)
+    subparser.add_parser(SystemFlags.CORRECT_LOCATION)
     subparser.add_parser(SystemFlags.DOWNLOAD)
     subparser.add_parser(SystemFlags.LEMMATIZE_CATEGORIES)
     subparser.add_parser(SystemFlags.SEED)
@@ -70,7 +74,9 @@ def main():
         case SystemFlags.CATEGORIZE:
             categorize_information(nbd_client)
         case SystemFlags.CORRECT_GEOPT:
-            categorize_information(nbd_client)
+            correct_coordinates(nbd_client)
+        case SystemFlags.CORRECT_LOCATION:
+            correct_location(nbd_client)
         case SystemFlags.DAYS_BACK:
             incidents = scraper.scrape_last_days(args.days)
         case SystemFlags.DOWNLOAD:
@@ -112,7 +118,7 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
     nbd_client.update_list_of_incidents(incidents)
 
 
-def correct_location_information(nbd_client: GoogleNBD) -> None:
+def correct_coordinates(nbd_client: GoogleNBD) -> None:
     incidents = nbd_client.get_all_incidents()
     logging.info(f"{len(incidents)} incidents fetched.")
     incidents = [i for i in incidents if i.validated_location.latitude < 0.0]
@@ -132,6 +138,23 @@ def correct_location_information(nbd_client: GoogleNBD) -> None:
     logging.info(f"{len(incidents)} incorrect incident GeoPts were updated.")
 
     nbd_client.update_list_of_incidents(incidents)
+    incidents = nbd_client.get_all_incidents()
+
+    corrected_locations = 0
+    for i in incidents:
+        address = i.location
+        if address != i.location:
+            logging.info(f"{i.location} changed to {address}")
+            corrected_locations += 1
+
+    logging.info(
+        f"{corrected_locations} of {len(incidents)} "
+        "had their addressed updated."
+    )
+
+
+def correct_location(nbd_client: GoogleNBD) -> None:
+    nbd_client.get()
 
 
 def lemmatize_categories(nbd_client: GoogleNBD) -> None:
@@ -199,9 +222,10 @@ def parse_and_save_records(
 
             i[INCIDENT_KEY_ID] = key
 
-            i[INCIDENT_KEY_LOCATION] = i[INCIDENT_KEY_LOCATION].replace(
-                "&", "and"
+            i[INCIDENT_KEY_LOCATION] = address_correction(
+                i[INCIDENT_KEY_LOCATION]
             )
+
             address = (
                 i[INCIDENT_KEY_LOCATION].split(" (")[0]
                 if "(" in i[INCIDENT_KEY_LOCATION]
