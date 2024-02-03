@@ -154,7 +154,58 @@ def correct_coordinates(nbd_client: GoogleNBD) -> None:
 
 
 def correct_location(nbd_client: GoogleNBD) -> None:
-    nbd_client.get()
+    geocoder = Geocoder()
+    incidents = nbd_client.get_all_incidents()
+
+    corrected_locations: int = 0
+    updated_incidents: [Incident] = []
+    for i in incidents:
+        if (
+            i.location == "Unknown"
+            or i.location == "Campus"
+            or i.location == "Metra Train"
+        ):
+            continue
+
+        fmt_address = address_correction(i.location)
+        if fmt_address != i.location:
+            logging.info(f"{i.location} changed to {fmt_address}")
+            i.location = fmt_address
+
+            fmt_address = (
+                fmt_address.split(" (")[0]
+                if "(" in fmt_address
+                else fmt_address
+            )
+
+            i_dict: {str: Any} = {"dummy_key": True}
+            if (
+                geocoder.get_address_information(fmt_address, i_dict)
+                and INCIDENT_KEY_ADDRESS in i_dict
+                and -90.0 <= i_dict[INCIDENT_KEY_LATITUDE] <= 90.0
+                and -90.0 <= i_dict[INCIDENT_KEY_LONGITUDE] <= 90.0
+            ):
+                i.validated_address = i_dict[INCIDENT_KEY_ADDRESS]
+                i.validated_location = GeoPt(
+                    i_dict[INCIDENT_KEY_LATITUDE],
+                    i_dict[INCIDENT_KEY_LONGITUDE],
+                )
+                corrected_locations += 1
+                updated_incidents.append(i)
+            else:
+                logging.error(
+                    "This incident failed to get a valid location with the "
+                    f"Geocoder: {i}"
+                )
+
+    logging.info(
+        f"{corrected_locations} of {len(incidents)} "
+        "had their address updated."
+    )
+
+    nbd_client.update_list_of_incidents(updated_incidents)
+
+    logging.info(f"{len(updated_incidents)} addresses were updated.")
 
 
 def lemmatize_categories(nbd_client: GoogleNBD) -> None:
