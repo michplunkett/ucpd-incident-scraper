@@ -12,6 +12,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LATITUDE,
     INCIDENT_KEY_LONGITUDE,
     LOCATION_CHICAGO,
+    LOCATION_HYDE_PARK,
     LOCATION_ILLINOIS,
     LOCATION_US,
 )
@@ -38,6 +39,8 @@ class Geocoder:
             INCIDENT_KEY_ADDRESS not in i_dict
             and "between" not in address
             and " and " not in address
+            and " to " not in address
+            and " at " not in address
         ):
             self._get_address_from_cache(
                 i_dict, self._get_address_from_census(address)
@@ -99,7 +102,7 @@ class Geocoder:
             [address],
             # Enable Coding Accuracy Support System
             enableUspsCass=True,
-            locality=LOCATION_CHICAGO,
+            locality=LOCATION_HYDE_PARK,
             regionCode=LOCATION_US,
         )
 
