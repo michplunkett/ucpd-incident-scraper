@@ -42,6 +42,7 @@ class Geocoder:
             INCIDENT_KEY_ADDRESS not in i_dict
             and "between" not in address
             and " and " not in address
+            and " to " not in address
         ):
             self._get_address_from_cache(
                 i_dict, self._get_address_from_census(address)
