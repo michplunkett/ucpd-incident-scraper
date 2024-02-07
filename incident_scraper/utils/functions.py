@@ -47,8 +47,9 @@ def address_correction(address: str) -> str:
         .replace(" .s ", " .S ")
         .replace(" .e ", " .E ")
         .replace(" st. ", " St. ")
+        .replace(" Pl ", " Pl. ")
         .replace(" pl. ", " Pl. ")
-        .replace(" Midway Pl. ", " Midway Plaisance ")
+        .replace("Midway Pl.", "Midway Plaisance")
     )
 
     address = re.sub(r"\s{2,}", " ", address)
@@ -138,7 +139,7 @@ def custom_title_case(input_string: str) -> str:
 
 
 # Source: https://stackoverflow.com/a/50992575
-def make_ordinal(n: int):
+def make_ordinal(n: int) -> str:
     """
     Convert an integer into its ordinal representation::
 
