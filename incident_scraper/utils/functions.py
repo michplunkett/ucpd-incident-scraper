@@ -47,8 +47,9 @@ def address_correction(address: str) -> str:
         .replace(" .s ", " .S ")
         .replace(" .e ", " .E ")
         .replace(" st. ", " St. ")
+        .replace(" Pl ", " Pl. ")
         .replace(" pl. ", " Pl. ")
-        .replace(" Midway Pl. ", " Midway Plaisance ")
+        .replace("Midway Pl.", "Midway Plaisance")
     )
 
     address = re.sub(r"\s{2,}", " ", address)
