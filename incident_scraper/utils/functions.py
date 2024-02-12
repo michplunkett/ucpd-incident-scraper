@@ -1,141 +1,11 @@
 import re
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Optional
 
 from incident_scraper.utils.constants import (
     INCIDENT_KEY_REPORTED,
     UCPD_DATE_FORMATS,
 )
-
-
-def create_street_tuple(
-    street: str, blvd: bool = False
-) -> Tuple[str, str, str]:
-    street_type = "Ave." if not blvd else "Blvd."
-
-    return street, f"S. {street}", f"S. {street} {street_type}"
-
-
-STREET_CORRECTIONS = [
-    create_street_tuple("Blackstone"),
-    create_street_tuple("Cottage Grove"),
-    create_street_tuple("Cornell"),
-    create_street_tuple("Dorchester"),
-    create_street_tuple("Drexel"),
-    create_street_tuple("East End"),
-    create_street_tuple("East View Park"),
-    create_street_tuple("Ellis"),
-    create_street_tuple("Everett"),
-    create_street_tuple("Greenwood"),
-    create_street_tuple("Harper"),
-    create_street_tuple("Hyde Park", blvd=True),
-    create_street_tuple("Ingleside"),
-    create_street_tuple("Kenwood"),
-    create_street_tuple("Kimbark"),
-    create_street_tuple("Lake Park"),
-    ("Lake Shore", "S. Lake Shore", "S. Lake Shore Dr."),
-    ("Madison Park", "E. Madison Park", "E. Madison Park"),
-    create_street_tuple("Maryland"),
-    create_street_tuple("Oakenwald"),
-    create_street_tuple("Oakwood", blvd=True),
-    ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
-    create_street_tuple("Stony Island"),
-    create_street_tuple("University"),
-    create_street_tuple("Woodlawn"),
-]
-
-STREET_CORRECTIONS_FINAL = [s for _, _, s in STREET_CORRECTIONS]
-STREET_CORRECTIONS_FINAL.extend(["S. Shore Dr.", "Midway Plaisance"])
-
-
-def address_correction_replaces(address: str) -> str:
-    address = re.sub(r"\s{2,}", " ", address)
-    address = re.sub(r" Drive$", " Dr.", address)
-    address = re.sub(r" Court$", " Ct.", address)
-    address = re.sub(r"^Shore Dr.", "S. Shore Dr.", address)
-
-    address = (
-        address.replace("&", "and")
-        .replace(" Drive ", " Dr. ")
-        .replace(" Dr ", " Dr. ")
-        .replace(" s. ", " S. ")
-        .replace(" e. ", " E. ")
-        .replace("S. S.", "S.")
-        .replace("E. E.", "E.")
-        .replace(" st. ", " St. ")
-        .replace("St..", "St.")
-        .replace("St. St.", "St.")
-        .replace(" Court ", " Ct. ")
-        .replace(" Pl ", " Pl. ")
-        .replace(" pl. ", " Pl. ")
-        .replace("Midway Pl.", "Midway Plaisance")
-        .replace("South Shore", "S. Shore")
-        .replace("Woodland", "Woodlawn")
-        .replace("Between", "between")
-        .replace(" and Shore Dr.", " and S. Shore Dr.")
-    )
-
-    return address
-
-
-def address_correction_ordinals(address: str) -> str:
-    numerical_streets = [make_ordinal(s) for s in range(37, 95)]
-    for s in numerical_streets:
-        dir_s = f"E. {s}"
-        if s in address and dir_s not in address:
-            address = address.replace(s, dir_s)
-
-        full_s = f"{dir_s} St."
-        if (
-            dir_s in address
-            and full_s not in address
-            and f"{s} Pl" not in address
-        ):
-            address = address.replace(dir_s, full_s)
-
-    return address
-
-
-def address_correction_non_ordinals(address: str) -> str:
-    for sc in STREET_CORRECTIONS:
-        if "E. S. Harper Ave. Ct." in address:
-            address = address.replace("E. S. Harper Ave. Ct.", "E. Harper Ct.")
-            break
-
-        if "S. Harper Ave. Ct." in address:
-            address = address.replace("S. Harper Ave. Ct.", "S. Harper Ave.")
-            break
-
-        if "E. S. Hyde Park Blvd." in address:
-            address = address.replace(
-                "E. S. Hyde Park Blvd.", "E. Hyde Park Blvd."
-            )
-            break
-
-        name, dir_name, full_name = sc
-
-        if name in address and dir_name not in address:
-            address = address.replace(name, dir_name)
-
-        if dir_name in address and full_name not in address:
-            address = address.replace(dir_name, full_name)
-
-    non_ordinal_streets = [s for s in STREET_CORRECTIONS_FINAL if s in address]
-    if (
-        len(non_ordinal_streets) == 3
-        and "S. Hyde Park Blvd." in non_ordinal_streets
-    ):
-        address = address.replace("S. Hyde Park Blvd.", "E. Hyde Park Blvd.")
-
-    return address
-
-
-def address_correction(address: str) -> str:
-    address = address_correction_replaces(address)
-    address = address_correction_ordinals(address)
-    address = address_correction_non_ordinals(address)
-
-    return address
 
 
 # Source: https://www.geeksforgeeks.org/convert-string-to-title-case-in-python/
@@ -194,23 +64,6 @@ def custom_title_case(input_string: str) -> str:
             output_list.append(word.title())
 
     return " ".join(output_list)
-
-
-# Source: https://stackoverflow.com/a/50992575
-def make_ordinal(n: int) -> str:
-    """
-    Convert an integer into its ordinal representation::
-
-        make_ordinal(0)   => '0th'
-        make_ordinal(3)   => '3rd'
-        make_ordinal(122) => '122nd'
-        make_ordinal(213) => '213th'
-    """
-    if 11 <= (n % 100) <= 13:
-        suffix = "th"
-    else:
-        suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
-    return str(n) + suffix
 
 
 def parse_scraped_incident_timestamp(i: dict) -> Optional[str]:
