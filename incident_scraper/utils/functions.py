@@ -23,6 +23,7 @@ STREET_CORRECTIONS = [
     create_street_tuple("Dorchester"),
     create_street_tuple("Drexel"),
     create_street_tuple("East End"),
+    create_street_tuple("East View Park"),
     create_street_tuple("Ellis"),
     create_street_tuple("Everett"),
     create_street_tuple("Greenwood"),
@@ -56,6 +57,8 @@ def address_correction(address: str) -> str:
         .replace(" .s ", " .S ")
         .replace(" .e ", " .E ")
         .replace(" st. ", " St. ")
+        .replace("St..", "St.")
+        .replace("St. St.", "St.")
         .replace(" Court ", " Ct. ")
         .replace(" Pl ", " Pl. ")
         .replace(" pl. ", " Pl. ")
@@ -64,7 +67,7 @@ def address_correction(address: str) -> str:
         .replace("Woodland", "Woodlawn")
     )
 
-    numerical_streets = [make_ordinal(s) for s in range(37, 66)]
+    numerical_streets = [make_ordinal(s) for s in range(37, 95)]
     for s in numerical_streets:
         dir_s = f"E. {s}"
         if s in address and dir_s not in address:
