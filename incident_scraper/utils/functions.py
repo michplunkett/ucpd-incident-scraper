@@ -72,6 +72,7 @@ def address_correction_replaces(address: str) -> str:
         .replace("South Shore", "S. Shore")
         .replace("Woodland", "Woodlawn")
         .replace("Between", "between")
+        .replace(" and Shore Dr.", " and S. Shore Dr.")
     )
 
     return address
