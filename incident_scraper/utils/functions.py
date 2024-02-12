@@ -33,6 +33,7 @@ STREET_CORRECTIONS = [
     create_street_tuple("Kimbark"),
     create_street_tuple("Lake Park"),
     ("Lake Shore", "S. Lake Shore", "S. Lake Shore Dr."),
+    ("Madison Park", "E. Madison Park", "E. Madison Park"),
     create_street_tuple("Maryland"),
     create_street_tuple("Oakenwald"),
     create_street_tuple("Oakwood", blvd=True),
@@ -84,6 +85,12 @@ def address_correction(address: str) -> str:
 
         if "S. Harper Ave. Ct." in address:
             address = address.replace("S. Harper Ave. Ct.", "S. Harper Ave.")
+            break
+
+        if "E. S. Hyde Park Blvd." in address:
+            address = address.replace(
+                "E. S. Hyde Park Blvd.", "E. Hyde Park Blvd."
+            )
             break
 
         name, dir_name, full_name = sc
