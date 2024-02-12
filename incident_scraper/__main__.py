@@ -12,6 +12,7 @@ from incident_scraper.external.geocoder import Geocoder
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.external.lemmatizer import Lemmatizer
+from incident_scraper.models.address_parser import AddressParser
 from incident_scraper.models.classifier import Classifier
 from incident_scraper.models.incident import Incident
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
@@ -31,10 +32,7 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
     SystemFlags,
 )
-from incident_scraper.utils.functions import (
-    address_correction,
-    parse_scraped_incident_timestamp,
-)
+from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
 
 # TODO: Chop this up into a service or some other organized structure
@@ -154,6 +152,7 @@ def correct_coordinates(nbd_client: GoogleNBD) -> None:
 
 
 def correct_location(nbd_client: GoogleNBD) -> None:
+    addr_parser = AddressParser()
     geocoder = Geocoder()
     incidents = nbd_client.get_all_incidents()
 
@@ -167,7 +166,7 @@ def correct_location(nbd_client: GoogleNBD) -> None:
         ):
             continue
 
-        fmt_address = address_correction(i.location)
+        fmt_address = addr_parser.process(i.location)
         if fmt_address != i.location:
             logging.info(f"{i.location} changed to {fmt_address}")
             i.location = fmt_address
@@ -240,6 +239,7 @@ def parse_and_save_records(
     )
 
     # Instantiate clients
+    addr_parser = AddressParser()
     geocoder = Geocoder()
     prediction_model = Classifier()
     total_incidents = len(incidents.keys())
@@ -273,7 +273,7 @@ def parse_and_save_records(
 
             i[INCIDENT_KEY_ID] = key
 
-            i[INCIDENT_KEY_LOCATION] = address_correction(
+            i[INCIDENT_KEY_LOCATION] = addr_parser.process(
                 i[INCIDENT_KEY_LOCATION]
             )
 
