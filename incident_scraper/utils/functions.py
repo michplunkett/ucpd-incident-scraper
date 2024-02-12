@@ -60,6 +60,7 @@ def address_correction(address: str) -> str:
         .replace(" pl. ", " Pl. ")
         .replace("Midway Pl.", "Midway Plaisance")
         .replace("South Shore", "S. Shore")
+        .replace("Woodland", "Woodlawn")
     )
 
     numerical_streets = [make_ordinal(s) for s in range(37, 66)]
