@@ -32,11 +32,11 @@ STREET_CORRECTIONS = [
     create_street_tuple("Kenwood"),
     create_street_tuple("Kimbark"),
     create_street_tuple("Lake Park"),
+    ("Lake Shore", "S. Lake Shore", "S. Lake Shore Dr."),
     create_street_tuple("Maryland"),
     create_street_tuple("Oakenwald"),
     create_street_tuple("Oakwood", blvd=True),
     ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
-    ("Shore", "S. Shore", "South Shore Dr."),
     create_street_tuple("Stony Island"),
     create_street_tuple("University"),
     create_street_tuple("Woodlawn"),
@@ -44,9 +44,14 @@ STREET_CORRECTIONS = [
 
 
 def address_correction(address: str) -> str:
+    address = re.sub(r"\s{2,}", " ", address)
+    address = re.sub(r" Drive$", " Dr.", address)
+    address = re.sub(r" Court$", " Ct.", address)
+
     address = (
         address.replace("&", "and")
         .replace(" Drive ", " Dr. ")
+        .replace(" Dr ", " Dr. ")
         .replace(" .s ", " .S ")
         .replace(" .e ", " .E ")
         .replace(" st. ", " St. ")
@@ -55,8 +60,6 @@ def address_correction(address: str) -> str:
         .replace(" pl. ", " Pl. ")
         .replace("Midway Pl.", "Midway Plaisance")
     )
-
-    address = re.sub(r"\s{2,}", " ", address)
 
     numerical_streets = [make_ordinal(s) for s in range(37, 66)]
     for s in numerical_streets:
@@ -73,6 +76,14 @@ def address_correction(address: str) -> str:
             address = address.replace(dir_s, full_s)
 
     for sc in STREET_CORRECTIONS:
+        if "E. S. Harper Ave. Ct." in address:
+            address = address.replace("E. S. Harper Ave. Ct.", "E. Harper Ct.")
+            break
+
+        if "S. Harper Ave. Ct." in address:
+            address = address.replace("S. Harper Ave. Ct.", "S. Harper Ave.")
+            break
+
         name, dir_name, full_name = sc
 
         if name in address and dir_name not in address:
