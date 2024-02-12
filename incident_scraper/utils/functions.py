@@ -120,16 +120,12 @@ def address_correction_non_ordinals(address: str) -> str:
         if dir_name in address and full_name not in address:
             address = address.replace(dir_name, full_name)
 
-        # non_ordinal_streets = [
-        #     s for s in STREET_CORRECTIONS_FINAL if s in address
-        # ]
-        # if (
-        #     len(non_ordinal_streets) == 3
-        #     and "S. Hyde Park Blvd." in non_ordinal_streets
-        # ):
-        #     address = address.replace(
-        #         "S. Hyde Park Blvd.", "E. Hyde Park Blvd."
-        #     )
+    non_ordinal_streets = [s for s in STREET_CORRECTIONS_FINAL if s in address]
+    if (
+        len(non_ordinal_streets) == 3
+        and "S. Hyde Park Blvd." in non_ordinal_streets
+    ):
+        address = address.replace("S. Hyde Park Blvd.", "E. Hyde Park Blvd.")
 
     return address
 
