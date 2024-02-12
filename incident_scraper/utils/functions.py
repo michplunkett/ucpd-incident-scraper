@@ -44,18 +44,24 @@ STREET_CORRECTIONS = [
     create_street_tuple("Woodlawn"),
 ]
 
+STREET_CORRECTIONS_FINAL = [s for _, _, s in STREET_CORRECTIONS]
+STREET_CORRECTIONS_FINAL.extend(["S. Shore Dr.", "Midway Plaisance"])
 
-def address_correction(address: str) -> str:
+
+def address_correction_replaces(address: str) -> str:
     address = re.sub(r"\s{2,}", " ", address)
     address = re.sub(r" Drive$", " Dr.", address)
     address = re.sub(r" Court$", " Ct.", address)
+    address = re.sub(r"^Shore Dr.", "S. Shore Dr.", address)
 
     address = (
         address.replace("&", "and")
         .replace(" Drive ", " Dr. ")
         .replace(" Dr ", " Dr. ")
-        .replace(" .s ", " .S ")
-        .replace(" .e ", " .E ")
+        .replace(" s. ", " S. ")
+        .replace(" e. ", " E. ")
+        .replace("S. S.", "S.")
+        .replace("E. E.", "E.")
         .replace(" st. ", " St. ")
         .replace("St..", "St.")
         .replace("St. St.", "St.")
@@ -65,8 +71,13 @@ def address_correction(address: str) -> str:
         .replace("Midway Pl.", "Midway Plaisance")
         .replace("South Shore", "S. Shore")
         .replace("Woodland", "Woodlawn")
+        .replace("Between", "between")
     )
 
+    return address
+
+
+def address_correction_ordinals(address: str) -> str:
     numerical_streets = [make_ordinal(s) for s in range(37, 95)]
     for s in numerical_streets:
         dir_s = f"E. {s}"
@@ -81,6 +92,10 @@ def address_correction(address: str) -> str:
         ):
             address = address.replace(dir_s, full_s)
 
+    return address
+
+
+def address_correction_non_ordinals(address: str) -> str:
     for sc in STREET_CORRECTIONS:
         if "E. S. Harper Ave. Ct." in address:
             address = address.replace("E. S. Harper Ave. Ct.", "E. Harper Ct.")
@@ -103,6 +118,25 @@ def address_correction(address: str) -> str:
 
         if dir_name in address and full_name not in address:
             address = address.replace(dir_name, full_name)
+
+        # non_ordinal_streets = [
+        #     s for s in STREET_CORRECTIONS_FINAL if s in address
+        # ]
+        # if (
+        #     len(non_ordinal_streets) == 3
+        #     and "S. Hyde Park Blvd." in non_ordinal_streets
+        # ):
+        #     address = address.replace(
+        #         "S. Hyde Park Blvd.", "E. Hyde Park Blvd."
+        #     )
+
+    return address
+
+
+def address_correction(address: str) -> str:
+    address = address_correction_replaces(address)
+    address = address_correction_ordinals(address)
+    address = address_correction_non_ordinals(address)
 
     return address
 
