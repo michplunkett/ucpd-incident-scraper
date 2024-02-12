@@ -35,6 +35,7 @@ STREET_CORRECTIONS = [
     create_street_tuple("Maryland"),
     create_street_tuple("Oakenwald"),
     create_street_tuple("Oakwood", blvd=True),
+    ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
     ("Shore", "S. Shore", "South Shore Dr."),
     create_street_tuple("Stony Island"),
     create_street_tuple("University"),
@@ -49,6 +50,7 @@ def address_correction(address: str) -> str:
         .replace(" .s ", " .S ")
         .replace(" .e ", " .E ")
         .replace(" st. ", " St. ")
+        .replace(" Court ", " Ct. ")
         .replace(" Pl ", " Pl. ")
         .replace(" pl. ", " Pl. ")
         .replace("Midway Pl.", "Midway Plaisance")
