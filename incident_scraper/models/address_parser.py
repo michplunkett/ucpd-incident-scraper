@@ -143,7 +143,12 @@ class AddressParser:
         address = (
             address.replace("&", "and")
             .replace("..", ".")
+            .replace("South S.", "S.")
+            .replace("East E.", "E.")
             .replace("\n", " ")
+            .replace("Ave. Ave", "Ave.")
+            .replace("Blvd. Blvd", "Blvd.")
+            .replace("St. Street", "St.")
             .replace(" Drive ", " Dr. ")
             .replace(" Dr ", " Dr. ")
             .replace(" s. ", " S. ")
