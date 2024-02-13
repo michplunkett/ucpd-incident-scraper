@@ -39,6 +39,7 @@ class AddressParser:
             self._create_street_tuple("Oakenwald"),
             self._create_street_tuple("Oakwood", blvd=True),
             ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
+            ("State", "S. State", "S. State St."),
             self._create_street_tuple("Stony Island"),
             self._create_street_tuple("University"),
             self._create_street_tuple("Woodlawn"),
@@ -141,6 +142,8 @@ class AddressParser:
 
         address = (
             address.replace("&", "and")
+            .replace("..", ".")
+            .replace("\n", " ")
             .replace(" Drive ", " Dr. ")
             .replace(" Dr ", " Dr. ")
             .replace(" s. ", " S. ")
