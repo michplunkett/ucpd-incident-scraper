@@ -26,6 +26,11 @@ class Geocoder:
     A class that houses code for both the Census and Google Maps geocoders.
     """
 
+    NON_FINDABLE_ADDRESS_DICT = {
+        INCIDENT_KEY_ADDRESS: "",
+        INCIDENT_KEY_LATITUDE: 0.0,
+        INCIDENT_KEY_LONGITUDE: 0.0,
+    }
     NUM_RETRIES = 10
     TIMEOUT = 5
 
@@ -40,24 +45,30 @@ class Geocoder:
 
         if (
             INCIDENT_KEY_ADDRESS not in i_dict
-            and "between " not in address
+            and "between " not in address.lower()
             and " and " not in address
             and " to " not in address
             and " at " not in address
         ):
             self._get_address_from_cache(
-                i_dict, self._get_address_from_census(address)
+                i_dict, self._census_validate_address(address)
             )
 
         if INCIDENT_KEY_ADDRESS not in i_dict:
             self._get_address_from_cache(
-                i_dict, self._get_address_from_google(address)
+                i_dict, self._google_validate_address(address)
             )
 
         # Return if an address was found.
         return INCIDENT_KEY_ADDRESS in i_dict
 
-    def _get_address_from_census(self, address: str) -> dict:
+    def _parse_and_process_address(self, address: str) -> dict:
+        if " to " in address.lower():
+            self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+        elif "between " in address.lower():
+            pass
+
+    def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
 
         For more information on the Census Geocode API, visit this link:
@@ -98,7 +109,7 @@ class Geocoder:
 
         return self.address_cache[address]
 
-    def _get_address_from_coordinates_from_google(
+    def _google_validate_coordinates(
         self, original_addr: str, coords: [float, float]
     ) -> dict:
         logging.debug(f"Using the Google Maps reverse geocoder for: {coords}")
@@ -121,7 +132,7 @@ class Geocoder:
 
         return self.address_cache[original_addr]
 
-    def _get_address_from_google(self, address: str) -> dict:
+    def _google_validate_address(self, address: str) -> dict:
         """Get address from Google Maps geocoder.
 
         For more information on the Google Maps API, visit this link:
