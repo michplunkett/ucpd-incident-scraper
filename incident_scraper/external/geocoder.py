@@ -17,7 +17,6 @@ from incident_scraper.utils.constants import (
     LOCATION_US,
 )
 
-
 ORDINAL_STREET_REGEX = r"E\. \d{2}[a-z]{2} St."
 
 
@@ -40,7 +39,7 @@ class Geocoder:
 
         if (
             INCIDENT_KEY_ADDRESS not in i_dict
-            and " between " not in address
+            and "between " not in address
             and " and " not in address
             and " to " not in address
             and " at " not in address
