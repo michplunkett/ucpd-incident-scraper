@@ -62,11 +62,26 @@ class Geocoder:
         # Return if an address was found.
         return INCIDENT_KEY_ADDRESS in i_dict
 
+    @staticmethod
+    def _cannot_geocode(address: str, and_cnt: [str]) -> bool:
+        return " to " in address or " or " in address or and_cnt > 1
+
     def _parse_and_process_address(self, address: str) -> dict:
-        if " to " in address.lower():
+        address_lower = address.lower()
+        and_cnt = len([s for s in address_lower.split() if s == "and"])
+
+        if self._cannot_geocode(address, and_cnt):
+            logging.info(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
         elif "between " in address.lower():
             pass
+        elif and_cnt == 1 or " at " in address_lower:
+            pass
+        else:
+            logging.info(f"Unable to process and geocode address: {address}")
+            self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+
+        return self.address_cache[address]
 
     def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
