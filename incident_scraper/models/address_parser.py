@@ -139,6 +139,15 @@ class AddressParser:
         address = re.sub(r" Drive$", " Dr.", address)
         address = re.sub(r" Court$", " Ct.", address)
         address = re.sub(r"^Shore Dr.", "S. Shore Dr.", address)
+        address = re.sub("St. St,?", "St.", address)
+        address = re.sub("Dr. Dr,?", "Dr.", address)
+        address = re.sub(r"E,?\.? E\.", "E.", address)
+        address = re.sub(r"S,?\.? S\.", "S.", address)
+        address = re.sub(
+            r"\(?S. Woodlawn Ave. Charter School\)?$",
+            "(S. Woodlawn Ave. Charter School)",
+            address,
+        )
 
         address = (
             address.replace("&", "and")
