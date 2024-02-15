@@ -17,6 +17,7 @@ from incident_scraper.utils.constants import (
     LOCATION_US,
 )
 
+
 ORDINAL_STREET_REGEX = r"E\. \d{2}[a-z]{2} St."
 
 
