@@ -17,7 +17,6 @@ from incident_scraper.utils.constants import (
     LOCATION_US,
 )
 
-
 ORDINAL_STREET_REGEX = r"E\. \d{2}[a-z]{2} St."
 
 
@@ -74,14 +73,20 @@ class Geocoder:
             logging.info(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
         elif "between " in address.lower():
-            pass
+            self._parse_between_addresses(address)
         elif and_cnt == 1 or " at " in address_lower:
-            pass
+            self._process_at_and_addresses(address)
         else:
             logging.info(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
         return self.address_cache[address]
+
+    def _parse_between_addresses(self, address: str) -> None:
+        pass
+
+    def _process_at_and_addresses(self, address: str) -> None:
+        pass
 
     def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
