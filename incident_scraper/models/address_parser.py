@@ -131,6 +131,8 @@ class AddressParser:
                 "S. Hyde Park Blvd.", "E. Hyde Park Blvd."
             )
 
+        address = address.replace("E. S. Drexel Ave. Sq.", "E. Drexel Sq.")
+
         return address
 
     @staticmethod
