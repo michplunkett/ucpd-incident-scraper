@@ -37,8 +37,10 @@ class AddressParser:
             ("Lake Shore", "S. Lake Shore", "S. Lake Shore Dr."),
             ("Madison Park", "E. Madison Park", "E. Madison Park"),
             self._create_street_tuple("Maryland"),
+            ("Morgan", "Morgan", "Morgan Dr."),
             self._create_street_tuple("Oakenwald"),
             self._create_street_tuple("Oakwood", "Blvd."),
+            self._create_street_tuple("Payne", "Dr."),
             ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
             ("Roosevelt", "E. Roosevelt", "E. Roosevelt Rd."),
             ("State", "S. State", "S. State St."),
@@ -50,7 +52,7 @@ class AddressParser:
             s for _, _, s in self.street_corrections
         ]
         self.street_corrections_final.extend(
-            ["S. Shore Dr.", "Midway Plaisance"]
+            ["S. Shore Dr.", "Midway Plaisance", "E. Drexel Sq."]
         )
 
     @staticmethod
@@ -134,6 +136,7 @@ class AddressParser:
             )
 
         address = address.replace("E. S. Drexel Ave. Sq.", "E. Drexel Sq.")
+        address = address.replace("Park Place", "E. Park Pl.")
 
         return address
 
