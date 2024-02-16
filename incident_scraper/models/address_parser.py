@@ -29,7 +29,7 @@ class AddressParser:
             self._create_street_tuple("Everett"),
             self._create_street_tuple("Greenwood"),
             self._create_street_tuple("Harper"),
-            self._create_street_tuple("Hyde Park", blvd=True),
+            self._create_street_tuple("Hyde Park", "Blvd."),
             self._create_street_tuple("Ingleside"),
             self._create_street_tuple("Kenwood"),
             self._create_street_tuple("Kimbark"),
@@ -38,8 +38,9 @@ class AddressParser:
             ("Madison Park", "E. Madison Park", "E. Madison Park"),
             self._create_street_tuple("Maryland"),
             self._create_street_tuple("Oakenwald"),
-            self._create_street_tuple("Oakwood", blvd=True),
+            self._create_street_tuple("Oakwood", "Blvd."),
             ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
+            ("Roosevelt", "E. Roosevelt", "E. Roosevelt Rd."),
             ("State", "S. State", "S. State St."),
             self._create_street_tuple("Stony Island"),
             self._create_street_tuple("University"),
@@ -54,9 +55,9 @@ class AddressParser:
 
     @staticmethod
     def _create_street_tuple(
-        street: str, blvd: bool = False
+        street: str, other_suffix: str = ""
     ) -> Tuple[str, str, str]:
-        street_type = "Ave." if not blvd else "Blvd."
+        street_type = "Ave." if not other_suffix else other_suffix
 
         return street, f"S. {street}", f"S. {street} {street_type}"
 
@@ -138,6 +139,7 @@ class AddressParser:
 
     @staticmethod
     def _correct_replacements(address: str) -> str:
+        address = re.sub("between", "between ", address)
         address = re.sub(r"\s{2,}", " ", address)
         address = re.sub(r" Drive$", " Dr.", address)
         address = re.sub(r" Court$", " Ct.", address)
