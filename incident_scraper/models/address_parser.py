@@ -25,6 +25,7 @@ class AddressParser:
             self._create_street_tuple("East End"),
             self._create_street_tuple("East View Park"),
             self._create_street_tuple("Ellis"),
+            self._create_street_tuple("Evans"),
             self._create_street_tuple("Everett"),
             self._create_street_tuple("Greenwood"),
             self._create_street_tuple("Harper"),
@@ -180,6 +181,16 @@ class AddressParser:
         )
 
         return address
+
+    def process_at_and_streets(self, address: str):
+        ordinals = list(
+            map(int, re.findall(r"E\. (\d{2})[a-z]{2} \w+", address))
+        )
+        non_ordinal_streets = [
+            s for s in self.street_corrections_final if s in address
+        ]
+        if len(ordinals) == 1 and len(non_ordinal_streets) == 1:
+            return f"{ordinals[0]}00 {non_ordinal_streets[0]}"
 
     def process(self, address: str) -> str:
         address = self._correct_replacements(address)
