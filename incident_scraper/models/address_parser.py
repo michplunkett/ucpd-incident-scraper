@@ -42,6 +42,7 @@ class AddressParser:
             self._create_street_tuple("Oakwood", "Blvd."),
             self._create_street_tuple("Payne", "Dr."),
             ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
+            ("Rochdale", "E. Rochdale", "E. Rochdale Pl."),
             ("Roosevelt", "E. Roosevelt", "E. Roosevelt Rd."),
             ("State", "S. State", "S. State St."),
             self._create_street_tuple("Stony Island"),
@@ -52,7 +53,7 @@ class AddressParser:
             s for _, _, s in self.street_corrections
         ]
         self.street_corrections_final.extend(
-            ["S. Shore Dr.", "Midway Plaisance", "E. Drexel Sq."]
+            ["S. Shore Dr.", "Midway Plaisance", "E. Drexel Sq.", "E. Park Pl."]
         )
 
     @staticmethod
@@ -194,6 +195,7 @@ class AddressParser:
         non_ordinal_streets = [
             s for s in self.street_corrections_final if s in address
         ]
+
         if len(ordinals) == 1 and len(non_ordinal_streets) == 1:
             return f"{ordinals[0]}00 {non_ordinal_streets[0]}"
         elif len(non_ordinal_streets) == 2:
@@ -202,22 +204,33 @@ class AddressParser:
             return address
 
     def process_between_streets(self, address) -> [str]:
-        re.findall(r"E\. \d{2}[a-z]{2} \w+", address)
+        and_cnt = len([s for s in address.split() if s == "and"])
         ordinals = list(
             map(int, re.findall(r"E\. (\d{2})[a-z]{2} \w+", address))
         )
+        ordinals.sort()
         non_ordinal_streets = [
             s for s in self.street_corrections_final if s in address
         ]
+
+        parsed_addresses = []
+
         if len(ordinals) == 2 and len(non_ordinal_streets) == 1:
-            return f"{ordinals[0]}20 {non_ordinal_streets[0]}"
+            parsed_addresses.append(f"{ordinals[0]}20 {non_ordinal_streets[0]}")
         elif len(ordinals) == 1 and len(non_ordinal_streets) == 2:
-            return [
-                f"{ordinals[0]}00 {non_ordinal_streets[0]}",
-                f"{ordinals[0]}00 {non_ordinal_streets[1]}",
-            ]
-        else:
-            return
+            parsed_addresses.append(f"{ordinals[0]}00 {non_ordinal_streets[0]}")
+            parsed_addresses.append(f"{ordinals[0]}00 {non_ordinal_streets[1]}")
+        elif and_cnt == 1:
+            between_split = address.split(" between ")
+            verticals = between_split[1].split(" and ")
+            parsed_addresses.append(
+                f"{between_split[0]} and {verticals[0]}",
+            )
+            parsed_addresses.append(
+                f"{between_split[0]} and {verticals[1]}",
+            )
+
+        return parsed_addresses
 
     def process(self, address: str) -> str:
         address = self._correct_replacements(address)
