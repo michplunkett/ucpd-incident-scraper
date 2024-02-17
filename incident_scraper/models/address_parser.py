@@ -8,6 +8,7 @@ class AddressParser:
     """
 
     _instance = None
+    ORDINALS_REGEX = r"E\. (\d{2})[a-z]{2} \w+"
 
     def __new__(cls):
         if cls._instance is None:
@@ -17,6 +18,7 @@ class AddressParser:
     def __init__(self):
         self.numerical_streets = [self._make_ordinal(s) for s in range(37, 95)]
         self.street_corrections = [
+            self._create_street_tuple("Berkeley"),
             self._create_street_tuple("Blackstone"),
             self._create_street_tuple("Cottage Grove"),
             self._create_street_tuple("Cornell"),
@@ -25,10 +27,11 @@ class AddressParser:
             self._create_street_tuple("East End"),
             self._create_street_tuple("East View Park"),
             self._create_street_tuple("Ellis"),
+            self._create_street_tuple("Evans"),
             self._create_street_tuple("Everett"),
             self._create_street_tuple("Greenwood"),
             self._create_street_tuple("Harper"),
-            self._create_street_tuple("Hyde Park", blvd=True),
+            self._create_street_tuple("Hyde Park", "Blvd."),
             self._create_street_tuple("Ingleside"),
             self._create_street_tuple("Kenwood"),
             self._create_street_tuple("Kimbark"),
@@ -36,9 +39,14 @@ class AddressParser:
             ("Lake Shore", "S. Lake Shore", "S. Lake Shore Dr."),
             ("Madison Park", "E. Madison Park", "E. Madison Park"),
             self._create_street_tuple("Maryland"),
+            ("Morgan", "Morgan", "Morgan Dr."),
             self._create_street_tuple("Oakenwald"),
-            self._create_street_tuple("Oakwood", blvd=True),
+            self._create_street_tuple("Oakwood", "Blvd."),
+            self._create_street_tuple("Payne", "Dr."),
             ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
+            ("Rochdale", "E. Rochdale", "E. Rochdale Pl."),
+            ("Roosevelt", "E. Roosevelt", "E. Roosevelt Rd."),
+            ("State", "S. State", "S. State St."),
             self._create_street_tuple("Stony Island"),
             self._create_street_tuple("University"),
             self._create_street_tuple("Woodlawn"),
@@ -47,14 +55,14 @@ class AddressParser:
             s for _, _, s in self.street_corrections
         ]
         self.street_corrections_final.extend(
-            ["S. Shore Dr.", "Midway Plaisance"]
+            ["S. Shore Dr.", "Midway Plaisance", "E. Drexel Sq.", "E. Park Pl."]
         )
 
     @staticmethod
     def _create_street_tuple(
-        street: str, blvd: bool = False
+        street: str, other_suffix: str = ""
     ) -> Tuple[str, str, str]:
-        street_type = "Ave." if not blvd else "Blvd."
+        street_type = "Ave." if not other_suffix else other_suffix
 
         return street, f"S. {street}", f"S. {street} {street_type}"
 
@@ -130,17 +138,37 @@ class AddressParser:
                 "S. Hyde Park Blvd.", "E. Hyde Park Blvd."
             )
 
+        address = address.replace("E. S. Drexel Ave. Sq.", "E. Drexel Sq.")
+        address = address.replace("Park Place", "E. Park Pl.")
+
         return address
 
     @staticmethod
     def _correct_replacements(address: str) -> str:
+        address = re.sub("between", "between ", address)
         address = re.sub(r"\s{2,}", " ", address)
         address = re.sub(r" Drive$", " Dr.", address)
         address = re.sub(r" Court$", " Ct.", address)
         address = re.sub(r"^Shore Dr.", "S. Shore Dr.", address)
+        address = re.sub("St. St,?", "St.", address)
+        address = re.sub("Dr. Dr,?", "Dr.", address)
+        address = re.sub(r"E,?\.?\w?E\.", "E.", address)
+        address = re.sub(r"S,?\.? S\.", "S.", address)
+        address = re.sub(
+            r"\(?S. Woodlawn Ave. Charter School\)?$",
+            "(S. Woodlawn Ave. Charter School)",
+            address,
+        )
 
         address = (
             address.replace("&", "and")
+            .replace("..", ".")
+            .replace("South S.", "S.")
+            .replace("East E.", "E.")
+            .replace("\n", " ")
+            .replace("Ave. Ave", "Ave.")
+            .replace("Blvd. Blvd", "Blvd.")
+            .replace("St. Street", "St.")
             .replace(" Drive ", " Dr. ")
             .replace(" Dr ", " Dr. ")
             .replace(" s. ", " S. ")
@@ -161,6 +189,53 @@ class AddressParser:
         )
 
         return address
+
+    def process_at_and_streets(self, address: str) -> str:
+        ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
+        non_ordinal_streets = [
+            s for s in self.street_corrections_final if s in address
+        ]
+
+        if len(ordinals) == 1 and len(non_ordinal_streets) == 1:
+            return f"{ordinals[0]}00 {non_ordinal_streets[0]}"
+        elif len(non_ordinal_streets) == 2:
+            return " and ".join(non_ordinal_streets)
+        else:
+            return address
+
+    def process_between_streets(self, address) -> [str]:
+        and_cnt = len([s for s in address.split() if s == "and"])
+        ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
+        ordinals.sort()
+        non_ordinal_streets = [
+            s for s in self.street_corrections_final if s in address
+        ]
+
+        parsed_addresses = []
+
+        if len(ordinals) == 2 and len(non_ordinal_streets) == 1:
+            parsed_addresses.append(f"{ordinals[0]}20 {non_ordinal_streets[0]}")
+        elif len(ordinals) == 1 and len(non_ordinal_streets) == 2:
+            parsed_addresses.append(f"{ordinals[0]}00 {non_ordinal_streets[0]}")
+            parsed_addresses.append(f"{ordinals[0]}00 {non_ordinal_streets[1]}")
+        elif and_cnt == 1:
+            between_split = address.split(" between ")
+            verticals = between_split[1].split(" and ")
+            if between_split == "E. Madison Park":
+                # Madison Park is a Blvd. split that doesn't allow you to
+                # meaningfully reference a location outside its center.
+                parsed_addresses.append(
+                    f"{between_split[0]}",
+                )
+            else:
+                parsed_addresses.append(
+                    f"{between_split[0]} and {verticals[0]}",
+                )
+                parsed_addresses.append(
+                    f"{between_split[0]} and {verticals[1]}",
+                )
+
+        return parsed_addresses
 
     def process(self, address: str) -> str:
         address = self._correct_replacements(address)
