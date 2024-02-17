@@ -54,7 +54,9 @@ class Geocoder:
             )
 
         if INCIDENT_KEY_ADDRESS not in i_dict:
-            self._parse_and_process_address(address)
+            self._get_address_from_cache(
+                i_dict, self._parse_and_process_address(address)
+            )
 
         # Return if an address was found.
         return INCIDENT_KEY_ADDRESS in i_dict
@@ -94,8 +96,7 @@ class Geocoder:
             # TODO
             pass
         elif len(processed_addresses) == 1:
-            # TODO
-            pass
+            self.address_cache[address] = self._google_validate_address(address)
         else:
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
