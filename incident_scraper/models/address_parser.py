@@ -220,12 +220,19 @@ class AddressParser:
         elif and_cnt == 1:
             between_split = address.split(" between ")
             verticals = between_split[1].split(" and ")
-            parsed_addresses.append(
-                f"{between_split[0]} and {verticals[0]}",
-            )
-            parsed_addresses.append(
-                f"{between_split[0]} and {verticals[1]}",
-            )
+            if between_split == "E. Madison Park":
+                # Madison Park is a Blvd. split that doesn't allow you to
+                # meaningfully reference a location outside its center.
+                parsed_addresses.append(
+                    f"{between_split[0]}",
+                )
+            else:
+                parsed_addresses.append(
+                    f"{between_split[0]} and {verticals[0]}",
+                )
+                parsed_addresses.append(
+                    f"{between_split[0]} and {verticals[1]}",
+                )
 
         return parsed_addresses
 
