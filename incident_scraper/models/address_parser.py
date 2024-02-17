@@ -187,7 +187,7 @@ class AddressParser:
 
         return address
 
-    def process_at_and_streets(self, address: str):
+    def process_at_and_streets(self, address: str) -> str:
         ordinals = list(
             map(int, re.findall(r"E\. (\d{2})[a-z]{2} \w+", address))
         )
@@ -200,6 +200,9 @@ class AddressParser:
             return " and ".join(non_ordinal_streets)
         else:
             return address
+
+    def process_between_streets(self, address) -> [str]:
+        pass
 
     def process(self, address: str) -> str:
         address = self._correct_replacements(address)
