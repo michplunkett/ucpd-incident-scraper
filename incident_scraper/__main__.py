@@ -167,8 +167,14 @@ def correct_location(nbd_client: GoogleNBD) -> None:
             continue
 
         fmt_address = addr_parser.process(i.location)
-        if fmt_address != i.location:
-            logging.info(f"{i.location} changed to {fmt_address}")
+        # Re-geocode any reformatted address or one that contains the following
+        # words.
+        if fmt_address != i.location or (
+            " and " in fmt_address
+            or "between" in fmt_address
+            or " to " in fmt_address
+            or " at " in fmt_address
+        ):
             i.location = fmt_address
 
             fmt_address = (
@@ -189,6 +195,13 @@ def correct_location(nbd_client: GoogleNBD) -> None:
                     i_dict[INCIDENT_KEY_LATITUDE],
                     i_dict[INCIDENT_KEY_LONGITUDE],
                 )
+                if i.validated_address:
+                    logging.info(
+                        f"{fmt_address} was geocoded to: {i.validated_address}"
+                    )
+                else:
+                    logging.info(f"Unable to geocode address: {fmt_address}")
+
                 corrected_locations += 1
                 updated_incidents.append(i)
             else:
