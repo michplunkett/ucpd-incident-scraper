@@ -93,8 +93,19 @@ class Geocoder:
         )
 
         if len(processed_addresses) == 2:
-            # TODO
-            pass
+            addr_one = self._google_validate_address(processed_addresses[0])
+            addr_two = self._google_validate_address(processed_addresses[1])
+            avg_latitude: float = (
+                addr_one[INCIDENT_KEY_LATITUDE]
+                + addr_two[INCIDENT_KEY_LATITUDE]
+            ) / 2
+            avg_longitude: float = (
+                addr_one[INCIDENT_KEY_LONGITUDE]
+                + addr_two[INCIDENT_KEY_LONGITUDE]
+            ) / 2
+            self.address_cache[address] = self._google_validate_coordinates(
+                avg_longitude, avg_latitude
+            )
         elif len(processed_addresses) == 1:
             self.address_cache[address] = self._google_validate_address(address)
         else:
@@ -157,22 +168,22 @@ class Geocoder:
     ) -> dict:
         logging.debug(
             "Using the Google Maps reverse geocoder for: "
-            f"{longitude}, {latitude}"
+            f"{latitude}, {longitude}"
         )
-        resp = self.google_client.reverse_geocode((longitude, latitude))
+        resp = self.google_client.reverse_geocode((latitude, longitude))
 
         if resp:
             self.address_cache[original_addr] = {
                 INCIDENT_KEY_ADDRESS: resp[0]["formattedAddress"].replace(
                     ", USA", ""
                 ),
-                INCIDENT_KEY_LONGITUDE: longitude,
                 INCIDENT_KEY_LATITUDE: latitude,
+                INCIDENT_KEY_LONGITUDE: longitude,
             }
         else:
             logging.debug(
                 "Unable to get result from the Google Maps reverse geocoder "
-                f"for: {longitude}, {latitude}"
+                f"for: {latitude}, {longitude}"
             )
             self.address_cache[original_addr] = None
 
