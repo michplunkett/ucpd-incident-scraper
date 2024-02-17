@@ -153,23 +153,26 @@ class Geocoder:
         return self.address_cache[address]
 
     def _google_validate_coordinates(
-        self, original_addr: str, coords: [float, float]
+        self, original_addr: str, longitude: float, latitude: float
     ) -> dict:
-        logging.debug(f"Using the Google Maps reverse geocoder for: {coords}")
-        resp = self.google_client.reverse_geocode((coords[0], coords[1]))
+        logging.debug(
+            "Using the Google Maps reverse geocoder for: "
+            f"{longitude}, {latitude}"
+        )
+        resp = self.google_client.reverse_geocode((longitude, latitude))
 
         if resp:
             self.address_cache[original_addr] = {
                 INCIDENT_KEY_ADDRESS: resp[0]["formattedAddress"].replace(
                     ", USA", ""
                 ),
-                INCIDENT_KEY_LATITUDE: coords[0],
-                INCIDENT_KEY_LONGITUDE: coords[1],
+                INCIDENT_KEY_LONGITUDE: longitude,
+                INCIDENT_KEY_LATITUDE: latitude,
             }
         else:
             logging.debug(
                 "Unable to get result from the Google Maps reverse geocoder "
-                f"for: {coords}"
+                f"for: {longitude}, {latitude}"
             )
             self.address_cache[original_addr] = None
 
