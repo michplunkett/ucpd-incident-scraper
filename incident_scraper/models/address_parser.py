@@ -196,6 +196,10 @@ class AddressParser:
         ]
         if len(ordinals) == 1 and len(non_ordinal_streets) == 1:
             return f"{ordinals[0]}00 {non_ordinal_streets[0]}"
+        elif len(non_ordinal_streets) == 2:
+            return " and ".join(non_ordinal_streets)
+        else:
+            return address
 
     def process(self, address: str) -> str:
         address = self._correct_replacements(address)
