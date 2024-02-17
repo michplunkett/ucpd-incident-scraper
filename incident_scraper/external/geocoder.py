@@ -6,6 +6,7 @@ import requests
 from censusgeocode import CensusGeocode
 from googlemaps import Client
 
+from incident_scraper.models.address_parser import AddressParser
 from incident_scraper.utils.constants import (
     ENV_GOOGLE_MAPS_KEY,
     INCIDENT_KEY_ADDRESS,
@@ -36,6 +37,7 @@ class Geocoder:
 
     def __init__(self):
         self.address_cache = {}
+        self.address_parser = AddressParser()
         self.census_client = CensusGeocode()
         self.google_client = Client(ENV_GOOGLE_MAPS_KEY)
 
@@ -64,7 +66,12 @@ class Geocoder:
 
     @staticmethod
     def _cannot_geocode(address: str, and_cnt: [str]) -> bool:
-        return " to " in address or " or " in address or and_cnt > 1
+        return (
+            " to " in address
+            or " or " in address
+            or "Out of Area" in address
+            or and_cnt > 1
+        )
 
     def _parse_and_process_address(self, address: str) -> dict:
         address_lower = address.lower()
@@ -87,7 +94,10 @@ class Geocoder:
         pass
 
     def _process_at_and_addresses(self, address: str) -> None:
-        pass
+        formatted_addr = self.address_parser.process_at_and_streets(address)
+        # search, save, and return
+
+        return formatted_addr
 
     def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
