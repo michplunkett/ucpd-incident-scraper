@@ -86,12 +86,29 @@ class Geocoder:
         return self.address_cache[address]
 
     def _parse_between_addresses(self, address: str) -> dict:
-        pass
+        processed_addresses = self.address_parser.process_between_streets(
+            address
+        )
+
+        if len(processed_addresses) == 2:
+            # TODO
+            pass
+        elif len(processed_addresses) == 1:
+            # TODO
+            pass
+        else:
+            self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+
+        return self.address_cache[address]
 
     def _process_at_and_addresses(self, address: str) -> dict:
-        formatted_addr = self.address_parser.process_at_and_streets(address)
+        processed_address = self.address_parser.process_at_and_streets(address)
 
-        return self._google_validate_address(formatted_addr)
+        self.address_cache[address] = self._google_validate_address(
+            processed_address
+        )
+
+        return self.address_cache[address]
 
     def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
