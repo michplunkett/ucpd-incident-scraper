@@ -8,6 +8,7 @@ class AddressParser:
     """
 
     _instance = None
+    ORDINALS_REGEX = r"E\. (\d{2})[a-z]{2} \w+"
 
     def __new__(cls):
         if cls._instance is None:
@@ -189,9 +190,7 @@ class AddressParser:
         return address
 
     def process_at_and_streets(self, address: str) -> str:
-        ordinals = list(
-            map(int, re.findall(r"E\. (\d{2})[a-z]{2} \w+", address))
-        )
+        ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         non_ordinal_streets = [
             s for s in self.street_corrections_final if s in address
         ]
@@ -205,9 +204,7 @@ class AddressParser:
 
     def process_between_streets(self, address) -> [str]:
         and_cnt = len([s for s in address.split() if s == "and"])
-        ordinals = list(
-            map(int, re.findall(r"E\. (\d{2})[a-z]{2} \w+", address))
-        )
+        ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         ordinals.sort()
         non_ordinal_streets = [
             s for s in self.street_corrections_final if s in address
