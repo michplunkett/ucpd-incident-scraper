@@ -19,9 +19,6 @@ from incident_scraper.utils.constants import (
 )
 
 
-ORDINAL_STREET_REGEX = r"E\. \d{2}[a-z]{2} St."
-
-
 class Geocoder:
     """
     A class that houses code for both the Census and Google Maps geocoders.
@@ -57,9 +54,7 @@ class Geocoder:
             )
 
         if INCIDENT_KEY_ADDRESS not in i_dict:
-            self._get_address_from_cache(
-                i_dict, self._google_validate_address(address)
-            )
+            self._parse_and_process_address(address)
 
         # Return if an address was found.
         return INCIDENT_KEY_ADDRESS in i_dict
@@ -80,7 +75,7 @@ class Geocoder:
         if self._cannot_geocode(address, and_cnt):
             logging.info(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
-        elif "between " in address.lower():
+        elif " between " in address_lower:
             self._parse_between_addresses(address)
         elif and_cnt == 1 or " at " in address_lower:
             self._process_at_and_addresses(address)
@@ -90,14 +85,13 @@ class Geocoder:
 
         return self.address_cache[address]
 
-    def _parse_between_addresses(self, address: str) -> None:
+    def _parse_between_addresses(self, address: str) -> dict:
         pass
 
-    def _process_at_and_addresses(self, address: str) -> None:
+    def _process_at_and_addresses(self, address: str) -> dict:
         formatted_addr = self.address_parser.process_at_and_streets(address)
-        # search, save, and return
 
-        return formatted_addr
+        return self._google_validate_address(formatted_addr)
 
     def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
