@@ -18,6 +18,7 @@ class AddressParser:
     def __init__(self):
         self.numerical_streets = [self._make_ordinal(s) for s in range(37, 95)]
         self.street_corrections = [
+            self._create_street_tuple("Berkeley"),
             self._create_street_tuple("Blackstone"),
             self._create_street_tuple("Cottage Grove"),
             self._create_street_tuple("Cornell"),
