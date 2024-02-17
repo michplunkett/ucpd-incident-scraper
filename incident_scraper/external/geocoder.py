@@ -95,19 +95,17 @@ class Geocoder:
         if len(processed_addresses) == 2:
             addr_one = self._google_validate_address(processed_addresses[0])
             addr_two = self._google_validate_address(processed_addresses[1])
-            avg_latitude: float = (
-                addr_one[INCIDENT_KEY_LATITUDE]
-                + addr_two[INCIDENT_KEY_LATITUDE]
-            ) / 2
             avg_longitude: float = (
                 addr_one[INCIDENT_KEY_LONGITUDE]
                 + addr_two[INCIDENT_KEY_LONGITUDE]
-            ) / 2
+            ) / 2.0
             self._google_validate_coordinates(
-                address, avg_longitude, avg_latitude
+                address, avg_longitude, addr_one[INCIDENT_KEY_LATITUDE]
             )
         elif len(processed_addresses) == 1:
-            self.address_cache[address] = self._google_validate_address(address)
+            self.address_cache[address] = self._google_validate_address(
+                processed_addresses[0]
+            )
         else:
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
