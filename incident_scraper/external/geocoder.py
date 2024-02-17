@@ -44,7 +44,7 @@ class Geocoder:
 
         if (
             INCIDENT_KEY_ADDRESS not in i_dict
-            and "between " not in address.lower()
+            and "between" not in address.lower()
             and " and " not in address
             and " to " not in address
             and " at " not in address
@@ -103,8 +103,8 @@ class Geocoder:
                 addr_one[INCIDENT_KEY_LONGITUDE]
                 + addr_two[INCIDENT_KEY_LONGITUDE]
             ) / 2
-            self.address_cache[address] = self._google_validate_coordinates(
-                avg_longitude, avg_latitude
+            self._google_validate_coordinates(
+                address, avg_longitude, avg_latitude
             )
         elif len(processed_addresses) == 1:
             self.address_cache[address] = self._google_validate_address(address)
@@ -174,11 +174,11 @@ class Geocoder:
 
         if resp:
             self.address_cache[original_addr] = {
-                INCIDENT_KEY_ADDRESS: resp[0]["formattedAddress"].replace(
+                INCIDENT_KEY_ADDRESS: resp[0]["formatted_address"].replace(
                     ", USA", ""
                 ),
-                INCIDENT_KEY_LATITUDE: latitude,
-                INCIDENT_KEY_LONGITUDE: longitude,
+                INCIDENT_KEY_LATITUDE: resp[0]["geometry"]["location"]["lat"],
+                INCIDENT_KEY_LONGITUDE: resp[0]["geometry"]["location"]["lng"],
             }
         else:
             logging.debug(
