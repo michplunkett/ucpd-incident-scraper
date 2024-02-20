@@ -73,7 +73,7 @@ class Geocoder:
 
     def _parse_and_process_address(self, address: str) -> dict:
         address_lower = address.lower()
-        and_cnt = len([s for s in address_lower.split() if s == " and "])
+        and_cnt = len([s for s in address_lower.split() if s == "and"])
 
         if self._cannot_geocode(address, and_cnt):
             logging.info(f"Unable to process and geocode address: {address}")
