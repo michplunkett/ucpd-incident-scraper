@@ -204,7 +204,7 @@ class AddressParser:
             return address
 
     def process_between_streets(self, address) -> [str]:
-        and_cnt = len([s for s in address.split() if s == "and"])
+        and_cnt = len([s for s in address.split() if s == " and "])
         ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         ordinals.sort()
         non_ordinal_streets = [

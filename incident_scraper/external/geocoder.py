@@ -1,4 +1,5 @@
 import logging
+import re
 from time import sleep
 from typing import Optional
 
@@ -72,7 +73,7 @@ class Geocoder:
 
     def _parse_and_process_address(self, address: str) -> dict:
         address_lower = address.lower()
-        and_cnt = len([s for s in address_lower.split() if s == "and"])
+        and_cnt = len([s for s in address_lower.split() if s == " and "])
 
         if self._cannot_geocode(address, and_cnt):
             logging.info(f"Unable to process and geocode address: {address}")
@@ -81,6 +82,8 @@ class Geocoder:
             self._parse_between_addresses(address)
         elif and_cnt == 1 or " at " in address_lower:
             self._process_at_and_addresses(address)
+        elif re.match(r"^\d+ [ES]{1}\. ", address):
+            self._google_validate_address(address)
         else:
             logging.info(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT

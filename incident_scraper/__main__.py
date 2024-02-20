@@ -363,7 +363,7 @@ def parse_and_save_records(
         )
         logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
-            f"processed by the GoogleMaps' Geocoder."
+            f"processed by the Geocoder."
         )
         logging.info(
             f"{added_incidents} of {inter_incidents} incidents were "
