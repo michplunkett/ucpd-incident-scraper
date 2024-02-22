@@ -76,7 +76,7 @@ class Geocoder:
         and_cnt = len([s for s in address_lower.split() if s == "and"])
 
         if self._cannot_geocode(address, and_cnt):
-            logging.info(f"Unable to process and geocode address: {address}")
+            logging.error(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
         elif " between " in address_lower:
             self._parse_between_addresses(address)
@@ -85,7 +85,7 @@ class Geocoder:
         elif re.match(r"^\d+ [ES]{1}\. ", address):
             self._google_validate_address(address)
         else:
-            logging.info(f"Unable to process and geocode address: {address}")
+            logging.error(f"Unable to process and geocode address: {address}")
             self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
         return self.address_cache[address]
