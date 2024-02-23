@@ -57,7 +57,6 @@ TIMEZONE_CHICAGO = pytz.timezone(TIMEZONE_KEY_CHICAGO)
 class SystemFlags:
     BUILD_MODEL = "build-model"
     CATEGORIZE = "categorize"
-    CORRECT_GEOPT = "correct-geopt"
     CORRECT_LOCATION = "correct-location"
     DAYS_BACK = "days-back"
     DOWNLOAD = "download"
