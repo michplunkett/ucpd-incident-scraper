@@ -71,8 +71,6 @@ def main():
             Classifier(build_model=True).train_and_save()
         case SystemFlags.CATEGORIZE:
             categorize_information(nbd_client)
-        case SystemFlags.CORRECT_GEOPT:
-            correct_coordinates(nbd_client)
         case SystemFlags.CORRECT_LOCATION:
             correct_location(nbd_client)
         case SystemFlags.DAYS_BACK:
@@ -114,41 +112,6 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
     )
 
     nbd_client.update_list_of_incidents(incidents)
-
-
-def correct_coordinates(nbd_client: GoogleNBD) -> None:
-    incidents = nbd_client.get_all_incidents()
-    logging.info(f"{len(incidents)} incidents fetched.")
-    incidents = [i for i in incidents if i.validated_location.latitude < 0.0]
-
-    logging.info(f"{len(incidents)} incidents had incorrect geocoding.")
-
-    for i in incidents:
-        # The location SHOULD be latitude, longitude, but they were not mapped
-        # correctly upon creation.
-        incorrect_latitude = i.validated_location.latitude
-        incorrect_longitude = i.validated_location.longitude
-        if incorrect_latitude < 0:
-            i.validated_location = GeoPt(
-                incorrect_longitude, incorrect_latitude
-            )
-
-    logging.info(f"{len(incidents)} incorrect incident GeoPts were updated.")
-
-    nbd_client.update_list_of_incidents(incidents)
-    incidents = nbd_client.get_all_incidents()
-
-    corrected_locations = 0
-    for i in incidents:
-        address = i.location
-        if address != i.location:
-            logging.info(f"{i.location} changed to {address}")
-            corrected_locations += 1
-
-    logging.info(
-        f"{corrected_locations} of {len(incidents)} "
-        "had their addressed updated."
-    )
 
 
 def correct_location(nbd_client: GoogleNBD) -> None:
