@@ -51,7 +51,6 @@ def main():
 
     subparser.add_parser(SystemFlags.BUILD_MODEL)
     subparser.add_parser(SystemFlags.CATEGORIZE)
-    subparser.add_parser(SystemFlags.CORRECT_GEOPT)
     subparser.add_parser(SystemFlags.CORRECT_LOCATION)
     subparser.add_parser(SystemFlags.DOWNLOAD)
     subparser.add_parser(SystemFlags.LEMMATIZE_CATEGORIES)
