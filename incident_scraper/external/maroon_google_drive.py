@@ -43,7 +43,16 @@ class MaroonGoogleDrive:
             "Starting upload process to the Chicago Maroon's Tech "
             f"Google Drive folder for: {file_name}"
         )
-        drive_file = self.__client.CreateFile({"parents": [{"id": ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID, "title": file_name}]})
+        drive_file = self.__client.CreateFile(
+            {
+                "parents": [
+                    {
+                        "id": ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID,
+                        "title": file_name,
+                    }
+                ]
+            }
+        )
         drive_file.SetContentFile(file_name)
 
         drive_file.Upload()
