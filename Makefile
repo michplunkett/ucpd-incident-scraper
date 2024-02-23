@@ -28,10 +28,6 @@ build_model: download
 categorize:
 	python -m incident_scraper categorize
 
-.PHONY: correct_geopt
-correct_geopt:
-	python -m incident_scraper correct-geopt
-
 .PHONY: correct_location
 correct_location:
 	python -m incident_scraper correct-location
