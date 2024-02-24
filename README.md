@@ -19,6 +19,7 @@ As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing va
 variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - Google Cloud Platform project ID stored in the environment variable: `GOOGLE_CLOUD_PROJECT`
 - [Google Maps API](https://developers.google.com/maps/documentation/geocoding/get-api-key) key stored in the environment variable: `GOOGLE_MAPS_API_KEY`
+- [Google Drive Folder ID](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) stored in the environment variable: `GOOGLE_DRIVE_MAROON_FOLDER_ID`
 
 ## Instructions to Run the Project
 1. Go into the base directory of the repository and type `poetry shell` into the terminal.
@@ -30,8 +31,9 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
   - Example: `poetry add black`
 
 ## Standard Commands
-- `make lint`: Runs `pre-commit` on the codebase.
-- `make seed`: Saves incidents starting from January 1st of 2011 and continuing until today.
-- `make update`: Saves incidents starting from the most recently saved incident until today.
-- `make build_model`: Builds a predictive XGBoost model based off of locally saved incident data and saves it in the `data` folder.
+- `make lint`: Runs`pre-commit` on the codebase.
+- `make seed`: Save incidents starting from January 1st of 2011 and continuing until today.
+- `make update`: Save incidents starting from the most recently saved incident until today.
+- `make build_model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
 - `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
+- `make download`: Download all incidents into a locally stored file titled `incident_dump.csv`.
