@@ -1,6 +1,7 @@
 """Serves as the entry point for the project module."""
 import argparse
 import logging
+import os.path
 import re
 from datetime import datetime
 from typing import Any
@@ -12,11 +13,13 @@ from incident_scraper.external.geocoder import Geocoder
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.external.lemmatizer import Lemmatizer
+from incident_scraper.external.maroon_google_drive import MaroonGoogleDrive
 from incident_scraper.models.address_parser import AddressParser
 from incident_scraper.models.classifier import Classifier
 from incident_scraper.models.incident import Incident
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
+    FILE_NAME_INCIDENT_DUMP,
     INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_COMMENTS,
     INCIDENT_KEY_ID,
@@ -35,6 +38,9 @@ from incident_scraper.utils.constants import (
 from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
 
+init_logger()
+
+
 # TODO: Chop this up into a service or some other organized structure
 def main():
     """Run the UCPD Incident Scraper."""
@@ -51,7 +57,6 @@ def main():
 
     subparser.add_parser(SystemFlags.BUILD_MODEL)
     subparser.add_parser(SystemFlags.CATEGORIZE)
-    subparser.add_parser(SystemFlags.CORRECT_GEOPT)
     subparser.add_parser(SystemFlags.CORRECT_LOCATION)
     subparser.add_parser(SystemFlags.DOWNLOAD)
     subparser.add_parser(SystemFlags.LEMMATIZE_CATEGORIES)
@@ -63,7 +68,6 @@ def main():
     # General setup
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
-    init_logger()
 
     incidents = {}
     match args.command:
@@ -71,8 +75,6 @@ def main():
             Classifier(build_model=True).train_and_save()
         case SystemFlags.CATEGORIZE:
             categorize_information(nbd_client)
-        case SystemFlags.CORRECT_GEOPT:
-            correct_coordinates(nbd_client)
         case SystemFlags.CORRECT_LOCATION:
             correct_location(nbd_client)
         case SystemFlags.DAYS_BACK:
@@ -114,41 +116,6 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
     )
 
     nbd_client.update_list_of_incidents(incidents)
-
-
-def correct_coordinates(nbd_client: GoogleNBD) -> None:
-    incidents = nbd_client.get_all_incidents()
-    logging.info(f"{len(incidents)} incidents fetched.")
-    incidents = [i for i in incidents if i.validated_location.latitude < 0.0]
-
-    logging.info(f"{len(incidents)} incidents had incorrect geocoding.")
-
-    for i in incidents:
-        # The location SHOULD be latitude, longitude, but they were not mapped
-        # correctly upon creation.
-        incorrect_latitude = i.validated_location.latitude
-        incorrect_longitude = i.validated_location.longitude
-        if incorrect_latitude < 0:
-            i.validated_location = GeoPt(
-                incorrect_longitude, incorrect_latitude
-            )
-
-    logging.info(f"{len(incidents)} incorrect incident GeoPts were updated.")
-
-    nbd_client.update_list_of_incidents(incidents)
-    incidents = nbd_client.get_all_incidents()
-
-    corrected_locations = 0
-    for i in incidents:
-        address = i.location
-        if address != i.location:
-            logging.info(f"{i.location} changed to {address}")
-            corrected_locations += 1
-
-    logging.info(
-        f"{corrected_locations} of {len(incidents)} "
-        "had their addressed updated."
-    )
 
 
 def correct_location(nbd_client: GoogleNBD) -> None:
@@ -218,6 +185,16 @@ def correct_location(nbd_client: GoogleNBD) -> None:
     nbd_client.update_list_of_incidents(updated_incidents)
 
     logging.info(f"{len(updated_incidents)} addresses were updated.")
+
+
+def download_and_upload_records() -> None:
+    logging.info("Beginning incident download and Google Drive export.")
+    GoogleNBD().download_all()
+    if os.path.isfile(FILE_NAME_INCIDENT_DUMP):
+        MaroonGoogleDrive().upload_file_to_maroon_tech_folder(
+            FILE_NAME_INCIDENT_DUMP
+        )
+    logging.info("Finished incident download and Google Drive export.")
 
 
 def lemmatize_categories(nbd_client: GoogleNBD) -> None:
@@ -393,7 +370,6 @@ def parse_and_save_records(
 
 def update_records() -> None:
     """Update incident records based on last scraped incident."""
-    init_logger()
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
     day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days

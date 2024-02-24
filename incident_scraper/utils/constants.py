@@ -17,12 +17,14 @@ UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
 # Environment Constants
-ENV_GCP_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+ENV_GCP_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 ENV_GCP_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID = os.getenv("GOOGLE_DRIVE_MAROON_FOLDER_ID")
 ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
 FILE_ENCODING_UTF_8 = "utf-8"
+FILE_NAME_INCIDENT_DUMP = "incident_dump.csv"
 FILE_OPEN_READ = "r"
 FILE_OPEN_WRITE = "w"
 
@@ -57,7 +59,6 @@ TIMEZONE_CHICAGO = pytz.timezone(TIMEZONE_KEY_CHICAGO)
 class SystemFlags:
     BUILD_MODEL = "build-model"
     CATEGORIZE = "categorize"
-    CORRECT_GEOPT = "correct-geopt"
     CORRECT_LOCATION = "correct-location"
     DAYS_BACK = "days-back"
     DOWNLOAD = "download"
