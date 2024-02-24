@@ -38,6 +38,9 @@ from incident_scraper.utils.constants import (
 from incident_scraper.utils.functions import parse_scraped_incident_timestamp
 
 
+init_logger()
+
+
 # TODO: Chop this up into a service or some other organized structure
 def main():
     """Run the UCPD Incident Scraper."""
@@ -65,7 +68,6 @@ def main():
     # General setup
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
-    init_logger()
 
     incidents = {}
     match args.command:
@@ -368,7 +370,6 @@ def parse_and_save_records(
 
 def update_records() -> None:
     """Update incident records based on last scraped incident."""
-    init_logger()
     nbd_client = GoogleNBD()
     scraper = UCPDScraper()
     day_diff = (datetime.now().date() - nbd_client.get_latest_date()).days
