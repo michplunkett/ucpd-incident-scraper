@@ -17,6 +17,8 @@ class MaroonGoogleDrive:
     Class that manages interactions with Google Drive.
     """
 
+    SCOPES = ["https://www.googleapis.com/auth/drive"]
+
     def __init__(self):
         auth_client = GoogleAuth()
         auth_client.auth_method = "service"
@@ -24,12 +26,14 @@ class MaroonGoogleDrive:
             auth_client.credentials = (
                 ServiceAccountCredentials.from_json_keyfile_name(
                     ENV_GCP_CREDENTIALS,
-                    scopes=["https://www.googleapis.com/auth/drive"],
+                    scopes=self.SCOPES,
                 )
             )
         else:
-            auth_client.credentials = ServiceAccountCredentials.from_json(
-                json.loads(ENV_GCP_CREDENTIALS)
+            auth_client.credentials = (
+                ServiceAccountCredentials.from_json_keyfile_dict(
+                    json.loads(ENV_GCP_CREDENTIALS), scopes=self.SCOPES
+                )
             )
 
         self.__client = GoogleDrive(auth_client)
