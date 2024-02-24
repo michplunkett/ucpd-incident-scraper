@@ -391,4 +391,4 @@ def update_records() -> None:
 
 
 if __name__ == "__main__":
-    download_and_upload_records()
+    main()
