@@ -23,7 +23,8 @@ class MaroonGoogleDrive:
         if ENV_GCP_CREDENTIALS.endswith(FILE_TYPE_JSON):
             auth_client.credentials = (
                 ServiceAccountCredentials.from_json_keyfile_name(
-                    ENV_GCP_CREDENTIALS
+                    ENV_GCP_CREDENTIALS,
+                    scopes=["https://www.googleapis.com/auth/drive"],
                 )
             )
         else:
@@ -43,19 +44,39 @@ class MaroonGoogleDrive:
             "Starting upload process to the Chicago Maroon's Tech "
             f"Google Drive folder for: {file_name}"
         )
-        drive_file = self.__client.CreateFile(
-            {
-                "parents": [
-                    {
-                        "id": ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID,
-                        "title": file_name,
-                    }
-                ]
-            }
-        )
-        drive_file.SetContentFile(file_name)
 
-        drive_file.Upload()
+        file_id = ""
+        file_list = self.__client.ListFile(
+            {
+                "q": f"'{ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID}' in parents "
+                "and trashed=False"
+            }
+        ).GetList()
+        for f in file_list:
+            if f["title"] == file_name:
+                file_id = f["id"]
+
+        if file_id:
+            file = self.__client.CreateFile({"id": file_id})
+            logging.debug(f"Updating file: {file_name}.")
+        else:
+            file = self.__client.CreateFile(
+                {
+                    "parents": [
+                        {
+                            "id": ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID,
+                            "title": "Tech",
+                        }
+                    ],
+                    "title": file_name,
+                    "mimeType": "text/csv",
+                }
+            )
+            logging.debug(f"Creating file: {file_name}.")
+
+        file.SetContentFile(file_name)
+        file.Upload()
+
         logging.debug(
             "Finished upload process to the Chicago Maroon's Tech "
             f"Google Drive folder for: {file_name}"
