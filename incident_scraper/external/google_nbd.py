@@ -23,6 +23,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LONGITUDE,
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
+    INCIDENT_KEY_SEASON,
     INCIDENT_KEY_TYPE,
     INCIDENT_PREDICTED_TYPE,
     INCIDENT_TYPE_INFO,
@@ -70,6 +71,7 @@ class GoogleNBD:
             comments=incident[INCIDENT_KEY_COMMENTS],
             disposition=incident["Disposition"],
             location=incident[INCIDENT_KEY_LOCATION],
+            season=incident[INCIDENT_KEY_SEASON],
             validated_address=incident[INCIDENT_KEY_ADDRESS],
             validated_location=GeoPt(
                 incident[INCIDENT_KEY_LATITUDE],

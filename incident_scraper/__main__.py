@@ -28,6 +28,7 @@ from incident_scraper.utils.constants import (
     INCIDENT_KEY_LONGITUDE,
     INCIDENT_KEY_REPORTED,
     INCIDENT_KEY_REPORTED_DATE,
+    INCIDENT_KEY_SEASON,
     INCIDENT_KEY_TYPE,
     INCIDENT_PREDICTED_TYPE,
     INCIDENT_TYPE_INFO,
@@ -35,7 +36,10 @@ from incident_scraper.utils.constants import (
     UCPD_MDY_KEY_DATE_FORMAT,
     SystemFlags,
 )
-from incident_scraper.utils.functions import parse_scraped_incident_timestamp
+from incident_scraper.utils.functions import (
+    determine_season,
+    parse_scraped_incident_timestamp,
+)
 
 
 init_logger()
@@ -312,6 +316,8 @@ def parse_and_save_records(
             i[INCIDENT_KEY_REPORTED] = TIMEZONE_CHICAGO.localize(
                 formatted_reported_value
             )
+
+            i[INCIDENT_KEY_SEASON] = determine_season(i[INCIDENT_KEY_REPORTED])
 
             if (
                 geocoder.get_address_information(address, i)
