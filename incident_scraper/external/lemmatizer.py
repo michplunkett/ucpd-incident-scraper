@@ -32,6 +32,7 @@ class Lemmatizer:
             .replace("\n", " ")
             .replace(" - ", " / ")
             .replace("/", " / ")
+            .replace("`", "")
         ).strip()
         incident = custom_title_case(incident)
 
