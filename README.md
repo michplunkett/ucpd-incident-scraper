@@ -2,6 +2,10 @@
 This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The data is stored on
 [Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [Heroku's Dyno](https://devcenter.heroku.com/articles/dyno-types) functionality.
 
+## Primary Application Functions
+1. Scrape the UCPD Incident Report webpage every weekday morning, pulling all incidents from the latest reported incident date in the Google Datastore to the current day.
+2. Upload all stored UCPD incidents to the _Chicago Maroon_'s Google Drive every Saturday morning.
+
 ## Relevant Reading
 - Ethical Issues of Crime Mapping: [Link](https://storymaps.arcgis.com/stories/9b71d1fba77641a0ad35b07b23aae66b?utm_source=pocket_saves)
 
@@ -20,11 +24,6 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - Google Cloud Platform project ID stored in the environment variable: `GOOGLE_CLOUD_PROJECT`
 - [Google Maps API](https://developers.google.com/maps/documentation/geocoding/get-api-key) key stored in the environment variable: `GOOGLE_MAPS_API_KEY`
 - [Google Drive Folder ID](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) stored in the environment variable: `GOOGLE_DRIVE_MAROON_FOLDER_ID`
-
-## Instructions to Run the Project
-1. Go into the base directory of the repository and type `poetry shell` into the terminal.
-2. Run the command `poetry install` to install the requirements.
-3. Use the `make update` command.
 
 ## Technical Notes
 - Any modules should be added via the `poetry add [module]` command.
