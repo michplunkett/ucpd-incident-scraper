@@ -23,7 +23,7 @@ As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing va
 variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - Google Cloud Platform project ID stored in the environment variable: `GOOGLE_CLOUD_PROJECT`
 - [Google Maps API](https://developers.google.com/maps/documentation/geocoding/get-api-key) key stored in the environment variable: `GOOGLE_MAPS_API_KEY`
-- [Google Drive Folder ID](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) stored in the environment variable: `GOOGLE_DRIVE_MAROON_FOLDER_ID`
+- [Google Drive Folder ID](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) stored in the environment variable: `GOOGLE_DRIVE_FOLDER_ID`
 
 ## Technical Notes
 - Any modules should be added via the `poetry add [module]` command.
