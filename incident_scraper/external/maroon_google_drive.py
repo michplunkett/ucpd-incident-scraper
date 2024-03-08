@@ -7,7 +7,7 @@ from pydrive2.drive import GoogleDrive
 
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
-    ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID,
+    ENV_GOOGLE_DRIVE_FOLDER_ID,
     FILE_TYPE_JSON,
 )
 
@@ -52,7 +52,7 @@ class MaroonGoogleDrive:
         file_id = ""
         file_list = self.__client.ListFile(
             {
-                "q": f"'{ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID}' in parents "
+                "q": f"'{ENV_GOOGLE_DRIVE_FOLDER_ID}' in parents "
                 "and trashed=False"
             }
         ).GetList()
@@ -68,7 +68,7 @@ class MaroonGoogleDrive:
                 {
                     "parents": [
                         {
-                            "id": ENV_GOOGLE_DRIVE_MAROON_FOLDER_ID,
+                            "id": ENV_GOOGLE_DRIVE_FOLDER_ID,
                             "title": "Tech",
                         }
                     ],
