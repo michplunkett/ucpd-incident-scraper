@@ -97,6 +97,14 @@ class Lemmatizer:
                 "Battery to Police Officer",
             ],
             "Criminal Damage to Vehicle": ["Criminal Damage to Motor Vehicle"],
+            "Damage to Property": [
+                "Criminal Damage to Property",
+                "Damage to City Property",
+                "Damage to Personal Property",
+                "Damage to UC Property",
+                "Damage",
+                "Damaged Property",
+            ],
             "Domestic Assault": [
                 "Aggravated Domestic Assault",
                 "Domestic Aggravated Assault",
@@ -131,9 +139,17 @@ class Lemmatizer:
             "Interference with Police Officer": [
                 "Interference with Public Officer"
             ],
+            "Liquor Law Violation": ["Illegal Consumption by Minor"],
             "Lost Property": ["Lost", "Lost Phone", "Lost Wallet"],
-            "Motor Vehicle Theft and Recovery": [
-                "Motor Vehicle Theft Recovery"
+            "Medical Call": ["Mental Health Call"],
+            "Medical Transport": [
+                "Mental Health Transport",
+                "Mental Transport",
+            ],
+            "Miscellaneous": [
+                "Miscellaneous Incident Report",
+                "Miscellaneous Incident",
+                "Other",
             ],
             "Obstructing a Police Officer": [
                 "Obstruct Police Officer",
@@ -142,6 +158,14 @@ class Lemmatizer:
                 "Obstructing a Peace Officer",
             ],
             "Other Crime against Person": ["Other Crime Vs. Person"],
+            "Possession of Controlled Substance": [
+                "Narcotic Arrest",
+                "Narcotic",
+                "Possession of Crack Cocaine",
+                "Possession of Drug Paraphernalia",
+                "Possession of Narcotic with Intent to Deliver",
+                "Possession of Narcotic",
+            ],
             "Possession of Marijuana": ["Possession of Cannabis"],
             "Property Damage": ["Property Damage Only"],
             "Reckless Discharge of a Firearm": [
@@ -155,11 +179,14 @@ class Lemmatizer:
                 "Robbery-Aggravated",
                 "Robbery-Strong Arm",
             ],
-            "Recovered Motor Vehicle": [
+            "Recovered Vehicle": [
+                "Recovered Motor Vehicle",
                 "Recovered Vehicle",
                 "Recovery of Motor Vehicle",
             ],
-            "Recovered Stolen Motor Vehicle": [
+            "Recovered Stolen Vehicle": [
+                "Recovered Stolen Motor Vehicle",
+                "Recovered Motor Vehicle",
                 "Stolen Motor Vehicle Recovery",
                 "Stolen Vehicle Recovery",
             ],
@@ -174,7 +201,6 @@ class Lemmatizer:
             "Traffic Violation Arrest": [
                 "Traffic Arrest",
             ],
-            "Trespass to Motor Vehicle": ["Criminal Trespass to Motor Vehicle"],
             "Trespass to Property": [
                 "Criminal Trespass to Land",
                 "Criminal Trespass to Property",
@@ -183,6 +209,7 @@ class Lemmatizer:
                 "Trespass to Land",
             ],
             "Trespass to Vehicle": [
+                "Criminal Trespass to Motor Vehicle",
                 "Criminal Trespass to Vehicle",
                 "Trespass to Motor Vehicle",
             ],
@@ -202,6 +229,10 @@ class Lemmatizer:
             "Unlawful Use of a Weapon": [
                 "Unlawful Use of Weapon",
                 "Unlawful Use of a Weapon Arrest",
+            ],
+            "Vehicle Theft and Recovery": [
+                "Motor Vehicle Theft and Recovery",
+                "Motor Vehicle Theft Recovery",
             ],
             "Well-Being Check": ["Well-Being"],
         }
