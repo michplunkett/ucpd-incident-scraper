@@ -43,6 +43,7 @@ def custom_title_case(input_string: str) -> str:
         "around",
         "among",
         "of",
+        "via",
     ]
 
     lower_case = articles + conjunctions + prepositions
