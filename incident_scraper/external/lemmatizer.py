@@ -88,12 +88,23 @@ class Lemmatizer:
                 "Aggravated Battery to Police Officer",
             ],
             "Assault": ["Simple Assault Battery", "Simple Assault"],
+            "Assist Other Agency": [
+                "Assist Other Agency Motor Vehicle Theft and Recovery"
+            ],
             "Battery": ["Battery-Simple", "Simple Battery"],
             "Battery of a Police Officer": [
                 "Battery of Police Officer",
                 "Battery to Police Officer",
             ],
             "Criminal Damage to Vehicle": ["Criminal Damage to Motor Vehicle"],
+            "Domestic Assault": [
+                "Aggravated Domestic Assault",
+                "Domestic Aggravated Assault",
+            ],
+            "Domestic Battery": [
+                "Aggravated Domestic Battery",
+                "Domestic Aggravated Battery",
+            ],
             "DUI": ["DUI Arrest"],
             "Found Property": ["Found", "Found Key", "Found Wallet"],
             "Harassment by Electronic Means": [
@@ -112,6 +123,10 @@ class Lemmatizer:
                 "Haz-Mat Incident",
                 "Hazardous Material Event",
             ],
+            "Hit and Run": [
+                "Hit and Run Property Damage",
+                "Hit and Run Traffic Crash",
+            ],
             "Homicide": ["Murder"],
             "Interference with Police Officer": [
                 "Interference with Public Officer"
@@ -119,6 +134,12 @@ class Lemmatizer:
             "Lost Property": ["Lost", "Lost Phone", "Lost Wallet"],
             "Motor Vehicle Theft and Recovery": [
                 "Motor Vehicle Theft Recovery"
+            ],
+            "Obstructing a Police Officer": [
+                "Obstruct Police Officer",
+                "Obstructing Peace Officer",
+                "Obstructing Police",
+                "Obstructing a Peace Officer",
             ],
             "Other Crime against Person": ["Other Crime Vs. Person"],
             "Possession of Marijuana": ["Possession of Cannabis"],
@@ -138,7 +159,19 @@ class Lemmatizer:
                 "Stolen Motor Vehicle Recovery",
                 "Stolen Vehicle Recovery",
             ],
+            "Sexual Abuse": ["Criminal Sexual Abuse"],
+            "Sexual Assault": [
+                "Aggravated Criminal Sexual Assault",
+                "Criminal Sexual Assault",
+            ],
             "Strong Arm": ["Strong Armed"],
+            "Trespass to Motor Vehicle": ["Criminal Trespass to Motor Vehicle"],
+            "Trespass to Property": [
+                "Criminal Trespass to Land",
+                "Criminal Trespass to Property",
+                "Criminal Trespass to Residence",
+                "Criminal Trespass",
+            ],
             "Unlawful Discharge of a Firearm": [
                 "Unlawful Discharge of Firearm",
                 "Unlawful Discharge of Weapon",
