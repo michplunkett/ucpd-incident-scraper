@@ -63,6 +63,8 @@ class Lemmatizer:
                 .replace("Attempt ", "Attempted ")
             )
 
+            lemma = Lemmatizer.__map_incident_type(lemma)
+
             if i_type != lemma:
                 updated = True
                 i_types.append(lemma)
@@ -77,3 +79,48 @@ class Lemmatizer:
             return lemma_incident
         else:
             return incident
+
+    @staticmethod
+    def __map_incident_type(incident: str) -> str:
+        TYPE_MAPPINGS: {str: [str]} = {
+            "Aggravated Battery of a Police Officer": [
+                "Aggravated Battery of Police Officer",
+                "Aggravated Battery to Police Officer",
+            ],
+            "Battery": ["Battery-Simple", "Simple Battery"],
+            "Battery of a Police Officer": [
+                "Battery of Police Officer",
+                "Battery to Police Officer",
+            ],
+            "DUI": ["DUI Arrest"],
+            "Hazardous Material Incident": [
+                "Haz Mat Event",
+                "Haz Mat Incident",
+                "Haz Mat",
+                "Haz-Mat Incident",
+                "Hazardous Material Event",
+            ],
+            "Homicide": ["Murder"],
+            "Possession of Marijuana": ["Possession of Cannabis"],
+            "Reckless Discharge of a Firearm": [
+                "Aggravated Discharge of a Firearm",
+                "Reckless Discharge of Firearm",
+                "Reckless Discharge of a Weapon",
+            ],
+            "Unlawful Discharge of a Firearm": [
+                "Unlawful Discharge of Firearm",
+                "Unlawful Discharge of Weapon",
+                "Unlawful Discharge of a Weapon",
+            ],
+            "Unlawful Use of a Weapon": [
+                "Unlawful Use of Weapon",
+                "Unlawful Use of a Weapon Arrest",
+            ],
+        }
+
+        for true_type, type_list in TYPE_MAPPINGS.items():
+            if incident in type_list:
+                incident = true_type
+                break
+
+        return incident
