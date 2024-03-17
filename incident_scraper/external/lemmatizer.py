@@ -155,6 +155,10 @@ class Lemmatizer:
                 "Robbery-Aggravated",
                 "Robbery-Strong Arm",
             ],
+            "Recovered Motor Vehicle": [
+                "Recovered Vehicle",
+                "Recovery of Motor Vehicle",
+            ],
             "Recovered Stolen Motor Vehicle": [
                 "Stolen Motor Vehicle Recovery",
                 "Stolen Vehicle Recovery",
@@ -165,12 +169,18 @@ class Lemmatizer:
                 "Criminal Sexual Assault",
             ],
             "Strong Arm": ["Strong Armed"],
+            "Suspicious Mail": ["Suspicious Letter", "Suspicious Package"],
+            "Suspect Narcotic": ["Suspect Narcotic Found"],
+            "Traffic Violation Arrest": [
+                "Traffic Arrest",
+            ],
             "Trespass to Motor Vehicle": ["Criminal Trespass to Motor Vehicle"],
             "Trespass to Property": [
                 "Criminal Trespass to Land",
                 "Criminal Trespass to Property",
                 "Criminal Trespass to Residence",
                 "Criminal Trespass",
+                "Trespass to Land",
             ],
             "Trespass to Vehicle": [
                 "Criminal Trespass to Vehicle",
