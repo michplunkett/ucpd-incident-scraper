@@ -87,11 +87,13 @@ class Lemmatizer:
                 "Aggravated Battery of Police Officer",
                 "Aggravated Battery to Police Officer",
             ],
+            "Assault": ["Simple Assault Battery", "Simple Assault"],
             "Battery": ["Battery-Simple", "Simple Battery"],
             "Battery of a Police Officer": [
                 "Battery of Police Officer",
                 "Battery to Police Officer",
             ],
+            "Criminal Damage to Vehicle": ["Criminal Damage to Motor Vehicle"],
             "DUI": ["DUI Arrest"],
             "Harassment by Electronic Means": [
                 "Harassing Message",
@@ -115,6 +117,11 @@ class Lemmatizer:
                 "Aggravated Discharge of a Firearm",
                 "Reckless Discharge of Firearm",
                 "Reckless Discharge of a Weapon",
+            ],
+            "Robbery": [
+                "Robbery Arrest",
+                "Robbery-Aggravated",
+                "Robbery-Strong Arm",
             ],
             "Unlawful Discharge of a Firearm": [
                 "Unlawful Discharge of Firearm",
