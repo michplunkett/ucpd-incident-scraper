@@ -95,6 +95,7 @@ class Lemmatizer:
             ],
             "Criminal Damage to Vehicle": ["Criminal Damage to Motor Vehicle"],
             "DUI": ["DUI Arrest"],
+            "Found Property": ["Found", "Found Key", "Found Wallet"],
             "Harassment by Electronic Means": [
                 "Harassing Message",
                 "Harassment via Electronic Means",
@@ -112,26 +113,50 @@ class Lemmatizer:
                 "Hazardous Material Event",
             ],
             "Homicide": ["Murder"],
+            "Interference with Police Officer": [
+                "Interference with Public Officer"
+            ],
+            "Lost Property": ["Lost", "Lost Phone", "Lost Wallet"],
+            "Motor Vehicle Theft and Recovery": [
+                "Motor Vehicle Theft Recovery"
+            ],
+            "Other Crime against Person": ["Other Crime Vs. Person"],
             "Possession of Marijuana": ["Possession of Cannabis"],
+            "Property Damage": ["Property Damage Only"],
             "Reckless Discharge of a Firearm": [
                 "Aggravated Discharge of a Firearm",
                 "Reckless Discharge of Firearm",
                 "Reckless Discharge of a Weapon",
             ],
+            "Resisting Arrest": ["Resisting Police"],
             "Robbery": [
                 "Robbery Arrest",
                 "Robbery-Aggravated",
                 "Robbery-Strong Arm",
             ],
+            "Recovered Stolen Motor Vehicle": [
+                "Stolen Motor Vehicle Recovery",
+                "Stolen Vehicle Recovery",
+            ],
+            "Strong Arm": ["Strong Armed"],
             "Unlawful Discharge of a Firearm": [
                 "Unlawful Discharge of Firearm",
                 "Unlawful Discharge of Weapon",
                 "Unlawful Discharge of a Weapon",
             ],
+            "Unlawful Possession of a Firearm": [
+                "Unlawful Possession of Firearm",
+                "Unlawful Possession of Handgun",
+                "Unlawful Possession of a Handgun",
+            ],
+            "Unlawful Possession of a Weapon": [
+                "Unlawful Possession of Weapon"
+            ],
             "Unlawful Use of a Weapon": [
                 "Unlawful Use of Weapon",
                 "Unlawful Use of a Weapon Arrest",
             ],
+            "Well-Being Check": ["Well-Being"],
         }
 
         for true_type, type_list in TYPE_MAPPINGS.items():
