@@ -172,6 +172,10 @@ class Lemmatizer:
                 "Criminal Trespass to Residence",
                 "Criminal Trespass",
             ],
+            "Trespass to Vehicle": [
+                "Criminal Trespass to Vehicle",
+                "Trespass to Motor Vehicle",
+            ],
             "Unlawful Discharge of a Firearm": [
                 "Unlawful Discharge of Firearm",
                 "Unlawful Discharge of Weapon",
