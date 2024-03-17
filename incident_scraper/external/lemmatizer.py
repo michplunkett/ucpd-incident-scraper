@@ -93,6 +93,15 @@ class Lemmatizer:
                 "Battery to Police Officer",
             ],
             "DUI": ["DUI Arrest"],
+            "Harassment by Electronic Means": [
+                "Harassing Message",
+                "Harassment via Electronic Means",
+            ],
+            "Harassing Email": ["Harassing Email Message", "Harassing Message"],
+            "Harassing Telephone Call": [
+                "Harassing Phone Call",
+                "Harassment by Telephone",
+            ],
             "Hazardous Material Incident": [
                 "Haz Mat Event",
                 "Haz Mat Incident",
