@@ -83,6 +83,9 @@ class Lemmatizer:
     @staticmethod
     def __map_incident_type(incident: str) -> str:
         TYPE_MAPPINGS: {str: [str]} = {
+            "Aggravated Assault of a Police Officer": [
+                "Aggravated Assault of Police Officer"
+            ],
             "Aggravated Battery of a Police Officer": [
                 "Aggravated Battery of Police Officer",
                 "Aggravated Battery to Police Officer",

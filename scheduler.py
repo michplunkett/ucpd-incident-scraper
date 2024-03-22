@@ -17,7 +17,7 @@ def run_scraper():
     update_records()
 
 
-@scheduler.scheduled_job(trigger="cron", day_of_week="sat", hour=15)
+@scheduler.scheduled_job(trigger="cron", day_of_week="sat", hour=17)
 def export_to_maroon_google_drive():
     """Export the incidents to Google Drive at the above interval."""
     download_and_upload_records()
