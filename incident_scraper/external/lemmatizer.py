@@ -139,6 +139,7 @@ class Lemmatizer:
                 "Hit and Run Traffic Crash",
             ],
             "Homicide": ["Murder"],
+            "Information": ["Information Report"],
             "Interference with Police Officer": [
                 "Interference with Public Officer"
             ],
