@@ -11,11 +11,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
-from xgboost import XGBClassifier
+from sklearn.neural_network import MLPClassifier
 
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
-
 
 INCIDENT_FILE = "incident_dump.csv"
 KEY_COMMENTS = "comments"
@@ -144,9 +143,7 @@ class Classifier:
         X_test_tfidf = self._vectorizer.transform(X_test)
 
         self._model = MultiOutputClassifier(
-            XGBClassifier(
-                eta=0.2, max_depth=10, n_estimators=100, booster="gbtree"
-            )
+            MLPClassifier()
         ).fit(X_train_tfidf, y_train)
 
         prediction = self._model.predict(X_test_tfidf)
