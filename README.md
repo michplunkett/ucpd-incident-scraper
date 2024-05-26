@@ -33,6 +33,6 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - `make lint`: Runs`pre-commit` on the codebase.
 - `make seed`: Save incidents starting from January 1st of 2011 and continuing until today.
 - `make update`: Save incidents starting from the most recently saved incident until today.
-- `make build_model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
+- `make build-model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
 - `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
 - `make download`: Download all incidents into a locally stored file titled `incident_dump.csv`.
