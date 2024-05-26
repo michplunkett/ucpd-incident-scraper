@@ -1,39 +1,37 @@
-BASEDIR=incident_scraper
-
-default: create_requirements lint
+default: create-requirements lint
 
 .PHONY: lint
 lint:
 	pre-commit run --all-files
 
-.PHONY: create_requirements
-create_requirements:
+.PHONY: create-requirements
+create-requirements:
 	poetry export --format=requirements.txt > requirements.txt
 
 .PHONY: download
 download:
 	python -m incident_scraper download
 
-.PHONY: download_and_move
-download_and_move: download
+.PHONY: download-and-move
+download-and-move: download
 	cp ./incident_dump.csv ../one-offs/notebooks/data/
 	gzip --k ./incident_dump.csv
 	mv ./incident_dump.csv.gz ../ucpd-incident-reporting/incident_reporting/data/
 
-.PHONY: build_model
-build_model: download
+.PHONY: build-model
+build-model: download
 	python -m incident_scraper build-model
 
 .PHONY: categorize
 categorize:
 	python -m incident_scraper categorize
 
-.PHONY: correct_location
-correct_location:
+.PHONY: correct-location
+correct-location:
 	python -m incident_scraper correct-location
 
-.PHONY: lemmatize_categories
-lemmatize_categories:
+.PHONY: lemmatize-categories
+lemmatize-categories:
 	python -m incident_scraper lemmatize-categories
 
 .PHONY: seed
@@ -44,24 +42,24 @@ seed:
 update:
 	python -m incident_scraper update
 
-.PHONY: three_days
-three_days:
+.PHONY: three-days
+three-days:
 	python -m incident_scraper days-back 3
 
-.PHONY: five_days
-five_days:
+.PHONY: five-days
+five-days:
 	python -m incident_scraper days-back 5
 
-.PHONY: ten_days
-ten_days:
+.PHONY: ten-days
+ten-days:
 	python -m incident_scraper days-back 10
 
-.PHONY: twenty_days
-twenty_days:
+.PHONY: twenty-days
+twenty-days:
 	python -m incident_scraper days-back 20
 
-.PHONY: thirty_days
-thirty_days:
+.PHONY: thirty-days
+thirty-days:
 	python -m incident_scraper days-back 30
 
 .PHONY: test
