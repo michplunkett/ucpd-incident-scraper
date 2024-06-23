@@ -1,4 +1,5 @@
 """Contains constants that are used throughout the application."""
+
 import os
 
 import pytz

@@ -1,4 +1,5 @@
 """Initialize and set the logging defaults."""
+
 import json
 import logging
 import sys

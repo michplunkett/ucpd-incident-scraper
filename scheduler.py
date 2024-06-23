@@ -1,4 +1,5 @@
 """The python equivalent of a cron file."""
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from incident_scraper.__main__ import (

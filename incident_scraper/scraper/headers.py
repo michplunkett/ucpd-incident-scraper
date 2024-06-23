@@ -1,4 +1,5 @@
 """Contains the headers class."""
+
 import gzip
 import json
 import os

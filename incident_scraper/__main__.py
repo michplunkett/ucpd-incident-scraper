@@ -1,4 +1,5 @@
 """Serves as the entry point for the project module."""
+
 import argparse
 import logging
 import os.path
@@ -46,7 +47,7 @@ init_logger()
 
 
 # TODO: Chop this up into a service or some other organized structure
-def main():
+def main():  # noqa: C901
     """Run the UCPD Incident Scraper."""
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers(dest="command")

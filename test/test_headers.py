@@ -1,4 +1,5 @@
 """Test functionality of Header class."""
+
 from incident_scraper.scraper.headers import Headers
 
 
