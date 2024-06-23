@@ -1,4 +1,23 @@
 repos:
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.8.5
+    hooks:
+      - id: nbqa-ruff
+        exclude: data/
+        args:
+          - --fix
+          - --target-version=py311
+          - --ignore=E721,E722
+          - --line-length=80
+      - id: nbqa-black
+        exclude: data/
+        args:
+          - --line-length=80
+      - id: nbqa-isort
+        exclude: data/
+        args:
+          - --float-to-top
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -47,7 +66,7 @@ repos:
     rev: v0.4.10
     hooks:
       - id: ruff
-        types_or: [python, pyi, jupyter]
+        types_or: [python,pyi]
         args:
           - --fix
           - --target-version=py311
@@ -55,7 +74,7 @@ repos:
           - --line-length=80
           - --ignore=E203,E402,E501,E261
       - id: ruff-format
-        types_or: [ python, pyi, jupyter ]
+        types_or: [python,pyi]
         args:
           - --target-version=py311
           - --line-length=80
