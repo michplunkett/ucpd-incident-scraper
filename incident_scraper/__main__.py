@@ -177,7 +177,7 @@ def correct_location(nbd_client: GoogleNBD) -> None:
                 corrected_locations += 1
                 updated_incidents.append(i)
             else:
-                logging.error(
+                logging.debug(
                     "This incident failed to get a valid location with the "
                     f"Geocoder: {i}"
                 )
@@ -261,7 +261,7 @@ def parse_and_save_records(
 
             if len(i.keys()) != 6:
                 void_malformed_incidents.append(i)
-                logging.error(
+                logging.debug(
                     f"This incident has an insufficient number of keys: {i}"
                 )
                 continue
@@ -286,7 +286,7 @@ def parse_and_save_records(
 
             if not formatted_reported_value:
                 void_malformed_incidents.append(i)
-                logging.error(f"This incident has a malformed date: {i}")
+                logging.debug(f"This incident has a malformed date: {i}")
                 continue
 
             i[INCIDENT_KEY_TYPE] = Lemmatizer.process(i[INCIDENT_KEY_TYPE])
@@ -330,13 +330,13 @@ def parse_and_save_records(
                 continue
             else:
                 geocode_error_incidents.append(i)
-                logging.error(
+                logging.debug(
                     "This incident failed to get a valid location with the "
                     f"Geocoder: {i}"
                 )
 
             geocode_error_incidents.append(i)
-            logging.error(
+            logging.debug(
                 "This incident failed to get a location with the GoogleMaps' "
                 f"Geocoder: {i}"
             )
