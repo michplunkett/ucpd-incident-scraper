@@ -23,7 +23,7 @@ build-model: download
 	python -m incident_scraper build-model
 
 .PHONY: categorize
-categorize:
+categorize: build-model
 	python -m incident_scraper categorize
 
 .PHONY: correct-location
