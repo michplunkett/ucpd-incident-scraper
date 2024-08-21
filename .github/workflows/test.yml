@@ -20,10 +20,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.local
-          key: poetry-1.5.1
+          key: poetry-1.8.2
       - uses: snok/install-poetry@v1
         with:
-          version: 1.5.1
+          version: 1.8.2
           virtualenvs-create: true
           virtualenvs-in-project: true
       - name: cache deps
@@ -35,4 +35,4 @@ jobs:
       - run: poetry install --no-interaction --no-root
         if: steps.cache-deps.outputs.cache-hit != 'true'
       - run: poetry install --no-interaction
-      - run: poetry run pytest
+      - run: poetry run pytest tests/
