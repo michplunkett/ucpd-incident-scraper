@@ -64,4 +64,4 @@ thirty-days:
 
 .PHONY: test
 test:
-	pytest -vs test/
+	pytest -vs tests/
