@@ -55,9 +55,21 @@ class Classifier:
                     f"./{INCIDENT_FILE}",
                 )
                 .select(KEY_COMMENTS, KEY_INCIDENT_TYPE)
-                .with_columns(pl.col(KEY_COMMENTS).apply(remove_stopwords))
-                .with_columns(pl.col(KEY_COMMENTS).apply(remove_non_ascii))
-                .with_columns(pl.col(KEY_COMMENTS).apply(remove_puncts))
+                .with_columns(
+                    pl.col(KEY_COMMENTS).map_elements(
+                        remove_stopwords, return_dtype=pl.String
+                    )
+                )
+                .with_columns(
+                    pl.col(KEY_COMMENTS).map_elements(
+                        remove_non_ascii, return_dtype=pl.String
+                    )
+                )
+                .with_columns(
+                    pl.col(KEY_COMMENTS).map_elements(
+                        remove_puncts, return_dtype=pl.String
+                    )
+                )
             )
             self._unique_types = self._create_unique_type_list()
             self._clean_data()
