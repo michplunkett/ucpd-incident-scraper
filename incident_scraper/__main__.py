@@ -8,7 +8,6 @@ from datetime import datetime
 from typing import Any
 
 from click import IntRange
-from google.cloud.ndb import GeoPt
 
 from incident_scraper.external.geocoder import Geocoder
 from incident_scraper.external.google_logger import init_logger
@@ -62,7 +61,6 @@ def main():  # noqa: C901
 
     subparser.add_parser(SystemFlags.BUILD_MODEL)
     subparser.add_parser(SystemFlags.CATEGORIZE)
-    subparser.add_parser(SystemFlags.CORRECT_LOCATION)
     subparser.add_parser(SystemFlags.DOWNLOAD)
     subparser.add_parser(SystemFlags.LEMMATIZE_CATEGORIES)
     subparser.add_parser(SystemFlags.SEED)
@@ -80,8 +78,6 @@ def main():  # noqa: C901
             Classifier(build_model=True).train_and_save()
         case SystemFlags.CATEGORIZE:
             categorize_information(nbd_client)
-        case SystemFlags.CORRECT_LOCATION:
-            correct_location(nbd_client)
         case SystemFlags.DAYS_BACK:
             incidents = scraper.scrape_last_days(args.days)
         case SystemFlags.DOWNLOAD:
@@ -121,75 +117,6 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
     )
 
     nbd_client.update_list_of_incidents(incidents)
-
-
-def correct_location(nbd_client: GoogleNBD) -> None:
-    addr_parser = AddressParser()
-    geocoder = Geocoder()
-    incidents = nbd_client.get_all_incidents()
-
-    corrected_locations: int = 0
-    updated_incidents: [Incident] = []
-    for i in incidents:
-        if (
-            i.location == "Unknown"
-            or i.location == "Campus"
-            or i.location == "Metra Train"
-        ):
-            continue
-
-        fmt_address = addr_parser.process(i.location)
-        # Re-geocode any reformatted address or one that contains the following
-        # words.
-        if fmt_address != i.location or (
-            " and " in fmt_address
-            or "between" in fmt_address
-            or " to " in fmt_address
-            or " at " in fmt_address
-        ):
-            i.location = fmt_address
-
-            fmt_address = (
-                fmt_address.split(" (")[0]
-                if "(" in fmt_address
-                else fmt_address
-            )
-
-            i_dict: {str: Any} = {"dummy_key": True}
-            if (
-                geocoder.get_address_information(fmt_address, i_dict)
-                and INCIDENT_KEY_ADDRESS in i_dict
-                and -90.0 <= i_dict[INCIDENT_KEY_LATITUDE] <= 90.0
-                and -90.0 <= i_dict[INCIDENT_KEY_LONGITUDE] <= 90.0
-            ):
-                i.validated_address = i_dict[INCIDENT_KEY_ADDRESS]
-                i.validated_location = GeoPt(
-                    i_dict[INCIDENT_KEY_LATITUDE],
-                    i_dict[INCIDENT_KEY_LONGITUDE],
-                )
-                if i.validated_address:
-                    logging.info(
-                        f"{fmt_address} was geocoded to: {i.validated_address}"
-                    )
-                else:
-                    logging.info(f"Unable to geocode address: {fmt_address}")
-
-                corrected_locations += 1
-                updated_incidents.append(i)
-            else:
-                logging.debug(
-                    "This incident failed to get a valid location with the "
-                    f"Geocoder: {i}"
-                )
-
-    logging.info(
-        f"{corrected_locations} of {len(incidents)} "
-        "had their address updated."
-    )
-
-    nbd_client.update_list_of_incidents(updated_incidents)
-
-    logging.info(f"{len(updated_incidents)} addresses were updated.")
 
 
 def download_and_upload_records() -> None:
