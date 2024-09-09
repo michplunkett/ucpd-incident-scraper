@@ -30,7 +30,6 @@ textblob = "^0.18.0.post0"
 censusgeocode = "^0.5.2"
 nltk = "^3.9"
 pydrive2 = "^1.19.0"
-fastapi = "^0.114.0"
 
 [build-system]
 requires = ["poetry-core"]
