@@ -2,10 +2,7 @@
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from incident_scraper.__main__ import (
-    download_and_upload_records,
-    update_records,
-)
+from incident_scraper.__main__ import update_records
 
 
 scheduler = BlockingScheduler()
