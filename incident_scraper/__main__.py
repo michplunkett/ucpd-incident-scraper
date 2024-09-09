@@ -7,8 +7,6 @@ import re
 from datetime import datetime
 from typing import Any
 
-from click import IntRange
-
 from incident_scraper.external.geocoder import Geocoder
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_nbd import GoogleNBD
@@ -55,8 +53,9 @@ def main():  # noqa: C901
     days_back.add_argument(
         "days",
         # The range is locked between 3 and 30.
-        type=IntRange(3, 90),
+        choices=range(3, 31),
         default=3,
+        type=int,
     )
 
     subparser.add_parser(SystemFlags.BUILD_MODEL)
