@@ -2,7 +2,6 @@
 
 import argparse
 import logging
-import os.path
 import re
 from datetime import datetime
 from typing import Any
@@ -13,13 +12,11 @@ from incident_scraper.external.geocoder import Geocoder
 from incident_scraper.external.google_logger import init_logger
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.external.lemmatizer import Lemmatizer
-from incident_scraper.external.maroon_google_drive import MaroonGoogleDrive
 from incident_scraper.models.address_parser import AddressParser
 from incident_scraper.models.classifier import Classifier
 from incident_scraper.models.incident import Incident
 from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.utils.constants import (
-    FILE_NAME_INCIDENT_DUMP,
     INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_COMMENTS,
     INCIDENT_KEY_ID,
@@ -117,16 +114,6 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
     )
 
     nbd_client.update_list_of_incidents(incidents)
-
-
-def download_and_upload_records() -> None:
-    logging.info("Beginning incident download and Google Drive export.")
-    GoogleNBD().download_all()
-    if os.path.isfile(FILE_NAME_INCIDENT_DUMP):
-        MaroonGoogleDrive().upload_file_to_maroon_tech_folder(
-            FILE_NAME_INCIDENT_DUMP
-        )
-    logging.info("Finished incident download and Google Drive export.")
 
 
 def lemmatize_categories(nbd_client: GoogleNBD) -> None:
