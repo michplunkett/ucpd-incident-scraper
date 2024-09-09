@@ -4,7 +4,6 @@ import os
 
 import pytz
 
-
 # Date/Time Constants
 UCPD_DATE_FORMATS = [
     "%m/%d/%y %I:%M %p",
@@ -20,7 +19,6 @@ UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 # Environment Constants
 ENV_GCP_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 ENV_GCP_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
-ENV_GOOGLE_DRIVE_FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
 ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
