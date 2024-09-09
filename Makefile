@@ -26,10 +26,6 @@ build-model: download
 categorize: build-model
 	python -m incident_scraper categorize
 
-.PHONY: correct-location
-correct-location:
-	python -m incident_scraper correct-location
-
 .PHONY: lemmatize-categories
 lemmatize-categories:
 	python -m incident_scraper lemmatize-categories
