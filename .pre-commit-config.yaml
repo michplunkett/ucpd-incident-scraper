@@ -1,9 +1,27 @@
 repos:
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.8.5
+    hooks:
+      - id: nbqa-ruff
+        exclude: data/
+        args:
+          - --fix
+          - --target-version=py311
+          - --ignore=E721,E722
+          - --line-length=80
+      - id: nbqa-black
+        exclude: data/
+        args:
+          - --line-length=80
+      - id: nbqa-isort
+        exclude: data/
+        args:
+          - --float-to-top
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
       - id: trailing-whitespace
-      - id: name-tests-test
       - id: check-docstring-first
       - id: check-executables-have-shebangs
       - id: check-json
@@ -43,29 +61,19 @@ repos:
           - --profile=black
           - --line-length=80
 
-  - repo: https://github.com/psf/black
-    rev: 23.7.0
-    hooks:
-      - id: black
-        args:
-          - --target-version=py311
-          - --line-length=80
-
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.0.286
+    rev: v0.4.10
     hooks:
       - id: ruff
-        types_or: [python, pyi, jupyter]
+        types_or: [python,pyi]
         args:
           - --fix
           - --target-version=py311
           - --select=B,C,E,F,W
           - --line-length=80
-
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
+          - --ignore=E203,E402,E501,E261
+      - id: ruff-format
+        types_or: [python,pyi]
         args:
-          - --ignore=E203,E402,E501,E800,W503,W391,E261
-          - --select=B,C,E,F,W,T4,B9
+          - --target-version=py311
+          - --line-length=80

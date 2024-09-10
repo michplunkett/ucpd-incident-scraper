@@ -1,4 +1,5 @@
 """Contains code related to scraping UCPD incident reports."""
+
 import logging
 import time
 from datetime import datetime, timedelta

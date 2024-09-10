@@ -1,4 +1,5 @@
 """Contains constants that are used throughout the application."""
+
 import os
 
 import pytz
@@ -19,7 +20,6 @@ UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 # Environment Constants
 ENV_GCP_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 ENV_GCP_PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
-ENV_GOOGLE_DRIVE_FOLDER_ID = os.getenv("GOOGLE_DRIVE_FOLDER_ID")
 ENV_GOOGLE_MAPS_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
 # File Constants
@@ -60,7 +60,6 @@ TIMEZONE_CHICAGO = pytz.timezone(TIMEZONE_KEY_CHICAGO)
 class SystemFlags:
     BUILD_MODEL = "build-model"
     CATEGORIZE = "categorize"
-    CORRECT_LOCATION = "correct-location"
     DAYS_BACK = "days-back"
     DOWNLOAD = "download"
     LEMMATIZE_CATEGORIES = "lemmatize-categories"
