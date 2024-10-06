@@ -34,14 +34,14 @@ class Geocoder:
     TIMEOUT = 5
 
     def __init__(self):
-        self.address_cache = {}
-        self.address_parser = AddressParser()
-        self.census_client = CensusGeocode()
-        self.google_client = Client(ENV_GOOGLE_MAPS_KEY)
+        self._address_cache = {}
+        self._address_parser = AddressParser()
+        self._census_client = CensusGeocode()
+        self._google_client = Client(ENV_GOOGLE_MAPS_KEY)
 
     def get_address_information(self, address: str, i_dict: dict) -> bool:
-        if address in self.address_cache:
-            self._get_address_from_cache(i_dict, self.address_cache[address])
+        if address in self._address_cache:
+            self._get_address_from_cache(i_dict, self._address_cache[address])
 
         if (
             INCIDENT_KEY_ADDRESS not in i_dict
@@ -77,7 +77,7 @@ class Geocoder:
 
         if self._cannot_geocode(address, and_cnt):
             logging.error(f"Unable to process and geocode address: {address}")
-            self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+            self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
         elif " between " in address_lower:
             self._parse_between_addresses(address)
         elif and_cnt == 1 or " at " in address_lower:
@@ -86,12 +86,12 @@ class Geocoder:
             self._google_validate_address(address)
         else:
             logging.error(f"Unable to process and geocode address: {address}")
-            self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+            self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
-        return self.address_cache[address]
+        return self._address_cache[address]
 
     def _parse_between_addresses(self, address: str) -> dict:
-        processed_addresses = self.address_parser.process_between_streets(
+        processed_addresses = self._address_parser.process_between_streets(
             address
         )
 
@@ -106,22 +106,22 @@ class Geocoder:
                 address, avg_longitude, addr_one[INCIDENT_KEY_LATITUDE]
             )
         elif len(processed_addresses) == 1:
-            self.address_cache[address] = self._google_validate_address(
+            self._address_cache[address] = self._google_validate_address(
                 processed_addresses[0]
             )
         else:
-            self.address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+            self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
-        return self.address_cache[address]
+        return self._address_cache[address]
 
     def _process_at_and_addresses(self, address: str) -> dict:
-        processed_address = self.address_parser.process_at_and_streets(address)
+        processed_address = self._address_parser.process_at_and_streets(address)
 
-        self.address_cache[address] = self._google_validate_address(
+        self._address_cache[address] = self._google_validate_address(
             processed_address
         )
 
-        return self.address_cache[address]
+        return self._address_cache[address]
 
     def _census_validate_address(self, address: str) -> dict:
         """Get address from Census geocoder.
@@ -132,7 +132,7 @@ class Geocoder:
         response = None
         for _ in range(self.NUM_RETRIES):
             try:
-                response = self.census_client.address(
+                response = self._census_client.address(
                     street=address,
                     city=LOCATION_CHICAGO,
                     state=LOCATION_ILLINOIS,
@@ -151,7 +151,7 @@ class Geocoder:
         if response:
             logging.debug(f"Using the Census geocoder for: {address}")
             coordinates = response[0]["coordinates"]
-            self.address_cache[address] = {
+            self._address_cache[address] = {
                 INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"],
                 INCIDENT_KEY_LATITUDE: coordinates["y"],
                 INCIDENT_KEY_LONGITUDE: coordinates["x"],
@@ -160,9 +160,9 @@ class Geocoder:
             logging.debug(
                 f"Unable to get result from the Census geocoder for: {address}"
             )
-            self.address_cache[address] = None
+            self._address_cache[address] = None
 
-        return self.address_cache[address]
+        return self._address_cache[address]
 
     def _google_validate_coordinates(
         self, original_addr: str, longitude: float, latitude: float
@@ -171,10 +171,10 @@ class Geocoder:
             "Using the Google Maps reverse geocoder for: "
             f"{latitude}, {longitude}"
         )
-        resp = self.google_client.reverse_geocode((latitude, longitude))
+        resp = self._google_client.reverse_geocode((latitude, longitude))
 
         if resp:
-            self.address_cache[original_addr] = {
+            self._address_cache[original_addr] = {
                 INCIDENT_KEY_ADDRESS: resp[0]["formatted_address"].replace(
                     ", USA", ""
                 ),
@@ -186,9 +186,9 @@ class Geocoder:
                 "Unable to get result from the Google Maps reverse geocoder "
                 f"for: {latitude}, {longitude}"
             )
-            self.address_cache[original_addr] = None
+            self._address_cache[original_addr] = None
 
-        return self.address_cache[original_addr]
+        return self._address_cache[original_addr]
 
     def _google_validate_address(self, address: str) -> dict:
         """Get address from Google Maps geocoder.
@@ -196,7 +196,7 @@ class Geocoder:
         For more information on the Google Maps API, visit this link:
         https://github.com/googlemaps/google-maps-services-python#usage
         """
-        resp = self.google_client.addressvalidation(
+        resp = self._google_client.addressvalidation(
             [address],
             # Enable Coding Accuracy Support System
             enableUspsCass=True,
@@ -207,7 +207,7 @@ class Geocoder:
         result = resp["result"]
         if result:
             logging.debug(f"Using the Google Maps geocoder for: {address}")
-            self.address_cache[address] = {
+            self._address_cache[address] = {
                 INCIDENT_KEY_ADDRESS: result["address"][
                     "formattedAddress"
                 ].replace(", USA", ""),
@@ -223,9 +223,9 @@ class Geocoder:
                 "Unable to get result from the Google Maps geocoder "
                 f"for: {address}"
             )
-            self.address_cache[address] = None
+            self._address_cache[address] = None
 
-        return self.address_cache[address]
+        return self._address_cache[address]
 
     @staticmethod
     def _get_address_from_cache(i_dict: dict, result: Optional[dict]):

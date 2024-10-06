@@ -7,17 +7,17 @@ class AddressParser:
     A singleton class that contains all address parsing functions.
     """
 
-    _instance = None
+    __instance = None
     ORDINALS_REGEX = r"E\. (\d{2})[a-z]{2} \w+"
 
     def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
 
     def __init__(self):
-        self.numerical_streets = [self._make_ordinal(s) for s in range(37, 95)]
-        self.street_corrections = [
+        self._numerical_streets = [self._make_ordinal(s) for s in range(37, 95)]
+        self._street_corrections = [
             self._create_street_tuple("Berkeley"),
             self._create_street_tuple("Blackstone"),
             self._create_street_tuple("Cottage Grove"),
@@ -51,10 +51,10 @@ class AddressParser:
             self._create_street_tuple("University"),
             self._create_street_tuple("Woodlawn"),
         ]
-        self.street_corrections_final = [
-            s for _, _, s in self.street_corrections
+        self._street_corrections_final = [
+            s for _, _, s in self._street_corrections
         ]
-        self.street_corrections_final.extend(
+        self._street_corrections_final.extend(
             ["S. Shore Dr.", "Midway Plaisance", "E. Drexel Sq.", "E. Park Pl."]
         )
 
@@ -84,7 +84,7 @@ class AddressParser:
         return str(n) + suffix
 
     def _correct_ordinals(self, address: str) -> str:
-        for s in self.numerical_streets:
+        for s in self._numerical_streets:
             dir_s = f"E. {s}"
             if s in address and dir_s not in address:
                 address = address.replace(s, dir_s)
@@ -100,7 +100,7 @@ class AddressParser:
         return address
 
     def _correct_non_ordinals(self, address: str) -> str:
-        for sc in self.street_corrections:
+        for sc in self._street_corrections:
             if "E. S. Harper Ave. Ct." in address:
                 address = address.replace(
                     "E. S. Harper Ave. Ct.", "E. Harper Ct."
@@ -128,7 +128,7 @@ class AddressParser:
                 address = address.replace(dir_name, full_name)
 
         non_ordinal_streets = [
-            s for s in self.street_corrections_final if s in address
+            s for s in self._street_corrections_final if s in address
         ]
         if (
             len(non_ordinal_streets) == 3
@@ -193,7 +193,7 @@ class AddressParser:
     def process_at_and_streets(self, address: str) -> str:
         ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         non_ordinal_streets = [
-            s for s in self.street_corrections_final if s in address
+            s for s in self._street_corrections_final if s in address
         ]
 
         if len(ordinals) == 1 and len(non_ordinal_streets) == 1:
@@ -208,7 +208,7 @@ class AddressParser:
         ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         ordinals.sort()
         non_ordinal_streets = [
-            s for s in self.street_corrections_final if s in address
+            s for s in self._street_corrections_final if s in address
         ]
 
         parsed_addresses = []

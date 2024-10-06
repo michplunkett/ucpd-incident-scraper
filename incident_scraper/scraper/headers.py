@@ -13,7 +13,7 @@ class Headers:
 
     def __init__(self, seed=None):
         random.seed(seed)
-        self.list_of_headers = []
+        self._list_of_headers = []
         self._load_headers_file()
 
     def _load_headers_file(self):
@@ -24,12 +24,12 @@ class Headers:
         )
 
         with gzip.open(file_path, FILE_OPEN_READ) as f:
-            self.list_of_headers = json.loads(
+            self._list_of_headers = json.loads(
                 f.read().decode(FILE_ENCODING_UTF_8)
             )
 
     def get_random_header(self):
         """Use random number generator to get random header from list."""
-        return self.list_of_headers[
-            random.randint(0, len(self.list_of_headers) - 1)
+        return self._list_of_headers[
+            random.randint(0, len(self._list_of_headers) - 1)
         ]
