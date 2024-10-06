@@ -38,7 +38,7 @@ class UCPDScraper:
             "Host": "incidentreports.uchicago.edu",
             "Upgrade-Insecure-Requests": "1",
         }
-        self.__user_agent_rotator = Headers()
+        self._user_agent_rotator = Headers()
 
     def scrape_from_beginning_2011(self):
         """Scrape and parse all tables from January 1, 2011, to today."""
@@ -88,7 +88,7 @@ class UCPDScraper:
         time.sleep(self._request_delay)
         # Change user_agent randomly
         self._headers["User-Agent"] = (
-            self.__user_agent_rotator.get_random_header()
+            self._user_agent_rotator.get_random_header()
         )
         r = requests.get(url, headers=self._headers)
         response = html.fromstring(r.content)
