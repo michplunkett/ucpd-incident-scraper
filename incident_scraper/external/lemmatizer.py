@@ -63,7 +63,7 @@ class Lemmatizer:
                 .replace("Attempt ", "Attempted ")
             )
 
-            lemma = Lemmatizer.__map_incident_type(lemma)
+            lemma = Lemmatizer._map_incident_type(lemma)
 
             if i_type != lemma:
                 updated = True
@@ -81,7 +81,7 @@ class Lemmatizer:
             return incident
 
     @staticmethod
-    def __map_incident_type(incident: str) -> str:
+    def _map_incident_type(incident: str) -> str:
         TYPE_MAPPINGS: {str: [str]} = {
             "Aggravated Assault of a Police Officer": [
                 "Aggravated Assault of Police Officer"
