@@ -14,9 +14,9 @@ class Headers:
     def __init__(self, seed=None):
         random.seed(seed)
         self.list_of_headers = []
-        self._load_headers_file()
+        self.__load_headers_file()
 
-    def _load_headers_file(self):
+    def __load_headers_file(self):
         """Load the list of headers."""
         file_path = (
             os.getcwd().replace("\\", "/")
