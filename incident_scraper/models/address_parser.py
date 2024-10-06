@@ -7,59 +7,61 @@ class AddressParser:
     A singleton class that contains all address parsing functions.
     """
 
-    _instance = None
+    __instance = None
     ORDINALS_REGEX = r"E\. (\d{2})[a-z]{2} \w+"
 
     def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+        return cls.__instance
 
     def __init__(self):
-        self.numerical_streets = [self._make_ordinal(s) for s in range(37, 95)]
-        self.street_corrections = [
-            self._create_street_tuple("Berkeley"),
-            self._create_street_tuple("Blackstone"),
-            self._create_street_tuple("Cottage Grove"),
-            self._create_street_tuple("Cornell"),
-            self._create_street_tuple("Dorchester"),
-            self._create_street_tuple("Drexel"),
-            self._create_street_tuple("East End"),
-            self._create_street_tuple("East View Park"),
-            self._create_street_tuple("Ellis"),
-            self._create_street_tuple("Evans"),
-            self._create_street_tuple("Everett"),
-            self._create_street_tuple("Greenwood"),
-            self._create_street_tuple("Harper"),
-            self._create_street_tuple("Hyde Park", "Blvd."),
-            self._create_street_tuple("Ingleside"),
-            self._create_street_tuple("Kenwood"),
-            self._create_street_tuple("Kimbark"),
-            self._create_street_tuple("Lake Park"),
+        self.__numerical_streets = [
+            self.__make_ordinal(s) for s in range(37, 95)
+        ]
+        self.__street_corrections = [
+            self.__create_street_tuple("Berkeley"),
+            self.__create_street_tuple("Blackstone"),
+            self.__create_street_tuple("Cottage Grove"),
+            self.__create_street_tuple("Cornell"),
+            self.__create_street_tuple("Dorchester"),
+            self.__create_street_tuple("Drexel"),
+            self.__create_street_tuple("East End"),
+            self.__create_street_tuple("East View Park"),
+            self.__create_street_tuple("Ellis"),
+            self.__create_street_tuple("Evans"),
+            self.__create_street_tuple("Everett"),
+            self.__create_street_tuple("Greenwood"),
+            self.__create_street_tuple("Harper"),
+            self.__create_street_tuple("Hyde Park", "Blvd."),
+            self.__create_street_tuple("Ingleside"),
+            self.__create_street_tuple("Kenwood"),
+            self.__create_street_tuple("Kimbark"),
+            self.__create_street_tuple("Lake Park"),
             ("Lake Shore", "S. Lake Shore", "S. Lake Shore Dr."),
             ("Madison Park", "E. Madison Park", "E. Madison Park"),
-            self._create_street_tuple("Maryland"),
+            self.__create_street_tuple("Maryland"),
             ("Morgan", "Morgan", "Morgan Dr."),
-            self._create_street_tuple("Oakenwald"),
-            self._create_street_tuple("Oakwood", "Blvd."),
-            self._create_street_tuple("Payne", "Dr."),
+            self.__create_street_tuple("Oakenwald"),
+            self.__create_street_tuple("Oakwood", "Blvd."),
+            self.__create_street_tuple("Payne", "Dr."),
             ("Ridgewood", "S. Ridgewood", "S. Ridgewood Ct."),
             ("Rochdale", "E. Rochdale", "E. Rochdale Pl."),
             ("Roosevelt", "E. Roosevelt", "E. Roosevelt Rd."),
             ("State", "S. State", "S. State St."),
-            self._create_street_tuple("Stony Island"),
-            self._create_street_tuple("University"),
-            self._create_street_tuple("Woodlawn"),
+            self.__create_street_tuple("Stony Island"),
+            self.__create_street_tuple("University"),
+            self.__create_street_tuple("Woodlawn"),
         ]
-        self.street_corrections_final = [
-            s for _, _, s in self.street_corrections
+        self.__street_corrections_final = [
+            s for _, _, s in self.__street_corrections
         ]
-        self.street_corrections_final.extend(
+        self.__street_corrections_final.extend(
             ["S. Shore Dr.", "Midway Plaisance", "E. Drexel Sq.", "E. Park Pl."]
         )
 
     @staticmethod
-    def _create_street_tuple(
+    def __create_street_tuple(
         street: str, other_suffix: str = ""
     ) -> Tuple[str, str, str]:
         street_type = "Ave." if not other_suffix else other_suffix
@@ -68,7 +70,7 @@ class AddressParser:
 
     # Source: https://stackoverflow.com/a/50992575
     @staticmethod
-    def _make_ordinal(n: int) -> str:
+    def __make_ordinal(n: int) -> str:
         """
         Convert an integer into its ordinal representation::
 
@@ -83,8 +85,8 @@ class AddressParser:
             suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
         return str(n) + suffix
 
-    def _correct_ordinals(self, address: str) -> str:
-        for s in self.numerical_streets:
+    def __correct_ordinals(self, address: str) -> str:
+        for s in self.__numerical_streets:
             dir_s = f"E. {s}"
             if s in address and dir_s not in address:
                 address = address.replace(s, dir_s)
@@ -99,8 +101,8 @@ class AddressParser:
 
         return address
 
-    def _correct_non_ordinals(self, address: str) -> str:
-        for sc in self.street_corrections:
+    def __correct_non_ordinals(self, address: str) -> str:
+        for sc in self.__street_corrections:
             if "E. S. Harper Ave. Ct." in address:
                 address = address.replace(
                     "E. S. Harper Ave. Ct.", "E. Harper Ct."
@@ -128,7 +130,7 @@ class AddressParser:
                 address = address.replace(dir_name, full_name)
 
         non_ordinal_streets = [
-            s for s in self.street_corrections_final if s in address
+            s for s in self.__street_corrections_final if s in address
         ]
         if (
             len(non_ordinal_streets) == 3
@@ -144,7 +146,7 @@ class AddressParser:
         return address
 
     @staticmethod
-    def _correct_replacements(address: str) -> str:
+    def __correct_replacements(address: str) -> str:
         address = re.sub("between", "between ", address)
         address = re.sub(r"\s{2,}", " ", address)
         address = re.sub(r" Drive$", " Dr.", address)
@@ -193,7 +195,7 @@ class AddressParser:
     def process_at_and_streets(self, address: str) -> str:
         ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         non_ordinal_streets = [
-            s for s in self.street_corrections_final if s in address
+            s for s in self.__street_corrections_final if s in address
         ]
 
         if len(ordinals) == 1 and len(non_ordinal_streets) == 1:
@@ -208,7 +210,7 @@ class AddressParser:
         ordinals = list(map(int, re.findall(self.ORDINALS_REGEX, address)))
         ordinals.sort()
         non_ordinal_streets = [
-            s for s in self.street_corrections_final if s in address
+            s for s in self.__street_corrections_final if s in address
         ]
 
         parsed_addresses = []
@@ -238,8 +240,8 @@ class AddressParser:
         return parsed_addresses
 
     def process(self, address: str) -> str:
-        address = self._correct_replacements(address)
-        address = self._correct_ordinals(address)
-        address = self._correct_non_ordinals(address)
+        address = self.__correct_replacements(address)
+        address = self.__correct_ordinals(address)
+        address = self.__correct_non_ordinals(address)
 
         return address
