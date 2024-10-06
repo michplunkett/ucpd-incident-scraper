@@ -48,18 +48,18 @@ class GoogleNBD:
 
     def __init__(self):
         if ENV_GCP_CREDENTIALS.endswith(FILE_TYPE_JSON):
-            self.client = Client(ENV_GCP_PROJECT_ID)
+            self.__client = Client(ENV_GCP_PROJECT_ID)
         else:
             credentials = service_account.Credentials.from_service_account_info(
                 json.loads(ENV_GCP_CREDENTIALS)
             )
-            self.client = Client(
+            self.__client = Client(
                 credentials=credentials,
                 project=ENV_GCP_PROJECT_ID,
             )
 
     @staticmethod
-    def _create_incident_from_dict(incident: dict) -> Incident:
+    def __create_incident_from_dict(incident: dict) -> Incident:
         """Convert an incident dict to a Incident Model."""
         return Incident(
             id=f"{incident[INCIDENT_KEY_ID]}_{incident[INCIDENT_KEY_REPORTED_DATE]}",
@@ -82,22 +82,22 @@ class GoogleNBD:
 
     def add_incident(self, incident: dict) -> None:
         """Add Incident to datastore."""
-        with self.client.context():
-            nbd_incident = self._create_incident_from_dict(incident)
+        with self.__client.context():
+            nbd_incident = self.__create_incident_from_dict(incident)
             nbd_incident.put(incident)
 
     def add_incidents(self, incidents: [Incident]) -> None:
         """Add Incidents to datastore in bulk."""
-        with self.client.context():
+        with self.__client.context():
             incident_keys = []
             for i in incidents:
-                nbd_incident = self._create_incident_from_dict(i)
+                nbd_incident = self.__create_incident_from_dict(i)
                 incident_keys.append(nbd_incident)
             put_multi(incident_keys)
 
     def download_all(self) -> None:
         """Download all incidents from datastore."""
-        with self.client.context():
+        with self.__client.context():
             query = Incident.query().order(-Incident.reported_date).fetch()
 
         json_incidents = []
@@ -126,12 +126,12 @@ class GoogleNBD:
 
     def get_all_incidents(self) -> [Incident]:
         """Get ALL incidents."""
-        with self.client.context():
+        with self.__client.context():
             return Incident.query().order(-Incident.reported_date).fetch()
 
     def get_all_information_incidents(self) -> [Incident]:
         """Get all 'Information' categorized incidents."""
-        with self.client.context():
+        with self.__client.context():
             return (
                 Incident.query()
                 .filter(Incident.incident == INCIDENT_TYPE_INFO)
@@ -140,7 +140,7 @@ class GoogleNBD:
 
     def get_latest_date(self) -> date:
         """Get latest incident date."""
-        with self.client.context():
+        with self.__client.context():
             query = Incident.query().order(-Incident.reported_date).fetch(1)
             if query:
                 return datetime.strptime(
@@ -151,11 +151,11 @@ class GoogleNBD:
 
     def remove_incident(self, ucpd_id: str) -> None:
         """Remove incident from datastore."""
-        with self.client.context():
+        with self.__client.context():
             incident = Incident(ucpd_id=ucpd_id)
             incident.key.delete()
 
     def update_list_of_incidents(self, incidents: [Incident]) -> None:
         """Update all incident entries in datastore."""
-        with self.client.context():
+        with self.__client.context():
             put_multi(incidents)
