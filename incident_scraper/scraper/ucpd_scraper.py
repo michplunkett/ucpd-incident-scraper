@@ -24,8 +24,8 @@ class UCPDScraper:
     )
 
     def __init__(self, request_delay=0.15):
-        self.__request_delay = request_delay
-        self.__headers = {
+        self._request_delay = request_delay
+        self._headers = {
             "Accept": (
                 "text/html,application/xhtml+xml,application/xml;q=0.9,"
                 "image/avif,image/webp,image/apng,*/*;q=0.8,application/"
@@ -42,15 +42,15 @@ class UCPDScraper:
 
     def scrape_from_beginning_2011(self):
         """Scrape and parse all tables from January 1, 2011, to today."""
-        new_url = self.__construct_url(year_beginning=True)
-        return self.__get_incidents(new_url)
+        new_url = self._construct_url(year_beginning=True)
+        return self._get_incidents(new_url)
 
     def scrape_last_days(self, num_days: int = 3):
         """Scrape and parse all tables from num_days ago to today."""
-        new_url = self.__construct_url(num_days=num_days)
-        return self.__get_incidents(new_url)
+        new_url = self._construct_url(num_days=num_days)
+        return self._get_incidents(new_url)
 
-    def __construct_url(
+    def _construct_url(
         self, num_days: int = 0, year_beginning: bool = False
     ) -> str:
         """
@@ -74,7 +74,7 @@ class UCPDScraper:
             f"{today_str}&offset="
         )
 
-    def __get_table(self, url: str):
+    def _get_table(self, url: str):
         """
         Get the table information from that UCPD incident page.
 
@@ -85,12 +85,12 @@ class UCPDScraper:
         INCIDENT_INDEX = 6
         incident_dict = {}
 
-        time.sleep(self.__request_delay)
+        time.sleep(self._request_delay)
         # Change user_agent randomly
-        self.__headers["User-Agent"] = (
+        self._headers["User-Agent"] = (
             self.__user_agent_rotator.get_random_header()
         )
-        r = requests.get(url, headers=self.__headers)
+        r = requests.get(url, headers=self._headers)
         response = html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")
@@ -138,7 +138,7 @@ class UCPDScraper:
         ]
         return incident_dict, page_numbers[0] == page_numbers[1]
 
-    def __get_incidents(self, new_url: str) -> dict:
+    def _get_incidents(self, new_url: str) -> dict:
         """Get all incidents for a given URL."""
         at_last_page = False
         incidents = {}
@@ -147,7 +147,7 @@ class UCPDScraper:
         # Loop until function arrives at last page
         logging.info("Beginning the UCPD Incident scraping process.")
         while not at_last_page:
-            rev_dict, at_last_page = self.__get_table(new_url + str(offset))
+            rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
             logging.debug(
                 f"Scraped {len(incidents)} incidents from the UCPD "
