@@ -24,8 +24,8 @@ class UCPDScraper:
     )
 
     def __init__(self, request_delay=0.15):
-        self.request_delay = request_delay
-        self.headers = {
+        self._request_delay = request_delay
+        self._headers = {
             "Accept": (
                 "text/html,application/xhtml+xml,application/xml;q=0.9,"
                 "image/avif,image/webp,image/apng,*/*;q=0.8,application/"
@@ -38,7 +38,7 @@ class UCPDScraper:
             "Host": "incidentreports.uchicago.edu",
             "Upgrade-Insecure-Requests": "1",
         }
-        self.user_agent_rotator = Headers()
+        self._user_agent_rotator = Headers()
 
     def scrape_from_beginning_2011(self):
         """Scrape and parse all tables from January 1, 2011, to today."""
@@ -85,10 +85,12 @@ class UCPDScraper:
         INCIDENT_INDEX = 6
         incident_dict = {}
 
-        time.sleep(self.request_delay)
+        time.sleep(self._request_delay)
         # Change user_agent randomly
-        self.headers["User-Agent"] = self.user_agent_rotator.get_random_header()
-        r = requests.get(url, headers=self.headers)
+        self._headers["User-Agent"] = (
+            self._user_agent_rotator.get_random_header()
+        )
+        r = requests.get(url, headers=self._headers)
         response = html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")
