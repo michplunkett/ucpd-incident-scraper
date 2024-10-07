@@ -1,6 +1,3 @@
-apscheduler==3.10.4 ; python_version >= "3.11" and python_version < "4.0" \
-    --hash=sha256:e6df071b27d9be898e486bc7940a7be50b4af2e9da7c08f0744a96d4bd4cef4a \
-    --hash=sha256:fb91e8a768632a4756a585f79ec834e0e27aad5860bac7eaa523d9ccefd87661
 async-timeout==4.0.3 ; python_version >= "3.11" and python_full_version < "3.11.3" \
     --hash=sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f \
     --hash=sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028
@@ -248,9 +245,9 @@ google-cloud-core==2.4.1 ; python_version >= "3.11" and python_version < "4.0" \
 google-cloud-datastore==2.20.1 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:07950b9c8865087c565f45fa3fdd7a05d4c3d99adf79e10c3f596ff08a7d9bba \
     --hash=sha256:b9383af24d8e90ed6c5d161d72411d82efd9b21c051fa6f4bbd743a49d37ffb3
-google-cloud-logging==3.11.1 ; python_version >= "3.11" and python_version < "4.0" \
-    --hash=sha256:9b2403bce5e4faf30c8a8756f85529bb14a28991dd2cedde49c488dd56076a26 \
-    --hash=sha256:a70f33d17a70237ea8b63409e07dd14adaedec93fbf52550be4f51d347c67918
+google-cloud-logging==3.11.2 ; python_version >= "3.11" and python_version < "4.0" \
+    --hash=sha256:0a755f04f184fbe77ad608258dc283a032485ebb4d0e2b2501964059ee9c898f \
+    --hash=sha256:4897441c2b74f6eda9181c23a8817223b6145943314a821d64b729d30766cb2b
 google-cloud-ndb==2.3.1 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:3d6c8866681dc280ad9f90a6f5b556d324e4b29173d0b63ddf6b8e19655fec1a \
     --hash=sha256:a6a2f6c58bd14febb92c0e569ca6a4e1d14c4a70935c28f3681e33c67402428f
@@ -897,9 +894,6 @@ tqdm==4.66.5 ; python_version >= "3.11" and python_version < "4.0" \
 tzdata==2024.1 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:2674120f8d891909751c38abcdfd386ac0a5a1127954fbc332af6b5ceae07efd \
     --hash=sha256:9068bc196136463f5245e51efda838afa15aaeca9903f49050dfa2679db4d252
-tzlocal==5.2 ; python_version >= "3.11" and python_version < "4.0" \
-    --hash=sha256:49816ef2fe65ea8ac19d19aa7a1ae0551c834303d5014c6d5a62e4cbda8047b8 \
-    --hash=sha256:8d399205578f1a9342816409cc1e46a93ebd5755e39ea2d85334bea911bf0e6e
 uritemplate==4.1.1 ; python_version >= "3.11" and python_version < "4.0" \
     --hash=sha256:4346edfc5c3b79f694bccd6d6099a322bbeb628dbf2cd86eea55a456ce5124f0 \
     --hash=sha256:830c08b8d99bdd312ea4ead05994a38e8936266f84b9a7878232db50b044e02e
