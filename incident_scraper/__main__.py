@@ -90,7 +90,9 @@ def main():  # noqa: C901
             if day_diff > 0:
                 incidents = scraper.scrape_last_days(day_diff - 1)
             else:
-                logging.info("Saved incidents are up-to-date.")
+                logging.warning(
+                    f"Scraper did not add any new incidents for {datetime.now().date()} with a day diff of {day_diff}"
+                )
 
     if len(incidents.keys()):
         parse_and_save_records(incidents, nbd_client)
