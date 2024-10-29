@@ -83,13 +83,15 @@ def main():  # noqa: C901
         case SystemFlags.SEED:
             incidents = scraper.scrape_from_beginning_2011()
         case SystemFlags.UPDATE:
-            day_diff = (
-                datetime.now().date() - nbd_client.get_latest_date()
-            ).days
+            now = datetime.now().date()
+            day_diff = (now - nbd_client.get_latest_date()).days
             if day_diff > 0:
                 incidents = scraper.scrape_last_days(day_diff - 1)
-            else:
-                logging.info("Saved incidents are up-to-date.")
+            elif now.isoweekday() not in (6, 7):
+                # Use the warning log level if day_diff <= 0, and it's a weekday
+                logging.warning(
+                    f"Scraper did not add any new incidents for {now} with a day diff of {day_diff}"
+                )
 
     if len(incidents.keys()):
         parse_and_save_records(incidents, nbd_client)
