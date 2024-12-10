@@ -14,6 +14,6 @@ https://success.vanillaforums.com/kb/articles/228-using-pull-requests-to-contrib
 ## Checklist before requesting a review
 - [ ] The code runs successfully.
 
-```commandline
+```console
 HERE IS SOME COMMAND LINE OUTPUT
 ```

@@ -14,8 +14,9 @@ I'd like to thank [@kdumais111](https://github.com/kdumais111) and [@FedericoDM]
 As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing validation to the project. Thanks, y'all! <3
 
 ## Project Requirements
-- Python version: `^3.11`
-- [Poetry](https://python-poetry.org/)
+- Python version: `^3.11.4`
+- `uv` version: `0.5.7`
+  - Download at: [link](https://docs.astral.sh/uv/).
 
 ### Required Credentials
 - [Census API Key](https://api.census.gov/data/key_signup.html) stored in the environment variable: `CENSUS_API_KEY`
@@ -26,13 +27,15 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - [Google Drive Folder ID](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) stored in the environment variable: `GOOGLE_DRIVE_FOLDER_ID`
 
 ## Technical Notes
-- Any modules should be added via the `poetry add [module]` command.
-  - Example: `poetry add black`
+- Any modules should be added via the `uv add [module]` command.
+  - Example: `uv add pre-commit`
 
 ## Standard Commands
+- `make build-model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
+- `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
+- `make create-requirements`: Creates and/or updates the `requirements.txt` file.
+- `make download`: Download all incidents into a locally stored file titled `incident_dump.csv`.
+- `make env`: Creates or activates a `uv` virtual environment.
 - `make lint`: Runs`pre-commit` on the codebase.
 - `make seed`: Save incidents starting from January 1st of 2011 and continuing until today.
 - `make update`: Save incidents starting from the most recently saved incident until today.
-- `make build-model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
-- `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
-- `make download`: Download all incidents into a locally stored file titled `incident_dump.csv`.
