@@ -27,7 +27,7 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
 
 ## Technical Notes
 - Any modules should be added via the `uv add [module]` command.
-  - Example: `uv add black`
+  - Example: `uv add pre-commit`
 
 ## Standard Commands
 - `make lint`: Runs`pre-commit` on the codebase.
