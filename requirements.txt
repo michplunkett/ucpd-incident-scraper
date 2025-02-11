@@ -18,7 +18,7 @@ click==8.1.7
     # via
     #   ucpd-incident-scraper (pyproject.toml)
     #   nltk
-cryptography==43.0.3
+cryptography==44.0.1
     # via
     #   pydrive2
     #   pyopenssl
