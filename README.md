@@ -24,7 +24,6 @@ As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing va
 variable: `GOOGLE_APPLICATION_CREDENTIALS`
 - Google Cloud Platform project ID stored in the environment variable: `GOOGLE_CLOUD_PROJECT`
 - [Google Maps API](https://developers.google.com/maps/documentation/geocoding/get-api-key) key stored in the environment variable: `GOOGLE_MAPS_API_KEY`
-- [Google Drive Folder ID](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) stored in the environment variable: `GOOGLE_DRIVE_FOLDER_ID`
 
 ## Technical Notes
 - Any modules should be added via the `uv add [module]` command.
@@ -33,7 +32,6 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
 ## Standard Commands
 - `make build-model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
 - `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
-- `make create-requirements`: Creates and/or updates the `requirements.txt` file.
 - `make download`: Download all incidents into a locally stored file titled `incident_dump.csv`.
 - `make env`: Creates or activates a `uv` virtual environment.
 - `make lint`: Runs`pre-commit` on the codebase.
