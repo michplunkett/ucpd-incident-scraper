@@ -6,7 +6,6 @@ authors = ["michplunkett"]
 readme = "README.md"
 requires-python = ">=3.11.4"
 dependencies = [
-    "apscheduler>=3.11.0",
     "censusgeocode>=0.5.2",
     "click>=8.1.7",
     "cssselect>=1.2.0",
