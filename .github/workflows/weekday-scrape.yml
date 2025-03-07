@@ -1,7 +1,10 @@
-name: Example
+name: UCPD-Scrape
+on:
+  schedule:
+    - cron: "0 0 16 ? * MON,TUE,WED,THU,FRI,SAT *"
 
 jobs:
-  uv-example:
+  scrape:
     name: python
     runs-on: ubuntu-latest
 
@@ -13,3 +16,7 @@ jobs:
 
       - name: Set up Python
         run: uv python install
+
+      - name: Scrape the UCPD Site
+        run: |
+          uv run python -m incident_scraper update
