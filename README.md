@@ -1,6 +1,6 @@
 # UChicago Incident Page Scraper
 This repository houses a scraping engine for the [UCPD's Incident Report webpage](https://incidentreports.uchicago.edu/). The data is stored on
-[Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [GitHub Actions](https://docs.github.com/en/actions) functionality.
+[Google Cloud Platform's Datastore](https://cloud.google.com/datastore) and ran using [GitHub Actions](https://docs.github.com/en/actions).
 
 ## Primary Application Functions
 Scrape the UCPD Incident Report webpage every weekday morning, pulling all incidents from the latest reported incident date in the Google Datastore to the current day.
