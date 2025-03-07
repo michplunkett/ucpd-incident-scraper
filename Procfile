@@ -1,1 +1,0 @@
-scrape: python scheduler.py

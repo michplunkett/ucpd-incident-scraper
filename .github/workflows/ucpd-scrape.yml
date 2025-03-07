@@ -1,0 +1,26 @@
+name: UCPD-Scrape
+on:
+  schedule:
+    - cron: "0 16 * * 1-6"
+
+jobs:
+  scrape:
+    name: python
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: 0.6.5
+          python-version: 3.11
+
+      - name: Scrape the UCPD Site
+        env:
+          CENSUS_API_KEY: ${{ secrets.CENSUS_API_KEY }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+        run: uv run python -m incident_scraper update
