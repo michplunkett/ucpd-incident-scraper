@@ -1,4 +1,4 @@
-default: create-requirements lint
+default: lint
 
 .PHONY: env
 env:
