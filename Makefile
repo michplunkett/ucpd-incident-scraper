@@ -4,6 +4,11 @@ default: lint
 env:
 	uv venv
 
+
+.PHONY: install
+install:
+	uv pip install -r pyproject.toml
+
 .PHONY: lint
 lint:
 	pre-commit run --all-files
