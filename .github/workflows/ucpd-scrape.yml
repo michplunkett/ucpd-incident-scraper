@@ -14,7 +14,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
-          version: 0.6.5
           python-version: 3.11
 
       - name: Scrape the UCPD Site
