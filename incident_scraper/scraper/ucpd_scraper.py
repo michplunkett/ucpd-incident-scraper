@@ -1,17 +1,20 @@
 """Contains code related to scraping UCPD incident reports."""
 
-import logging
 import time
 from datetime import datetime, timedelta
 
 import requests
 from lxml import etree, html
 
+from incident_scraper.external.google_logger import init_logger
 from incident_scraper.scraper.headers import Headers
 from incident_scraper.utils.constants import (
     TIMEZONE_CHICAGO,
     UCPD_MDY_DATE_FORMAT,
 )
+
+
+logger = init_logger()
 
 
 class UCPDScraper:
@@ -98,7 +101,7 @@ class UCPDScraper:
         incident_rows = incidents[FIRST_INDEX].cssselect("tr")
         for incident in incident_rows:
             if len(incident) == 1:
-                logging.debug(
+                logger.debug(
                     "This incident has a length of 1: "
                     f"{etree.tostring(incident)}"
                 )
@@ -109,7 +112,7 @@ class UCPDScraper:
                 incident_id in ["None", ":"]
                 or "No Incident Reports" in incident.text
             ):
-                logging.debug(
+                logger.debug(
                     "This incident has an ID of 'None': "
                     f"{etree.tostring(incident)}"
                 )
@@ -123,7 +126,7 @@ class UCPDScraper:
                 ).strip()
 
             if [v for v in i_dict.values() if v == "Void"]:
-                logging.debug(
+                logger.debug(
                     "This incident contains voided "
                     f"information: {etree.tostring(incident)}"
                 )
@@ -145,14 +148,14 @@ class UCPDScraper:
         offset = 0
 
         # Loop until function arrives at last page
-        logging.info("Beginning the UCPD Incident scraping process.")
+        logger.info("Beginning the UCPD Incident scraping process.")
         while not at_last_page:
             rev_dict, at_last_page = self._get_table(new_url + str(offset))
             incidents.update(rev_dict)
-            logging.debug(
+            logger.debug(
                 f"Scraped {len(incidents)} incidents from the UCPD "
                 "Incident page."
             )
             offset += 5
-        logging.info("Finished with the UCPD Incident scraping process.")
+        logger.info("Finished with the UCPD Incident scraping process.")
         return incidents

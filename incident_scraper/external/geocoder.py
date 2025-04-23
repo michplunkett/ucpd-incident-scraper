@@ -1,4 +1,3 @@
-import logging
 import re
 from time import sleep
 from typing import Optional
@@ -7,6 +6,7 @@ import requests
 from censusgeocode import CensusGeocode
 from googlemaps import Client
 
+from incident_scraper.external.google_logger import init_logger
 from incident_scraper.models.address_parser import AddressParser
 from incident_scraper.utils.constants import (
     ENV_GOOGLE_MAPS_KEY,
@@ -18,6 +18,9 @@ from incident_scraper.utils.constants import (
     LOCATION_ILLINOIS,
     LOCATION_US,
 )
+
+
+logger = init_logger()
 
 
 class Geocoder:
@@ -76,7 +79,7 @@ class Geocoder:
         and_cnt = len([s for s in address_lower.split() if s == "and"])
 
         if self._cannot_geocode(address, and_cnt):
-            logging.error(f"Unable to process and geocode address: {address}")
+            logger.error(f"Unable to process and geocode address: {address}")
             self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
         elif " between " in address_lower:
             self._parse_between_addresses(address)
@@ -85,7 +88,7 @@ class Geocoder:
         elif re.match(r"^\d+ [ES]{1}\. ", address):
             self._google_validate_address(address)
         else:
-            logging.error(f"Unable to process and geocode address: {address}")
+            logger.error(f"Unable to process and geocode address: {address}")
             self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
 
         return self._address_cache[address]
@@ -142,14 +145,14 @@ class Geocoder:
                 if response:
                     break
             except requests.exceptions.RequestException:
-                logging.info(
+                logger.info(
                     f"Pausing {self.TIMEOUT}s between Census Geocode requests."
                 )
                 sleep(self.TIMEOUT)
                 pass
 
         if response:
-            logging.debug(f"Using the Census geocoder for: {address}")
+            logger.debug(f"Using the Census geocoder for: {address}")
             coordinates = response[0]["coordinates"]
             self._address_cache[address] = {
                 INCIDENT_KEY_ADDRESS: response[0]["matchedAddress"],
@@ -157,7 +160,7 @@ class Geocoder:
                 INCIDENT_KEY_LONGITUDE: coordinates["x"],
             }
         else:
-            logging.debug(
+            logger.debug(
                 f"Unable to get result from the Census geocoder for: {address}"
             )
             self._address_cache[address] = None
@@ -167,7 +170,7 @@ class Geocoder:
     def _google_validate_coordinates(
         self, original_addr: str, longitude: float, latitude: float
     ) -> dict:
-        logging.debug(
+        logger.debug(
             "Using the Google Maps reverse geocoder for: "
             f"{latitude}, {longitude}"
         )
@@ -182,7 +185,7 @@ class Geocoder:
                 INCIDENT_KEY_LONGITUDE: resp[0]["geometry"]["location"]["lng"],
             }
         else:
-            logging.debug(
+            logger.debug(
                 "Unable to get result from the Google Maps reverse geocoder "
                 f"for: {latitude}, {longitude}"
             )
@@ -206,7 +209,7 @@ class Geocoder:
 
         result = resp["result"]
         if result:
-            logging.debug(f"Using the Google Maps geocoder for: {address}")
+            logger.debug(f"Using the Google Maps geocoder for: {address}")
             self._address_cache[address] = {
                 INCIDENT_KEY_ADDRESS: result["address"][
                     "formattedAddress"
@@ -219,7 +222,7 @@ class Geocoder:
                 ],
             }
         else:
-            logging.debug(
+            logger.debug(
                 "Unable to get result from the Google Maps geocoder "
                 f"for: {address}"
             )
