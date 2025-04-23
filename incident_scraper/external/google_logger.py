@@ -5,6 +5,7 @@ import logging
 import sys
 
 import google.cloud.logging as gcp_logging
+from google.cloud.logging_v2.handlers import StructuredLogHandler
 from google.oauth2 import service_account
 
 from incident_scraper.utils.constants import (
@@ -27,4 +28,4 @@ def init_logger():
         )
 
     logging_client.setup_logging(log_level=logging.INFO)
-    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+    logging.getLogger().addHandler(StructuredLogHandler(stream=sys.stdout))
