@@ -122,7 +122,11 @@ class Lemmatizer:
                 "Harassing Message",
                 "Harassment via Electronic Means",
             ],
-            "Harassing Email": ["Harassing Email Message", "Harassing Message"],
+            "Harassing Email": [
+                "Email Threat",
+                "Harassing Email Message",
+                "Harassing Message",
+            ],
             "Harassing Telephone Call": [
                 "Harassing Phone Call",
                 "Harassment by Telephone",
