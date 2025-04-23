@@ -1,4 +1,4 @@
-default: lint
+.DEFAULT_GOAL := lint
 
 .PHONY: env
 env:
