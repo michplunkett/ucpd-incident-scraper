@@ -1,13 +1,14 @@
-import logging
 import re
 
 import nltk
 from textblob import Word
 
+from incident_scraper.external.google_logger import init_logger
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
 
 
+logger = init_logger()
 nltk.download("wordnet")
 
 
@@ -73,7 +74,7 @@ class Lemmatizer:
 
         if updated:
             lemma_incident = " / ".join(i_types)
-            logging.info(
+            logger.info(
                 f"Incident type changed from {incident} to {lemma_incident}."
             )
             return lemma_incident
@@ -122,7 +123,11 @@ class Lemmatizer:
                 "Harassing Message",
                 "Harassment via Electronic Means",
             ],
-            "Harassing Email": ["Harassing Email Message", "Harassing Message"],
+            "Harassing Email": [
+                "Email Threat",
+                "Harassing Email Message",
+                "Harassing Message",
+            ],
             "Harassing Telephone Call": [
                 "Harassing Phone Call",
                 "Harassment by Telephone",

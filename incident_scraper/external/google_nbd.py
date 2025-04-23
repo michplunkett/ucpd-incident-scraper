@@ -2,13 +2,13 @@
 
 import csv
 import json
-import logging
 from datetime import date, datetime
 
 from google.cloud.datastore.helpers import GeoPoint
 from google.cloud.ndb import Client, GeoPt, put_multi
 from google.oauth2 import service_account
 
+from incident_scraper.external.google_logger import init_logger
 from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
     ENV_GCP_CREDENTIALS,
@@ -30,6 +30,9 @@ from incident_scraper.utils.constants import (
     INCIDENT_TYPE_INFO,
     UCPD_MDY_KEY_DATE_FORMAT,
 )
+
+
+logger = init_logger()
 
 
 def get_incident(ucpd_id: str):
@@ -101,7 +104,7 @@ class GoogleNBD:
             query = Incident.query().order(-Incident.reported_date).fetch()
 
         json_incidents = []
-        logging.info(f"Downloaded {len(query)} incident records.")
+        logger.info(f"Downloaded {len(query)} incident records.")
         for i in query:
             record = {}
             for key, value in i.to_dict().items():
@@ -122,7 +125,7 @@ class GoogleNBD:
             )
             csv_writer.writeheader()
             csv_writer.writerows(json_incidents)
-        logging.info(f"Saved {len(json_incidents)} incident records to a CSV.")
+        logger.info(f"Saved {len(json_incidents)} incident records to a CSV.")
 
     def get_all_incidents(self) -> [Incident]:
         """Get ALL incidents."""
