@@ -1,3 +1,4 @@
+import logging
 import os
 import pickle
 from functools import reduce
@@ -12,7 +13,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.multioutput import MultiOutputClassifier
 from xgboost import XGBClassifier
 
-from incident_scraper.external.google_logger import init_logger
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
 
@@ -38,8 +38,6 @@ TEXT_NORMALIZING_FUNCTIONS = [
     remove_puncts,
     str.lower,
 ]
-
-logger = init_logger()
 
 
 class Classifier:
@@ -171,9 +169,9 @@ class Classifier:
         recall = recall_score(
             y_test, prediction, average="micro", zero_division=0.0
         )
-        logger.info(f"Accuracy Score: {accuracy}")
-        logger.info(f"Precision Score: {precision}")
-        logger.info(f"Recall Score: {recall}")
+        logging.info(f"Accuracy Score: {accuracy}")
+        logging.info(f"Precision Score: {precision}")
+        logging.info(f"Recall Score: {recall}")
 
     def _save_model(self) -> None:
         pickle.dump(self._model, open(SAVED_MODEL_LOCATION, mode="wb"))

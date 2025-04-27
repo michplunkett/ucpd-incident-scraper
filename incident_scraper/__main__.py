@@ -1,6 +1,7 @@
 """Serves as the entry point for the project module."""
 
 import argparse
+import logging
 import re
 from datetime import datetime
 from typing import Any
@@ -38,7 +39,7 @@ from incident_scraper.utils.functions import (
 )
 
 
-logger = init_logger()
+init_logger()
 
 
 # TODO: Chop this up into a service or some other organized structure
@@ -89,7 +90,7 @@ def main():  # noqa: C901
                 incidents = scraper.scrape_last_days(day_diff - 1)
             elif now.isoweekday() not in (6, 7):
                 # Use the warning log level if day_diff <= 0, and it's a weekday
-                logger.warning(
+                logging.warning(
                     f"Scraper did not add any new incidents for {now} with a day diff of {day_diff}"
                 )
 
@@ -109,7 +110,7 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
             predicted_labels += 1
             i.predicted_incident = pred_type
 
-    logger.info(
+    logging.info(
         f"{predicted_labels} of {len(incidents)} 'Information' incidents "
         "were categorized."
     )
@@ -119,7 +120,7 @@ def categorize_information(nbd_client: GoogleNBD) -> None:
 
 def lemmatize_categories(nbd_client: GoogleNBD) -> None:
     incidents = nbd_client.get_all_incidents()
-    logger.info(f"{len(incidents)} incidents fetched.")
+    logging.info(f"{len(incidents)} incidents fetched.")
 
     lemmatized_incidents: [Incident] = []
 
@@ -129,21 +130,21 @@ def lemmatize_categories(nbd_client: GoogleNBD) -> None:
             i.incident = lemma_i_type
             lemmatized_incidents.append(i)
 
-    logger.info(
+    logging.info(
         f"{len(lemmatized_incidents)} of {len(incidents)} "
         "were incidents lemmatized."
     )
 
     nbd_client.update_list_of_incidents(lemmatized_incidents)
 
-    logger.info(f"{len(lemmatized_incidents)} types were updated.")
+    logging.info(f"{len(lemmatized_incidents)} types were updated.")
 
 
 def parse_and_save_records(
     incidents: {str: Any}, nbd_client: GoogleNBD
 ) -> None:
     """Take incidents and save them to the GCP Datastore."""
-    logger.info(
+    logging.info(
         f"{len(incidents.keys())} total incidents were scraped from the UCPD "
         "Incidents' site."
     )
@@ -176,7 +177,7 @@ def parse_and_save_records(
 
             if len(i.keys()) != 6:
                 void_malformed_incidents.append(i)
-                logger.debug(
+                logging.debug(
                     f"This incident has an insufficient number of keys: {i}"
                 )
                 continue
@@ -201,7 +202,7 @@ def parse_and_save_records(
 
             if not formatted_reported_value:
                 void_malformed_incidents.append(i)
-                logger.debug(f"This incident has a malformed date: {i}")
+                logging.debug(f"This incident has a malformed date: {i}")
                 continue
 
             i[INCIDENT_KEY_TYPE] = Lemmatizer.process(i[INCIDENT_KEY_TYPE])
@@ -245,46 +246,46 @@ def parse_and_save_records(
                 continue
             else:
                 geocode_error_incidents.append(i)
-                logger.debug(
+                logging.debug(
                     "This incident failed to get a valid location with the "
                     f"Geocoder: {i}"
                 )
 
             geocode_error_incidents.append(i)
-            logger.debug(
+            logging.debug(
                 "This incident failed to get a location with the GoogleMaps' "
                 f"Geocoder: {i}"
             )
         added_incidents = len(incident_objs)
-        logger.info(
+        logging.info(
             f"{len(void_malformed_incidents)} of {inter_incidents} contained "
             "malformed or voided information."
         )
-        logger.info(
+        logging.info(
             f"{len(geocode_error_incidents)} of {inter_incidents} could not be "
             f"processed by the Geocoder."
         )
-        logger.info(
+        logging.info(
             f"{added_incidents} of {inter_incidents} incidents were "
             "successfully processed."
         )
         if len(incident_objs):
-            logger.info(
+            logging.info(
                 f"Adding {added_incidents} of {inter_incidents} incidents to "
                 "the GCP Datastore."
             )
             nbd_client.add_incidents(incident_objs)
-            logger.info(
+            logging.info(
                 f"Completed adding {added_incidents} of {inter_incidents} "
                 "incidents to the GCP Datastore."
             )
         total_added_incidents += added_incidents
 
-    logger.info(
+    logging.info(
         f"{information_incidents_predicted} of {num_information_incidents} "
         "'Information' incidents predicted into other categories."
     )
-    logger.info(
+    logging.info(
         f"{total_incidents - total_added_incidents} of {total_incidents} "
         "incidents could NOT be added to the GCP Datastore."
     )
@@ -298,7 +299,7 @@ def update_records() -> None:
     if day_diff > 0:
         incidents = scraper.scrape_last_days(day_diff - 1)
     else:
-        logger.info("Saved incidents are up-to-date.")
+        logging.info("Saved incidents are up-to-date.")
         return
 
     total_incidents = len(incidents.keys())
@@ -306,7 +307,7 @@ def update_records() -> None:
     if total_incidents:
         parse_and_save_records(incidents, nbd_client)
     else:
-        logger.info(
+        logging.info(
             "No incidents were scraped for "
             f"{datetime.now().strftime(UCPD_MDY_KEY_DATE_FORMAT)}."
         )
