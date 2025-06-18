@@ -27,6 +27,6 @@ dependencies = [
     "scikit-learn>=1.6.0",
     "scikit-multilearn>=0.2.0",
     "textblob>=0.18.0.post0",
-    "urllib3==1.26.19",
+    "urllib3==2.5.0",
     "xgboost>=2.1.3",
 ]
