@@ -204,8 +204,8 @@ class Geocoder:
             regionCode=LOCATION_US,
         )
 
-        result = resp["result"]
-        if result:
+        if "result" in resp:
+            result = resp["result"]
             logging.debug(f"Using the Google Maps geocoder for: {address}")
             self._address_cache[address] = {
                 INCIDENT_KEY_ADDRESS: result["address"][
