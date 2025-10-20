@@ -1,7 +1,5 @@
 name: UCPD-Scrape
 on:
-  pull_request:
-    branches: [ main ]
   schedule:
     - cron: "0 16 * * 1-6"
 
