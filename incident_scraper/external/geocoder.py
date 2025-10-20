@@ -99,6 +99,7 @@ class Geocoder:
             addr_one = self._google_validate_address(processed_addresses[0])
             addr_two = self._google_validate_address(processed_addresses[1])
             if addr_one is None or addr_two is None:
+                logging.debug(f"Unable to middle point address for: {address}")
                 self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
             else:
                 avg_longitude: float = (
