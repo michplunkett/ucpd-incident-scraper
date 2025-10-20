@@ -98,13 +98,17 @@ class Geocoder:
         if len(processed_addresses) == 2:
             addr_one = self._google_validate_address(processed_addresses[0])
             addr_two = self._google_validate_address(processed_addresses[1])
-            avg_longitude: float = (
-                addr_one[INCIDENT_KEY_LONGITUDE]
-                + addr_two[INCIDENT_KEY_LONGITUDE]
-            ) / 2.0
-            self._google_validate_coordinates(
-                address, avg_longitude, addr_one[INCIDENT_KEY_LATITUDE]
-            )
+            if addr_one is None or addr_two is None:
+                logging.debug(f"Unable to middle point address for: {address}")
+                self._address_cache[address] = self.NON_FINDABLE_ADDRESS_DICT
+            else:
+                avg_longitude: float = (
+                    addr_one[INCIDENT_KEY_LONGITUDE]
+                    + addr_two[INCIDENT_KEY_LONGITUDE]
+                ) / 2.0
+                self._google_validate_coordinates(
+                    address, avg_longitude, addr_one[INCIDENT_KEY_LATITUDE]
+                )
         elif len(processed_addresses) == 1:
             self._address_cache[address] = self._google_validate_address(
                 processed_addresses[0]

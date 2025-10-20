@@ -13,6 +13,10 @@ install:
 lint:
 	pre-commit run --all-files
 
+.PHONY: create-requirements
+create-requirements:
+	uv pip compile pyproject.toml > requirements.txt
+
 .PHONY: download
 download:
 	python -m incident_scraper download
