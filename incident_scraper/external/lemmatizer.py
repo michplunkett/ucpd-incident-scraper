@@ -7,7 +7,6 @@ from textblob import Word
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
 
-
 nltk.download("wordnet")
 
 

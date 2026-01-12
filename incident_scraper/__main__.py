@@ -38,7 +38,6 @@ from incident_scraper.utils.functions import (
     parse_scraped_incident_timestamp,
 )
 
-
 init_logger()
 
 

@@ -16,7 +16,6 @@ from xgboost import XGBClassifier
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
 
-
 INCIDENT_FILE = "incident_dump.csv"
 KEY_COMMENTS = "comments"
 KEY_INCIDENT_TYPE = "incident"
