@@ -1,7 +1,6 @@
 import logging
 import re
 from time import sleep
-from typing import Optional
 
 import requests
 from censusgeocode import CensusGeocode
@@ -25,15 +24,15 @@ class Geocoder:
     A class that houses code for both the Census and Google Maps geocoders.
     """
 
-    NON_FINDABLE_ADDRESS_DICT = {
-        INCIDENT_KEY_ADDRESS: "",
-        INCIDENT_KEY_LATITUDE: 0.0,
-        INCIDENT_KEY_LONGITUDE: 0.0,
-    }
     NUM_RETRIES = 10
     TIMEOUT = 5
 
     def __init__(self):
+        self.NON_FINDABLE_ADDRESS_DICT = {
+            INCIDENT_KEY_ADDRESS: "",
+            INCIDENT_KEY_LATITUDE: 0.0,
+            INCIDENT_KEY_LONGITUDE: 0.0,
+        }
         self._address_cache = {}
         self._address_parser = AddressParser()
         self._census_client = CensusGeocode()
@@ -232,7 +231,7 @@ class Geocoder:
         return self._address_cache[address]
 
     @staticmethod
-    def _get_address_from_cache(i_dict: dict, result: Optional[dict]):
+    def _get_address_from_cache(i_dict: dict, result: dict | None):
         if i_dict and result:
             i_dict[INCIDENT_KEY_ADDRESS] = result[INCIDENT_KEY_ADDRESS]
             i_dict[INCIDENT_KEY_LATITUDE] = result[INCIDENT_KEY_LATITUDE]

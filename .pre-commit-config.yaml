@@ -27,14 +27,14 @@ repos:
       - id: python-no-log-warn
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.11
+    rev: v0.15.4
     hooks:
       - id: ruff-check
         types_or: [python,pyi]
         args:
           - --fix
           - --target-version=py311
-          - --select=B,C,E,F,W,I
+          - --select=B,C,E,F,W,I,RUF,UP,ERA
           - --line-length=80
           - --ignore=E203,E402,E501,E261
       - id: ruff-format
