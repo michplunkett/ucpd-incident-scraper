@@ -24,15 +24,15 @@ class Geocoder:
     A class that houses code for both the Census and Google Maps geocoders.
     """
 
-    NON_FINDABLE_ADDRESS_DICT = {
-        INCIDENT_KEY_ADDRESS: "",
-        INCIDENT_KEY_LATITUDE: 0.0,
-        INCIDENT_KEY_LONGITUDE: 0.0,
-    }
     NUM_RETRIES = 10
     TIMEOUT = 5
 
     def __init__(self):
+        self.NON_FINDABLE_ADDRESS_DICT = {
+            INCIDENT_KEY_ADDRESS: "",
+            INCIDENT_KEY_LATITUDE: 0.0,
+            INCIDENT_KEY_LONGITUDE: 0.0,
+        }
         self._address_cache = {}
         self._address_parser = AddressParser()
         self._census_client = CensusGeocode()
