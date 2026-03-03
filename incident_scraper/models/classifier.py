@@ -2,7 +2,6 @@ import logging
 import os
 import pickle
 from functools import reduce
-from typing import Optional
 
 import numpy as np
 import polars as pl
@@ -195,7 +194,7 @@ class Classifier:
         self._train()
         self._save_model()
 
-    def get_predicted_incident_type(self, comment: str) -> Optional[str]:
+    def get_predicted_incident_type(self, comment: str) -> str | None:
         comment = reduce(lambda t, f: f(t), TEXT_NORMALIZING_FUNCTIONS, comment)
         vectorized_comment = self._vectorizer.transform([comment])
         prediction = self._model.predict(vectorized_comment).tolist()[0]

@@ -1,5 +1,4 @@
 import re
-from typing import Tuple
 
 
 class AddressParser:
@@ -61,7 +60,7 @@ class AddressParser:
     @staticmethod
     def _create_street_tuple(
         street: str, other_suffix: str = ""
-    ) -> Tuple[str, str, str]:
+    ) -> tuple[str, str, str]:
         street_type = "Ave." if not other_suffix else other_suffix
 
         return street, f"S. {street}", f"S. {street} {street_type}"

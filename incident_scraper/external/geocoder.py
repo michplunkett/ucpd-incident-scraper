@@ -1,7 +1,6 @@
 import logging
 import re
 from time import sleep
-from typing import Optional
 
 import requests
 from censusgeocode import CensusGeocode
@@ -232,7 +231,7 @@ class Geocoder:
         return self._address_cache[address]
 
     @staticmethod
-    def _get_address_from_cache(i_dict: dict, result: Optional[dict]):
+    def _get_address_from_cache(i_dict: dict, result: dict | None):
         if i_dict and result:
             i_dict[INCIDENT_KEY_ADDRESS] = result[INCIDENT_KEY_ADDRESS]
             i_dict[INCIDENT_KEY_LATITUDE] = result[INCIDENT_KEY_LATITUDE]

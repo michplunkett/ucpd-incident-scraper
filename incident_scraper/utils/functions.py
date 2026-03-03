@@ -1,6 +1,5 @@
 import re
 from datetime import datetime
-from typing import Optional
 
 from incident_scraper.utils.constants import (
     INCIDENT_KEY_REPORTED,
@@ -67,7 +66,7 @@ def custom_title_case(input_string: str) -> str:
     return " ".join(output_list)
 
 
-def parse_scraped_incident_timestamp(i: dict) -> Optional[str]:
+def parse_scraped_incident_timestamp(i: dict) -> str | None:
     result = None
 
     # Compensate for date input irregularities
