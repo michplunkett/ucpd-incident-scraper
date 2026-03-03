@@ -34,7 +34,7 @@ repos:
         args:
           - --fix
           - --target-version=py311
-          - --select=B,C,E,F,W,I,RUF,UP
+          - --select=B,C,E,F,W,I,RUF,UP,ERA
           - --line-length=80
           - --ignore=E203,E402,E501,E261
       - id: ruff-format
