@@ -18,7 +18,6 @@ dependencies = [
     "numpy>=2.2.0",
     "pandas>=2.2.3",
     "polars>=1.17.1",
-    "pre-commit>=4.0.1",
     "pyarrow>=18.1.0",
     "pydrive2>=1.21.3",
     "pytest>=8.3.4",
@@ -29,4 +28,9 @@ dependencies = [
     "textblob>=0.18.0.post0",
     "urllib3==1.26.19",
     "xgboost>=2.1.3",
+]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
 ]

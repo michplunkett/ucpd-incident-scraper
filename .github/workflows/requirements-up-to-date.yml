@@ -27,10 +27,10 @@ jobs:
 
           if echo "$CHANGES" | grep -qE "^(uv.lock|pyproject.toml)$"; then
             echo "uv.lock or pyproject.toml has changed."
-            echo "files_changed=true" >> $GITHUB_ENV
+            echo "files_changed=true" >> "$GITHUB_ENV"
           else
             echo "No changes detected in uv.lock or pyproject.toml."
-            echo "files_changed=false" >> $GITHUB_ENV
+            echo "files_changed=false" >> "$GITHUB_ENV"
           fi
 
       - name: Validate requirements.txt changes
