@@ -1676,7 +1676,6 @@ dependencies = [
     { name = "numpy" },
     { name = "pandas" },
     { name = "polars" },
-    { name = "pre-commit" },
     { name = "pyarrow" },
     { name = "pydrive2" },
     { name = "pytest" },
@@ -1688,6 +1687,11 @@ dependencies = [
     { name = "urllib3" },
     { name = "xgboost", version = "3.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "xgboost", version = "3.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "pre-commit" },
 ]
 
 [package.metadata]
@@ -1704,7 +1708,6 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.2.0" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "polars", specifier = ">=1.17.1" },
-    { name = "pre-commit", specifier = ">=4.0.1" },
     { name = "pyarrow", specifier = ">=18.1.0" },
     { name = "pydrive2", specifier = ">=1.21.3" },
     { name = "pytest", specifier = ">=8.3.4" },
@@ -1716,6 +1719,9 @@ requires-dist = [
     { name = "urllib3", specifier = "==1.26.19" },
     { name = "xgboost", specifier = ">=2.1.3" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "pre-commit", specifier = ">=4.6.0" }]
 
 [[package]]
 name = "uritemplate"
