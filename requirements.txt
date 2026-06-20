@@ -12,7 +12,7 @@ click==8.4.1
     # via
     #   ucpd-incident-scraper (pyproject.toml)
     #   nltk
-cryptography==43.0.3
+cryptography==48.0.1
     # via
     #   google-auth
     #   pydrive2
@@ -156,7 +156,7 @@ pygments==2.20.0
     # via pytest
 pymemcache==4.0.0
     # via google-cloud-ndb
-pyopenssl==24.2.1
+pyopenssl==26.0.0
     # via pydrive2
 pyparsing==3.3.2
     # via httplib2
@@ -209,7 +209,7 @@ typing-extensions==4.15.0
     #   opentelemetry-api
 uritemplate==4.2.0
     # via google-api-python-client
-urllib3==1.26.19
+urllib3==2.7.0
     # via
     #   ucpd-incident-scraper (pyproject.toml)
     #   requests
