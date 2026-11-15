@@ -5,7 +5,7 @@ from collections.abc import Iterator, Sequence
 from datetime import datetime
 from typing import Any
 
-from incident_scraper.utils.constants import UCPD_DATE_FORMATS
+from incident_scraper.utils.constants import UCPD_TIMESTAMP_FORMAT
 
 # Words that stay lower case in a title: articles, coordinating conjunctions,
 # and some short prepositions.
@@ -52,6 +52,12 @@ _TITLE_CASE_LOWER_WORDS = frozenset(
         "without",
     }
 )
+
+_SEASON_BY_MONTH = {
+    **dict.fromkeys((3, 4, 5), "Spring"),
+    **dict.fromkeys((6, 7, 8), "Summer"),
+    **dict.fromkeys((9, 10, 11), "Fall"),
+}
 
 _WHITESPACE_RUN = re.compile(r"\s{2,}")
 
@@ -108,26 +114,16 @@ def normalize_reported_timestamp(timestamp: str) -> str:
 
 
 def parse_reported_timestamp(timestamp: str) -> datetime | None:
-    """Parse a normalized timestamp with the first UCPD format that fits."""
-    for time_format in UCPD_DATE_FORMATS:
-        try:
-            return datetime.strptime(timestamp, time_format)
-        except ValueError:
-            continue
-
-    return None
+    """Parse a normalized timestamp, or return None if it doesn't fit."""
+    try:
+        return datetime.strptime(timestamp, UCPD_TIMESTAMP_FORMAT)
+    except ValueError:
+        return None
 
 
 def determine_season(test_date: datetime) -> str:
-    test_date_tuple = (test_date.month, test_date.day)
-    if (3, 1) <= test_date_tuple < (5, 31):
-        return "Spring"
-    elif (6, 1) <= test_date_tuple < (8, 31):
-        return "Summer"
-    elif (9, 1) <= test_date_tuple < (12, 1):
-        return "Fall"
-    else:
-        return "Winter"
+    """Get the meteorological season (Winter is December through February)."""
+    return _SEASON_BY_MONTH.get(test_date.month, "Winter")
 
 
 def chunked(items: Sequence[Any], size: int) -> Iterator[Sequence[Any]]:
