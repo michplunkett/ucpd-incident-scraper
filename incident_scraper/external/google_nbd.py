@@ -1,21 +1,18 @@
 """Contains code relating to the Google Cloud Platform Datastore service."""
 
 import csv
-import json
 import logging
 from datetime import date, datetime
 
 from google.cloud.datastore.helpers import GeoPoint
 from google.cloud.ndb import Client, GeoPt, put_multi
-from google.oauth2 import service_account
 
+from incident_scraper.external.gcp_credentials import get_gcp_credentials
 from incident_scraper.models.incident import Incident
 from incident_scraper.utils.constants import (
-    ENV_GCP_CREDENTIALS,
     ENV_GCP_PROJECT_ID,
     FILE_NAME_INCIDENT_DUMP,
     FILE_OPEN_WRITE,
-    FILE_TYPE_JSON,
     INCIDENT_KEY_ADDRESS,
     INCIDENT_KEY_COMMENTS,
     INCIDENT_KEY_ID,
@@ -47,16 +44,9 @@ class GoogleNBD:
     ENTITY_TYPE = "Incident"
 
     def __init__(self):
-        if ENV_GCP_CREDENTIALS.endswith(FILE_TYPE_JSON):
-            self._client = Client(ENV_GCP_PROJECT_ID)
-        else:
-            credentials = service_account.Credentials.from_service_account_info(
-                json.loads(ENV_GCP_CREDENTIALS)
-            )
-            self._client = Client(
-                credentials=credentials,
-                project=ENV_GCP_PROJECT_ID,
-            )
+        self._client = Client(
+            project=ENV_GCP_PROJECT_ID, credentials=get_gcp_credentials()
+        )
 
     @staticmethod
     def _create_incident_from_dict(incident: dict) -> Incident:
