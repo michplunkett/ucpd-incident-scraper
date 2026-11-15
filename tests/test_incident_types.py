@@ -99,6 +99,9 @@ def test_merge_split_types(raw, expected):
             "Notification of Order of Protection",
         ),
         ("Telephone Harassment", "Harassing Telephone Call"),
+        ("Suspect Narcotic", "Found Suspect Narcotic"),
+        ("Suspect Narcotic Found", "Found Suspect Narcotic"),
+        ("Found Suspect Narcotic", "Found Suspect Narcotic"),
         # Behavior that predates these fixes.
         ("Murder", "Homicide"),
         ("Recovered Motor Vehicle", "Recovered Vehicle"),
