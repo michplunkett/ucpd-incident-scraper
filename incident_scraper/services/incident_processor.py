@@ -54,10 +54,10 @@ class IncidentProcessor:
 
     def __init__(
         self,
-        nbd_client: "GoogleNBD",
-        addr_parser: "AddressParser",
-        geocoder: "Geocoder",
-        classifier: "Classifier",
+        nbd_client: GoogleNBD,
+        addr_parser: AddressParser,
+        geocoder: Geocoder,
+        classifier: Classifier,
         lemmatize: Callable[[str], str],
     ):
         self._nbd_client = nbd_client
