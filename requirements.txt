@@ -212,7 +212,7 @@ tzdata==2026.6
     # via python-dateutil
 uritemplate==4.2.0
     # via google-api-python-client
-urllib3==1.26.19
+urllib3==2.8.0
     # via
     #   ucpd-incident-scraper (pyproject.toml)
     #   requests
