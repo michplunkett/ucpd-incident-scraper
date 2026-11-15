@@ -62,6 +62,7 @@ INCIDENT_TYPE_ALIASES: dict[str, tuple[str, ...]] = {
         "Fleeing Police",
     ),
     "Found Property": ("Found", "Found Key", "Found Wallet"),
+    "Found Suspect Narcotic": ("Suspect Narcotic", "Suspect Narcotic Found"),
     "Harassment by Electronic Means": (
         "Harassing Message",
         "Harassment via Electronic Means",
@@ -170,7 +171,6 @@ INCIDENT_TYPE_ALIASES: dict[str, tuple[str, ...]] = {
     ),
     "Sick Person": ("Ill Person",),
     "Strong Arm": ("Strong Armed",),
-    "Suspect Narcotic": ("Suspect Narcotic Found",),
     "Suspicious Mail": ("Suspicious Letter", "Suspicious Package"),
     "Telephone Threat": ("Threatening Phone Call", "Threatening Call"),
     "Theft from Motor Vehicle": ("Theft from Vehicle",),
