@@ -1,4 +1,5 @@
 import re
+from collections.abc import Iterable
 
 # Canonical incident type -> variants that should be rewritten to it. Aliases
 # are matched against a single, already title-cased and lemmatized component
@@ -295,3 +296,10 @@ def merge_split_types(incident: str) -> str:
 def map_incident_type(incident: str) -> str:
     """Return the canonical name for one component, or it unchanged."""
     return _CANONICAL_BY_ALIAS.get(incident, incident)
+
+
+def unique_type_names(incidents: Iterable[str]) -> list[str]:
+    """Sorted, lower-cased component names across all incident values."""
+    names = {part.strip().lower() for part in "/".join(incidents).split("/")}
+    names.discard("")
+    return sorted(names)

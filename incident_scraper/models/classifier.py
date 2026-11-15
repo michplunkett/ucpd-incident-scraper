@@ -14,6 +14,7 @@ from xgboost import XGBClassifier
 
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
+from incident_scraper.utils.incident_types import unique_type_names
 
 INCIDENT_FILE = "incident_dump.csv"
 KEY_COMMENTS = "comments"
@@ -69,7 +70,9 @@ class Classifier:
                     )
                 )
             )
-            self._unique_types = self._create_unique_type_list()
+            self._unique_types = unique_type_names(
+                self._df[KEY_INCIDENT_TYPE].to_list()
+            )
             self._clean_data()
             self._model = None
         else:
@@ -89,23 +92,6 @@ class Classifier:
             category = category.replace(old, new)
 
         return category
-
-    def _create_unique_type_list(self) -> [str]:
-        incidents = self._df[KEY_INCIDENT_TYPE].to_list()
-        incident_set = set()
-        for element in incidents:
-            if "/" in element:
-                for p in element.split("/"):
-                    fmt_element = p.strip().lower()
-                    if p:
-                        incident_set.add(fmt_element)
-            else:
-                fmt_element = element.strip().lower()
-                incident_set.add(fmt_element)
-        incident_set.remove("")
-        incident_list = list(incident_set)
-        incident_list.sort()
-        return incident_list
 
     def _clean_data(self) -> None:
         for i in self._unique_types:

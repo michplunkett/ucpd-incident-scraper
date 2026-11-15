@@ -7,6 +7,7 @@ from incident_scraper.utils.incident_types import (
     map_incident_type,
     merge_split_types,
     normalize_separators,
+    unique_type_names,
 )
 
 ALL_ALIASES = [a for aliases in INCIDENT_TYPE_ALIASES.values() for a in aliases]
@@ -148,3 +149,20 @@ def test_alias_table_has_no_conflicts(aliases):
 def test_clean_is_idempotent(raw):
     once = clean(raw)
     assert clean(once) == once
+
+
+@pytest.mark.parametrize(
+    ("incidents", "expected"),
+    [
+        (["Theft", "Battery"], ["battery", "theft"]),
+        (["Theft / Battery", "Theft"], ["battery", "theft"]),
+        (["Hit and Run /", "Theft"], ["hit and run", "theft"]),
+        (["Theft", ""], ["theft"]),
+        (["Theft", "  "], ["theft"]),
+        ([], []),
+        # No blank entry present: this used to raise KeyError.
+        (["Information"], ["information"]),
+    ],
+)
+def test_unique_type_names(incidents, expected):
+    assert unique_type_names(incidents) == expected
