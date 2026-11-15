@@ -2,10 +2,13 @@
 
 import re
 from collections.abc import Iterator, Sequence
-from datetime import datetime
+from datetime import date, datetime, time
 from typing import Any
 
-from incident_scraper.utils.constants import UCPD_TIMESTAMP_FORMAT
+from incident_scraper.utils.constants import (
+    TIMEZONE_CHICAGO,
+    UCPD_TIMESTAMP_FORMAT,
+)
 
 # Words that stay lower case in a title: articles, coordinating conjunctions,
 # and some short prepositions.
@@ -124,6 +127,13 @@ def parse_reported_timestamp(timestamp: str) -> datetime | None:
 def determine_season(test_date: datetime) -> str:
     """Get the meteorological season (Winter is December through February)."""
     return _SEASON_BY_MONTH.get(test_date.month, "Winter")
+
+
+def chicago_midnight_epoch(day: date) -> int:
+    """Get the epoch time of the start of a day, in Chicago's time zone."""
+    return int(
+        TIMEZONE_CHICAGO.localize(datetime.combine(day, time.min)).timestamp()
+    )
 
 
 def chunked(items: Sequence[Any], size: int) -> Iterator[Sequence[Any]]:
