@@ -9,9 +9,8 @@ from neattext import remove_non_ascii, remove_puncts, remove_stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
-from sklearn.multioutput import MultiOutputClassifier
-from xgboost import XGBClassifier
 
+from incident_scraper.models.neural_network import build_neural_network
 from incident_scraper.utils.constants import INCIDENT_TYPE_INFO
 from incident_scraper.utils.functions import custom_title_case
 from incident_scraper.utils.incident_types import unique_type_names
@@ -21,16 +20,10 @@ KEY_COMMENTS = "comments"
 KEY_INCIDENT_TYPE = "incident"
 KEY_VALIDATED_LOCATION = "validated_location"
 MINIMUM_TYPE_FREQUENCY = 20
-SAVED_MODEL_LOCATION = (
-    os.getcwd().replace("\\", "/")
-    + "/incident_scraper/data/xgb_prediction_model.pkl"
-)
-SAVED_VECTORIZER_LOCATION = (
-    os.getcwd().replace("\\", "/") + "/incident_scraper/data/xgb_vectorizer.pkl"
-)
-SAVED_TYPES_LOCATION = (
-    os.getcwd().replace("\\", "/") + "/incident_scraper/data/xgb_types.pkl"
-)
+DATA_DIRECTORY = os.getcwd().replace("\\", "/") + "/incident_scraper/data"
+SAVED_MODEL_LOCATION = f"{DATA_DIRECTORY}/classifier_model.pkl"
+SAVED_VECTORIZER_LOCATION = f"{DATA_DIRECTORY}/classifier_vectorizer.pkl"
+SAVED_TYPES_LOCATION = f"{DATA_DIRECTORY}/classifier_types.pkl"
 TEXT_NORMALIZING_FUNCTIONS = [
     remove_stopwords,
     remove_non_ascii,
@@ -139,11 +132,7 @@ class Classifier:
         X_train_tfidf = self._vectorizer.transform(X_train)
         X_test_tfidf = self._vectorizer.transform(X_test)
 
-        self._model = MultiOutputClassifier(
-            XGBClassifier(
-                eta=0.2, max_depth=10, n_estimators=100, booster="gbtree"
-            )
-        ).fit(X_train_tfidf, y_train)
+        self._model = build_neural_network().fit(X_train_tfidf, y_train)
 
         prediction = self._model.predict(X_test_tfidf)
         accuracy = accuracy_score(y_test, prediction)
