@@ -1,10 +1,11 @@
 """Test the pure helper functions."""
 
-from datetime import datetime
+from datetime import date, datetime
 
 import pytest
 
 from incident_scraper.utils.functions import (
+    chicago_midnight_epoch,
     chunked,
     clean_comments,
     collapse_whitespace,
@@ -150,3 +151,21 @@ def test_determine_season(month, day, expected):
 )
 def test_chunked(items, size, expected):
     assert [list(chunk) for chunk in chunked(items, size)] == expected
+
+
+@pytest.mark.parametrize(
+    ("day", "expected"),
+    [
+        (date(2011, 1, 1), 1293861600),
+        (date(2023, 1, 1), 1672552800),
+        (date(2023, 7, 17), 1689570000),
+        (date(2026, 11, 12), 1794463200),
+        # Midnight is still in standard time on the day DST begins...
+        (date(2026, 3, 8), 1772949600),
+        (date(2026, 3, 9), 1773032400),
+        # ...and still in daylight time on the day it ends.
+        (date(2026, 11, 1), 1793509200),
+    ],
+)
+def test_chicago_midnight_epoch(day, expected):
+    assert chicago_midnight_epoch(day) == expected
