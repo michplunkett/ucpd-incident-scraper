@@ -14,7 +14,7 @@ I'd like to thank [@kdumais111](https://github.com/kdumais111) and [@FedericoDM]
 As well as [@ehabich](https://github.com/ehabich) for adding a bit of testing validation to the project. Thanks, y'all! <3
 
 ## Project Requirements
-- Python version: `^3.11.4`
+- Python version: `^3.14`
 - `uv` version: `0.5.7`
   - Download at: [link](https://docs.astral.sh/uv/).
 

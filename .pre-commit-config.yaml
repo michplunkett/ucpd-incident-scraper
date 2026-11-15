@@ -33,14 +33,14 @@ repos:
         types_or: [python,pyi]
         args:
           - --fix
-          - --target-version=py311
+          - --target-version=py314
           - --select=B,C,E,F,W,I,RUF,UP,ERA
           - --line-length=80
           - --ignore=E203,E402,E501,E261
       - id: ruff-format
         types_or: [python,pyi]
         args:
-          - --target-version=py311
+          - --target-version=py314
           - --line-length=80
 
   - repo: https://github.com/rhysd/actionlint
