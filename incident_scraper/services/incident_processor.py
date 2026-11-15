@@ -1,4 +1,4 @@
-"""Turns freshly scraped UCPD incidents into records for the GCP Datastore."""
+"""Turns scraped UCPD incidents into records for the GCP Datastore."""
 
 import logging
 from collections.abc import Callable, Sequence
@@ -39,7 +39,7 @@ ScrapedIncident = dict[str, Any]
 
 
 class Outcome(Enum):
-    """What became of a scraped incident while it was being processed."""
+    """The result of processing a scraped incident."""
 
     READY = auto()
     MALFORMED = auto()
@@ -69,7 +69,7 @@ class IncidentProcessor:
         self._information_predicted = 0
 
     def process_and_save(self, incidents: dict[str, ScrapedIncident]) -> None:
-        """Take scraped incidents and save the valid ones to the Datastore."""
+        """Save the valid scraped incidents to the Datastore."""
         total_incidents = len(incidents)
         logging.info(
             f"{total_incidents} total incidents were scraped from the UCPD "
@@ -94,7 +94,7 @@ class IncidentProcessor:
     def _process_batch(
         self, batch: Sequence[tuple[str, ScrapedIncident]]
     ) -> int:
-        """Process one batch of incidents and return how many were added."""
+        """Process a batch and return how many incidents were added."""
         incidents_by_outcome: dict[Outcome, list[ScrapedIncident]] = {
             outcome: [] for outcome in Outcome
         }
@@ -178,7 +178,7 @@ class IncidentProcessor:
         return Outcome.GEOCODE_FAILED
 
     def _predict_information_type(self, incident: ScrapedIncident) -> None:
-        """Try to move 'Information' incidents into a more specific type."""
+        """Predict a more specific type for 'Information' incidents."""
         if incident[INCIDENT_KEY_TYPE] == INCIDENT_TYPE_INFO:
             self._information_total += 1
             predicted_type = self._classifier.get_predicted_incident_type(

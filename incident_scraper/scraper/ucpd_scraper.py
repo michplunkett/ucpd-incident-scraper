@@ -57,10 +57,9 @@ class UCPDScraper:
     @classmethod
     def _construct_url(cls, first_day: date, last_day: date) -> str:
         """
-        Construct the scraping URL.
+        Construct the scraping URL from Chicago-midnight epochs.
 
-        The site wants Chicago-midnight epochs. The end of the range is the
-        start of the day after last_day, so that all of last_day is included.
+        The range ends after last_day, so that all of it is included.
         """
         start_epoch = chicago_midnight_epoch(first_day)
         end_epoch = chicago_midnight_epoch(last_day + timedelta(days=1))

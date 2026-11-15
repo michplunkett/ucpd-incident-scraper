@@ -8,7 +8,10 @@ from typing import Any
 from click import IntRange
 
 from incident_scraper.external.geocoder import Geocoder
-from incident_scraper.external.google_logger import init_logger
+from incident_scraper.external.google_logger import (
+    init_logger,
+    shutdown_logger,
+)
 from incident_scraper.external.google_nbd import GoogleNBD
 from incident_scraper.external.lemmatizer import Lemmatizer
 from incident_scraper.models.address_parser import AddressParser
@@ -18,11 +21,11 @@ from incident_scraper.scraper.ucpd_scraper import UCPDScraper
 from incident_scraper.services.incident_processor import IncidentProcessor
 from incident_scraper.utils.constants import SystemFlags
 
-init_logger()
+logging_client = init_logger()
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Build the command line parser for the scraper's sub-commands."""
+    """Build the command line parser."""
     parser = argparse.ArgumentParser()
     subparser = parser.add_subparsers(dest="command")
 
@@ -85,7 +88,7 @@ def main():
 def scrape_since_latest_incident(
     nbd_client: GoogleNBD, scraper: UCPDScraper
 ) -> dict[str, Any]:
-    """Scrape every day since the latest incident that has been saved."""
+    """Scrape every day since the latest saved incident."""
     now = datetime.now().date()
     day_diff = (now - nbd_client.get_latest_date()).days
     if day_diff > 0:
@@ -144,4 +147,7 @@ def lemmatize_categories(nbd_client: GoogleNBD) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        shutdown_logger(logging_client)

@@ -1,4 +1,4 @@
-"""Contains the credential loading that is shared by the GCP clients."""
+"""Credential loading shared by the GCP clients."""
 
 import json
 
@@ -12,11 +12,10 @@ from incident_scraper.utils.constants import (
 
 def get_gcp_credentials() -> service_account.Credentials | None:
     """
-    Get the service account credentials for the GCP clients.
+    Get service account credentials, or None to use the default ones.
 
-    GOOGLE_APPLICATION_CREDENTIALS is either the path to a JSON key file, which
-    the GCP clients find on their own (None is returned), or the contents of
-    the key itself.
+    GOOGLE_APPLICATION_CREDENTIALS holds either a path to a JSON key file (which
+    the GCP clients find on their own) or the key's contents.
     """
     if ENV_GCP_CREDENTIALS.endswith(FILE_TYPE_JSON):
         return None

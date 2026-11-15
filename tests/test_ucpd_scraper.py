@@ -13,12 +13,11 @@ BASE = "https://incidentreports.uchicago.edu/incidentReportArchive.php"
 @pytest.mark.parametrize(
     ("first_day", "last_day", "start_epoch", "end_epoch"),
     [
-        # Three days back from the 14th: midnight on the 11th through the
-        # start of the 15th, so that the whole 14th is included.
+        # Through the start of the 15th, so that the 14th is included.
         (date(2026, 11, 11), date(2026, 11, 14), 1794376800, 1794722400),
-        # A single day, which is what an update scrapes when it is a day behind.
+        # A single day, as scraped by an update that is a day behind.
         (date(2026, 11, 12), date(2026, 11, 12), 1794463200, 1794549600),
-        # The range that was used to seed everything from the start of 2011.
+        # The range from the 2023 scraper's seed URL.
         (date(2011, 1, 1), date(2023, 7, 16), 1293861600, 1689570000),
     ],
 )
