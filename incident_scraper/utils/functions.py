@@ -1,22 +1,32 @@
+"""Pure helper functions shared across the scraper."""
+
 import re
-from datetime import datetime
+from collections.abc import Iterator, Sequence
+from datetime import date, datetime, time
+from typing import Any
 
 from incident_scraper.utils.constants import (
-    INCIDENT_KEY_REPORTED,
-    UCPD_DATE_FORMATS,
+    TIMEZONE_CHICAGO,
+    UCPD_TIMESTAMP_FORMAT,
 )
 
-
+# Words that stay lower case in a title (articles, conjunctions, prepositions).
 # Source: https://www.geeksforgeeks.org/convert-string-to-title-case-in-python/
-def custom_title_case(input_string: str) -> str:
-    # List of articles.
-    articles = ["a", "an", "the"]
-
-    # List of coordinating conjunctions.
-    conjunctions = ["and", "but", "for", "nor", "or", "so", "yet"]
-
-    # List of some short articles.
-    prepositions = [
+_TITLE_CASE_LOWER_WORDS = frozenset(
+    {
+        # Articles
+        "a",
+        "an",
+        "the",
+        # Coordinating conjunctions
+        "and",
+        "but",
+        "for",
+        "nor",
+        "or",
+        "so",
+        "yet",
+        # Prepositions
         "about",
         "after",
         "against",
@@ -28,7 +38,6 @@ def custom_title_case(input_string: str) -> str:
         "between",
         "by",
         "during",
-        "for",
         "from",
         "in",
         "into",
@@ -43,70 +52,88 @@ def custom_title_case(input_string: str) -> str:
         "via",
         "with",
         "without",
-    ]
+    }
+)
 
-    lower_case = articles + conjunctions + prepositions
-    output_list = []
+_SEASON_BY_MONTH = {
+    **dict.fromkeys((3, 4, 5), "Spring"),
+    **dict.fromkeys((6, 7, 8), "Summer"),
+    **dict.fromkeys((9, 10, 11), "Fall"),
+}
 
-    # separating each word in the string
-    input_list = input_string.split(" ")
+_WHITESPACE_RUN = re.compile(r"\s{2,}")
 
-    # checking each word
-    for word in input_list:
-        # if the word exists in the list
-        # then no need to capitalize it
-        if word in lower_case:
-            output_list.append(word)
+# Repairs for scraped timestamps, applied in order around a whitespace collapse.
+# AM/PM always gets a space added, and the collapse removes any surplus.
+_TIMESTAMP_REPLACEMENTS_BEFORE_COLLAPSE = (
+    (";", ":"),
+    ("AM", " AM"),
+    ("PM", " PM"),
+)
+_TIMESTAMP_REPLACEMENTS_AFTER_COLLAPSE = (
+    ("//", "/"),
+    ("!", "1"),
+    (" at ", " "),
+    (":PM", " PM"),
+    (":AM", " AM"),
+    (": PM", " PM"),
+    (": AM", " AM"),
+    (": ", ":"),
+)
 
-        # if the word does not exist in
-        # the list, then capitalize it
-        else:
-            output_list.append(word.title())
 
-    return " ".join(output_list)
-
-
-def parse_scraped_incident_timestamp(i: dict) -> str | None:
-    result = None
-
-    # Compensate for date input irregularities
-    i[INCIDENT_KEY_REPORTED] = re.sub(
-        r"\s{0}AM", " AM", i[INCIDENT_KEY_REPORTED]
-    )
-    i[INCIDENT_KEY_REPORTED] = re.sub(
-        r"\s{0}PM", " PM", i[INCIDENT_KEY_REPORTED]
-    )
-    i[INCIDENT_KEY_REPORTED] = re.sub(r"\s{2,}", " ", i[INCIDENT_KEY_REPORTED])
-    i[INCIDENT_KEY_REPORTED] = (
-        i[INCIDENT_KEY_REPORTED]
-        .replace("//", "/")
-        .replace("!", "1")
-        .replace(" at ", " ")
-        .replace(":PM", " PM")
-        .replace(":AM", " AM")
-        .replace(": PM", " PM")
-        .replace(": AM", " AM")
-        .replace(": ", ":")
+def custom_title_case(input_string: str) -> str:
+    """Title case a string, except for small words like 'of'."""
+    return " ".join(
+        word if word in _TITLE_CASE_LOWER_WORDS else word.title()
+        for word in input_string.split(" ")
     )
 
-    for time_format in UCPD_DATE_FORMATS:
-        try:
-            result = datetime.strptime(i[INCIDENT_KEY_REPORTED], time_format)
-        except ValueError:
-            continue
-        # If a date is successfully parsed, break from the loop.
-        break
 
-    return result
+def collapse_whitespace(text: str) -> str:
+    """Collapse runs of two or more whitespace characters to one space."""
+    return _WHITESPACE_RUN.sub(" ", text)
+
+
+def clean_comments(comments: str) -> str:
+    """Flatten a scraped comment onto one line."""
+    return collapse_whitespace(comments.replace("\n", " ").strip())
+
+
+def normalize_reported_timestamp(timestamp: str) -> str:
+    """Repair irregularities in scraped 'Reported' timestamps."""
+    for old, new in _TIMESTAMP_REPLACEMENTS_BEFORE_COLLAPSE:
+        timestamp = timestamp.replace(old, new)
+
+    timestamp = collapse_whitespace(timestamp)
+
+    for old, new in _TIMESTAMP_REPLACEMENTS_AFTER_COLLAPSE:
+        timestamp = timestamp.replace(old, new)
+
+    return timestamp
+
+
+def parse_reported_timestamp(timestamp: str) -> datetime | None:
+    """Parse a normalized timestamp, or return None."""
+    try:
+        return datetime.strptime(timestamp, UCPD_TIMESTAMP_FORMAT)
+    except ValueError:
+        return None
 
 
 def determine_season(test_date: datetime) -> str:
-    test_date_tuple = (test_date.month, test_date.day)
-    if (3, 1) <= test_date_tuple < (5, 31):
-        return "Spring"
-    elif (6, 1) <= test_date_tuple < (8, 31):
-        return "Summer"
-    elif (9, 1) <= test_date_tuple < (12, 1):
-        return "Fall"
-    else:
-        return "Winter"
+    """Get the meteorological season."""
+    return _SEASON_BY_MONTH.get(test_date.month, "Winter")
+
+
+def chicago_midnight_epoch(day: date) -> int:
+    """Get the epoch time of midnight on a day, in Chicago."""
+    return int(
+        TIMEZONE_CHICAGO.localize(datetime.combine(day, time.min)).timestamp()
+    )
+
+
+def chunked(items: Sequence[Any], size: int) -> Iterator[Sequence[Any]]:
+    """Yield slices of `items` that are at most `size` long."""
+    for start in range(0, len(items), size):
+        yield items[start : start + size]

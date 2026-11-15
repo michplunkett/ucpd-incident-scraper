@@ -69,4 +69,4 @@ thirty-days:
 
 .PHONY: test
 test:
-	pytest -vs tests/
+	pytest -vs tests/ --cov --cov-report=term-missing

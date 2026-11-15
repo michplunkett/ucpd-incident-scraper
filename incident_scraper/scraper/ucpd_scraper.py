@@ -2,16 +2,14 @@
 
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import requests
 from lxml import etree, html
 
 from incident_scraper.scraper.headers import Headers
-from incident_scraper.utils.constants import (
-    TIMEZONE_CHICAGO,
-    UCPD_MDY_DATE_FORMAT,
-)
+from incident_scraper.utils.constants import TIMEZONE_CHICAGO
+from incident_scraper.utils.functions import chicago_midnight_epoch
 
 
 class UCPDScraper:
@@ -22,6 +20,7 @@ class UCPDScraper:
     BASE_UCPD_URL = (
         "https://incidentreports.uchicago.edu/incidentReportArchive.php"
     )
+    FIRST_INCIDENT_DAY = date(2011, 1, 1)
 
     def __init__(self, request_delay=0.15):
         self._request_delay = request_delay
@@ -31,7 +30,7 @@ class UCPDScraper:
                 "image/avif,image/webp,image/apng,*/*;q=0.8,application/"
                 "signed-exchange;v=b3;q=0.7"
             ),
-            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Encoding": "gzip, deflate",
             "Accept-Language": "en-US,en;q=0.9",
             "Cache-Control": "max-age=0",
             "Connection": "keep-alive",
@@ -42,36 +41,32 @@ class UCPDScraper:
 
     def scrape_from_beginning_2011(self):
         """Scrape and parse all tables from January 1, 2011, to today."""
-        new_url = self._construct_url(year_beginning=True)
+        new_url = self._construct_url(self.FIRST_INCIDENT_DAY, self._today())
         return self._get_incidents(new_url)
 
     def scrape_last_days(self, num_days: int = 3):
         """Scrape and parse all tables from num_days ago to today."""
-        new_url = self._construct_url(num_days=num_days)
+        today = self._today()
+        new_url = self._construct_url(today - timedelta(days=num_days), today)
         return self._get_incidents(new_url)
 
-    def _construct_url(
-        self, num_days: int = 0, year_beginning: bool = False
-    ) -> str:
-        """
-        Construct the scraping URL.
+    @staticmethod
+    def _today() -> date:
+        return datetime.now(TIMEZONE_CHICAGO).date()
 
-        Constructs the URL to scrape from by getting the epochs of the present
-        day and the first day of the current year.
+    @classmethod
+    def _construct_url(cls, first_day: date, last_day: date) -> str:
         """
-        today = datetime.now(TIMEZONE_CHICAGO).date()
-        today_str = today.strftime(UCPD_MDY_DATE_FORMAT)
+        Construct the scraping URL from Chicago-midnight epochs.
 
-        previous_datetime = (
-            datetime(2011, 1, 1).date()
-            if year_beginning
-            else today - timedelta(days=num_days)
-        )
-        previous_date_str = previous_datetime.strftime(UCPD_MDY_DATE_FORMAT)
+        The range ends after last_day, so that all of it is included.
+        """
+        start_epoch = chicago_midnight_epoch(first_day)
+        end_epoch = chicago_midnight_epoch(last_day + timedelta(days=1))
 
         return (
-            f"{self.BASE_UCPD_URL}?startDate={previous_date_str}&endDate="
-            f"{today_str}&offset="
+            f"{cls.BASE_UCPD_URL}?startDate={start_epoch}&endDate={end_epoch}"
+            "&offset="
         )
 
     def _get_table(self, url: str):
@@ -91,6 +86,11 @@ class UCPDScraper:
             self._user_agent_rotator.get_random_header()
         )
         r = requests.get(url, headers=self._headers)
+        if not r.content.strip():
+            raise RuntimeError(
+                f"The UCPD site returned an empty page (HTTP {r.status_code}) "
+                f"for: {url}"
+            )
         response = html.fromstring(r.content)
         container = response.cssselect("thead")
         categories = container[FIRST_INDEX].cssselect("th")

@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "This code is going to be used to scrape the UCPD Daily Incident every day and store the incidents on a generic JSON data-store through the use of a Python 🐍 job on GCP's Cloud Run."
 authors = ["michplunkett"]
 readme = "README.md"
-requires-python = ">=3.11.4"
+requires-python = ">=3.14"
 dependencies = [
     "censusgeocode>=0.5.2",
     "click>=8.1.7",
@@ -33,4 +33,16 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.0",
+    "pytest-cov>=6.0.0",
+]
+
+[tool.coverage.run]
+source = ["incident_scraper"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    'if __name__ == "__main__":',
 ]

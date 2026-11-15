@@ -5,14 +5,9 @@ import os
 import pytz
 
 # Date/Time Constants
-UCPD_DATE_FORMATS = [
-    "%m/%d/%y %I:%M %p",
-    "%-m/%-d/%y %-I:%M %p",
-    "%-m/%-d/%y %-I:%M%p",
-    "%m/%d/%y %-H:%M",
-    "%m/%d/%Y %-H:%M",
-    "%-m/%-d/%Y %-H:%M",
-]
+# Like "1/5/24 3:45 PM". strptime accepts unpadded values, and timestamps are
+# normalized to have a space before AM/PM first.
+UCPD_TIMESTAMP_FORMAT = "%m/%d/%y %I:%M %p"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
