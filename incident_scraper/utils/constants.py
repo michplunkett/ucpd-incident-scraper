@@ -5,14 +5,11 @@ import os
 import pytz
 
 # Date/Time Constants
-UCPD_DATE_FORMATS = [
-    "%m/%d/%y %I:%M %p",
-    "%-m/%-d/%y %-I:%M %p",
-    "%-m/%-d/%y %-I:%M%p",
-    "%m/%d/%y %-H:%M",
-    "%m/%d/%Y %-H:%M",
-    "%-m/%-d/%Y %-H:%M",
-]
+# The UCPD site publishes 12-hour timestamps like "1/5/24 3:45 PM". strptime
+# accepts values that aren't zero-padded for the padded directives, so no
+# variants are needed for them. Timestamps are normalized to have a space
+# before AM/PM first.
+UCPD_TIMESTAMP_FORMAT = "%m/%d/%y %I:%M %p"
 UCPD_MDY_DATE_FORMAT = "%m/%d/%Y"
 UCPD_MDY_KEY_DATE_FORMAT = "%Y-%m-%d"
 
