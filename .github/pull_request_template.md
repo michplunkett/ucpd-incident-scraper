@@ -2,7 +2,7 @@
 
 
 ## Checklist before requesting a review
-- [ ] The code runs successfully.
+- [ ] `make three-days` runs correctly.
 
 ```console
 HERE IS SOME COMMAND LINE OUTPUT
