@@ -108,7 +108,6 @@ numpy==2.5.4
     #   pandas
     #   scikit-learn
     #   scipy
-    #   xgboost
 oauth2client==4.1.3
     # via pydrive2
 opentelemetry-api==1.45.2
@@ -196,9 +195,7 @@ scikit-learn==1.9.1
 scikit-multilearn==0.2.0
     # via ucpd-incident-scraper (pyproject.toml)
 scipy==1.18.1
-    # via
-    #   scikit-learn
-    #   xgboost
+    # via scikit-learn
 six==1.17.0
     # via oauth2client
 textblob==0.20.1
@@ -219,5 +216,3 @@ urllib3==1.26.19
     # via
     #   ucpd-incident-scraper (pyproject.toml)
     #   requests
-xgboost==3.4.1
-    # via ucpd-incident-scraper (pyproject.toml)

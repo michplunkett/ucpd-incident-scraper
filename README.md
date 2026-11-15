@@ -30,10 +30,28 @@ variable: `GOOGLE_APPLICATION_CREDENTIALS`
   - Example: `uv add pre-commit`
 
 ## Standard Commands
-- `make build-model`: Build a predictive XGBoost model based off of locally saved incident data and save it in the `data` folder.
+- `make build-model`: Build a predictive neural network (three hidden layers) based off of locally saved incident data and save it in the `data` folder. Commit the rebuilt files in `data` so the scheduled `update` job uses them.
 - `make categorize`: Categorize stored, 'Information' labeled incidents using the locally saved predictive model.
 - `make download`: Download all incidents into a locally stored file titled `incident_dump.csv`.
 - `make env`: Creates or activates a `uv` virtual environment.
 - `make lint`: Runs`pre-commit` on the codebase.
 - `make seed`: Save incidents starting from January 1st of 2011 and continuing until today.
 - `make update`: Save incidents starting from the most recently saved incident until today.
+
+## Incident Type Model
+'Information' incidents are categorized by a neural network (three hidden layers) trained on TF-IDF features of the incident comments. It replaced an XGBoost model after the two were compared on the same data.
+
+Each model was trained and scored on the same three random 65/35 train/test splits for every feature set, and the table shows the mean ± standard deviation across those splits. Accuracy is strict: every label of an incident has to match. Precision, recall and F1 are micro-averaged. The times are seconds to fit and to predict the whole test set.
+
+The feature sets are `baseline` (1,000 single-word terms, what the model uses), `5k_unigrams` (5,000 single words) and `5k_bigrams` (5,000 single words and two-word phrases).
+
+| model                        | accuracy        | precision       | recall          | f1              | fit_seconds      | predict_seconds |
+|------------------------------|-----------------|-----------------|-----------------|-----------------|------------------|-----------------|
+| xgboost [baseline]           | 0.7320 ± 0.0008 | 0.9022 ± 0.0029 | 0.7981 ± 0.0016 | 0.8470 ± 0.0022 | 29.6859 ± 1.1088 | 0.2299 ± 0.0084 |
+| neural_network [baseline]    | 0.7472 ± 0.0045 | 0.8914 ± 0.0050 | 0.8143 ± 0.0011 | 0.8511 ± 0.0020 | 8.8608 ± 1.2693  | 0.0264 ± 0.0002 |
+| xgboost [5k_unigrams]        | 0.7340 ± 0.0024 | 0.9011 ± 0.0014 | 0.8014 ± 0.0018 | 0.8483 ± 0.0009 | 35.4232 ± 0.1379 | 0.2747 ± 0.0194 |
+| neural_network [5k_unigrams] | 0.7242 ± 0.0024 | 0.8923 ± 0.0111 | 0.7919 ± 0.0097 | 0.8390 ± 0.0034 | 32.3943 ± 2.2905 | 0.0285 ± 0.0013 |
+| xgboost [5k_bigrams]         | 0.7352 ± 0.0039 | 0.9040 ± 0.0053 | 0.7991 ± 0.0025 | 0.8483 ± 0.0037 | 53.4456 ± 0.7072 | 0.2940 ± 0.0330 |
+| neural_network [5k_bigrams]  | 0.7313 ± 0.0043 | 0.8916 ± 0.0073 | 0.8006 ± 0.0017 | 0.8436 ± 0.0030 | 30.4135 ± 6.8297 | 0.0343 ± 0.0017 |
+
+The two models score about the same, with the network training roughly 3x faster and predicting roughly 9x faster. Larger vocabularies did not help either model, so the network uses the baseline features.
